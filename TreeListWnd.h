@@ -97,10 +97,10 @@ typedef		TVSORTEX				TV_SORTEX;
 #define 	TVI_AFTER				((HTREEITEM) 0xFFFF0005)
 #define		TVI_ROW(n)		        ((HTREEITEM)(0xFFE00000+(n)))
 #ifndef		VK_DBLCLK
-#define 	VK_DBLCLK				0x10000				// Edit mit Doppelklick
+#define 	VK_DBLCLK				0x10000				// Edit with doubleclick
 #endif
 #ifndef		VK_ICONCLK
-#define 	VK_ICONCLK				0x10001				// Edit mit Klick auf Icon
+#define 	VK_ICONCLK				0x10001				// Edit with click on icon
 #endif
 #ifndef		VK_EDITCLK
 #define 	VK_EDITCLK				0x10002				// Edit mit Klick auf augewähltes Element
@@ -111,7 +111,7 @@ typedef		TVSORTEX				TV_SORTEX;
 #define		TV_UINICODE				0
 #endif		
 
-// Konstanten für Farben (TVM_SETBKCOLOR)
+// Color Constants (TVM_SETBKCOLOR)
 #define 	TVC_BK					0					// Hintergrundfarbe
 #define 	TVC_ODD					1					// Abwechselnte Farbe        (siehe TVS_EX_ALTERNATECOLOR)
 #define 	TVC_EVEN				2					// Abwechselnte Farbe gerade (siehe TVS_EX_ALTERNATECOLOR)

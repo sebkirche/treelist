@@ -155,8 +155,7 @@
 #define 	TVIX_FOCUSED		0x40						// Der Eintrag hat einen Eingabe-Focus
 
 
-typedef struct
-	{
+typedef struct {
 	LPARAM		lParam;										// Ist der LPARAM Wert für den Eintrag
 	LPTSTR		pText;										// Zeiger auf Tree-Text
 	UINT		uState;										// Zustand des Eintrages
@@ -175,10 +174,9 @@ typedef struct
 	BYTE		bFlags;										// Diverse Flags
 	COLORREF	uColorText;									// Spezielle Textfarbe
 	COLORREF	uColorBk;									// Spezielle Hintergrundfarbe
-	}BaseItem;
+} BaseItem;
 
-typedef struct
-	{
+typedef struct {
 	LPTSTR		pText;										// Zeiger auf Tree-Text
 	UINT		uState;										// Zustand des Eintrages
 	int			iImage;										// Ist die Nummer des an zu zeigenden Icons
@@ -188,10 +186,9 @@ typedef struct
 	BYTE		bFlags;										// Diverse Flags
 	COLORREF	uColorText;									// Spezielle Textfarbe
 	COLORREF	uColorBk;									// Spezielle Hintergrundfarbe
-	}ExtraItem;
+} ExtraItem;
 
-typedef struct
-	{
+typedef struct {
 	void 	   *pCbData;									// Daten für das Autoeditieren
 	INT  	    iCbIcon;									// Startoffset für in Iconliste für Autoedit
 	short 		sSize;										// Ist die soll Breite einer Spalte
@@ -210,10 +207,9 @@ typedef struct
 	BYTE  	    bCbChar;									// Trennzeichnen für die Datenliste
 	BYTE  	    bMark;										// Ist die Spalte markiert
 	BYTE  	    bDummy[32-23-sizeof(void*)];				// Füllbytes auf 32 Grenze
-	}ColumnData;
+} ColumnData;
 
-typedef struct
-	{
+typedef struct {
 	HWND		hWnd;										// Fenster Handle
 	HANDLE		hSem;										// Zugriffssemaphore
 	LPVOID		hTheme;										// Handle für benutztes Thema (TREELIST)
@@ -328,7 +324,7 @@ typedef struct
 	char		cGlyphOk;									// Die Schaltfäche über Themen zeichnen
 	char		cEditCb;									// Muss das Edit-Fenster einen Callback aufrufen
 	char		cButtonFlag;								// Welche Maustaste wurde zuletzt gedrückt
-	}TreeListData;
+} TreeListData;
 
 typedef	HRESULT (WINAPI *SetWindowThemeT )(HWND,LPCWSTR,LPCWSTR);
 typedef	HRESULT (WINAPI *EndBufferedPtT  )(HANDLE,BOOL);
@@ -373,10 +369,10 @@ static int				TreeListEndLabelEdit   (TreeListData *pData,int iMode);
 //*****************************************************************************
 //	Registiert das TreeList Fenster.
 //	Ergibt 1 wenn das Fenster erfolgreich registiert wurde.
-int TreeListRegister(HINSTANCE hInstance)
-{
-static int		iIsRegistered=FALSE;
-WNDCLASSEX		sClass;
+int TreeListRegister(HINSTANCE hInstance){
+
+	static int		iIsRegistered=FALSE;
+	WNDCLASSEX		sClass;
 
 
     if(iIsRegistered)return TRUE;
@@ -410,14 +406,14 @@ return TRUE;
 //*		GlobalInit
 //*
 //*****************************************************************************
-static void GlobalInit()
-{
-LOGBRUSH	sLog;
-long		lCount;
+static void GlobalInit(){
+
+	LOGBRUSH	sLog;
+	long		lCount;
 
 
 
-	   lCount = InterlockedIncrement(&lWindowCount);
+	lCount = InterlockedIncrement(&lWindowCount);
 	if(lCount>0)return;
 
 	sLog.lbColor = GetSysColor(COLOR_BTNSHADOW);
@@ -425,17 +421,14 @@ long		lCount;
 	sLog.lbHatch = 0;
 	hPatternPen  = ExtCreatePen(PS_COSMETIC|PS_ALTERNATE,1,&sLog,0,NULL);
 
-    if(!hPatternPen)
-		{
+    if(!hPatternPen){
 		hPatternPen = CreatePen(PS_DOT,1,RGB(0,0,0));
-		}
+	}
 
 
-	if(!hUxThemeDll)
-		{
-		   hUxThemeDll = LoadLibrary(_T("UxTheme.dll"));
-		if(hUxThemeDll)
-			{
+	if(!hUxThemeDll){
+		hUxThemeDll = LoadLibrary(_T("UxTheme.dll"));
+		if(hUxThemeDll) {
 			pSetWindowTheme  = (SetWindowThemeT )GetProcAddress(hUxThemeDll,"SetWindowTheme"     );
 			pEndBufferedPt   = (EndBufferedPtT  )GetProcAddress(hUxThemeDll,"EndBufferedPaint"   );
 			pBeginBufferedPt = (BeginBufferedPnT)GetProcAddress(hUxThemeDll,"BeginBufferedPaint" );
@@ -446,13 +439,12 @@ long		lCount;
 			pDrawThemeBackg	 = (DrawThemeBackgT )GetProcAddress(hUxThemeDll,"DrawThemeBackground");
 			pGetThemeBackgRc = (GetThemeBackgRcT)GetProcAddress(hUxThemeDll,"GetThemeBackgroundContentRect");
 
-			}
 		}
+	}
 
-	if(pBufferedPtInit)
-		{
+	if(pBufferedPtInit) {
 		pBufferedPtInit();
-		}
+	}
 
 }
 
@@ -462,36 +454,31 @@ long		lCount;
 //*		GlobalDeinit
 //*
 //*****************************************************************************
-static void GlobalDeinit()
-{
-int	lCount;
+static void GlobalDeinit() {
 
+	int	lCount;
 
-	   lCount=InterlockedDecrement(&lWindowCount);
+	lCount=InterlockedDecrement(&lWindowCount);
 	if(lCount>=0)return;
 
-    if(hDefaultFontN)
-        {
+    if(hDefaultFontN){
         DeleteObject(hDefaultFontN);
         hDefaultFontN = NULL;
         }
 
-    if(hDefaultFontB)
-        {
+    if(hDefaultFontB){
         DeleteObject(hDefaultFontB);
         hDefaultFontB = NULL;
-        }
+	}
 
-    if(hPatternPen)
-        {
+    if(hPatternPen){
         DeleteObject(hPatternPen);
         hPatternPen = NULL;
-        }
+	}
 
-	if(pBufferedPtExit)
-		{
+	if(pBufferedPtExit){
 		pBufferedPtExit();
-		}
+	}
 
 }
 
@@ -505,15 +492,12 @@ int	lCount;
 //	pData		: Zeiger auf die Fensterdaten
 //	pNotify		: Zeiger auf die Notify-Daten
 //	Ergibt den Rückgabewert der WM_NOTIFY Nachrich
-static LRESULT SendNotify(TreeListData *pData,NMHDR	*pNotify)
-{
-
+static LRESULT SendNotify(TreeListData *pData,NMHDR	*pNotify){
 
 	pNotify->hwndFrom	= pData->hWnd;
     pNotify->idFrom		= GetWindowLong(pNotify->hwndFrom,GWL_ID);
-
-
-return SendMessage(GetParent(pNotify->hwndFrom),WM_NOTIFY,pNotify->idFrom,(LPARAM)pNotify);
+	
+	return SendMessage(GetParent(pNotify->hwndFrom),WM_NOTIFY,pNotify->idFrom,(LPARAM)pNotify);
 }
 
 
@@ -528,10 +512,9 @@ return SendMessage(GetParent(pNotify->hwndFrom),WM_NOTIFY,pNotify->idFrom,(LPARA
 //	uItem		: Nummer des Eintrages
 //	uFlags		: Welche Daten sollen abgefragt werden
 //	Ergibt den Rückgabewert der WM_NOTIFY Nachrich
-static void CallbackEntry(TreeListData *pData,BaseItem *pEntry,unsigned uItem,unsigned uFlags,int &iImage,unsigned &uTextSize,LPCTSTR &pText)
-{
-NMTVDISPINFO	sInfo;
-
+static void CallbackEntry(TreeListData *pData,BaseItem *pEntry,unsigned uItem,unsigned uFlags,int &iImage,unsigned &uTextSize,LPCTSTR &pText){
+	
+	NMTVDISPINFO	sInfo;
 
 	sInfo.item.mask				= TVIF_HANDLE|TVIF_PARAM|TVIF_STATE|uFlags;
 	sInfo.item.lParam			= pEntry->lParam;
@@ -542,26 +525,24 @@ NMTVDISPINFO	sInfo;
 	sInfo.item.iSelectedImage	= I_IMAGECALLBACK;
 	sInfo.item.cChildren		= I_CHILDRENCALLBACK;
 
-	if(uFlags&TVIF_TEXT)
-		{
-		if(uTextSize)
-			{
+	if(uFlags&TVIF_TEXT){
+		if(uTextSize){
 			pData->cTempText2[sizeof(pData->cTempText2)/sizeof(TCHAR)-1]	= 0;
 			pData->cTempText2[0]	= 0;
 			sInfo.item.pszText		= pData->cTempText2;
 			sInfo.item.cchTextMax	= sizeof(pData->cTempText2)/sizeof(TCHAR)-1;
-			}
+		}
 		else{
 			pData->cTempText1[sizeof(pData->cTempText1)/sizeof(TCHAR)-1]	= 0;
 			pData->cTempText1[0]	= 0;
 			sInfo.item.pszText		= pData->cTempText1;
 			sInfo.item.cchTextMax	= sizeof(pData->cTempText1)/sizeof(TCHAR)-1;
 			}
-		}
+	}
 	else{
 		sInfo.item.pszText		= 0;
 		sInfo.item.cchTextMax	= 0;
-		}
+	}
 
 	sInfo.hdr.hwndFrom	= pData->hWnd;
     sInfo.hdr.idFrom	= GetWindowLong(pData->hWnd,GWL_ID);
@@ -571,42 +552,36 @@ NMTVDISPINFO	sInfo;
 	SendMessage(GetParent(sInfo.hdr.hwndFrom),WM_NOTIFY,sInfo.hdr.idFrom,(LPARAM)&sInfo);
 	LOCK(pData);
 
-
-	if(uFlags&TVIF_IMAGE)
-		{
+	if(uFlags&TVIF_IMAGE){
 		if(!(pEntry->uState&TVIS_SELECTED))iImage = sInfo.item.iImage;
-		}
-	else if(uFlags&TVIF_SELECTEDIMAGE)
-		{
+	}
+	else if(uFlags&TVIF_SELECTEDIMAGE){
 		if(pEntry->uState&TVIS_SELECTED)iImage = sInfo.item.iSelectedImage;
+	}
+
+	if(uFlags&TVIF_CHILDREN){
+		switch(sInfo.item.cChildren){
+			case  0:		pEntry->bFlags    &= ~TVIX_HASBUTTON;
+							pEntry->bFlags    |=  TVIX_VARBUTTON;
+							break;
+
+			case  1:		pEntry->bFlags    &= ~TVIX_VARBUTTON;
+							pEntry->bFlags    |=  TVIX_HASBUTTON;
+							break;
+
+			default:		pEntry->bFlags    |=  TVIX_VARBUTTON;
+
+							if(pEntry->uFirstChild)
+									pEntry->bFlags |=  TVIX_HASBUTTON;
+							else	pEntry->bFlags &= ~TVIX_HASBUTTON;
 		}
+	}
 
-	if(uFlags&TVIF_CHILDREN)
-		{
-		switch(sInfo.item.cChildren)
-			{
-		case  0:		pEntry->bFlags    &= ~TVIX_HASBUTTON;
-						pEntry->bFlags    |=  TVIX_VARBUTTON;
-						break;
-
-		case  1:		pEntry->bFlags    &= ~TVIX_VARBUTTON;
-						pEntry->bFlags    |=  TVIX_HASBUTTON;
-						break;
-
-		default:		pEntry->bFlags    |=  TVIX_VARBUTTON;
-
-						if(pEntry->uFirstChild)
-								pEntry->bFlags |=  TVIX_HASBUTTON;
-						else	pEntry->bFlags &= ~TVIX_HASBUTTON;
-			}
-		}
-
-	if(uFlags&TVIF_TEXT)
-		{
+	if(uFlags&TVIF_TEXT){
 		pText		= sInfo.item.pszText;
 		uTextSize	= str_len(sInfo.item.pszText);
 		pEntry->iTextPixels = 0;
- 		}
+ 	}
 
 }
 
@@ -621,10 +596,9 @@ NMTVDISPINFO	sInfo;
 //	uItem		: Nummer des Eintrages
 //	uFlags		: Welche Daten sollen abgefragt werden
 //	Ergibt den Rückgabewert der WM_NOTIFY Nachrich
-static void CallbackExtra(TreeListData *pData,BaseItem *pEntry,ExtraItem *pExtra,unsigned uItem,unsigned uSub,unsigned uFlags,int &iImage,unsigned &uTextSize,LPCTSTR &pText)
-{
-NMTVDISPINFO	sInfo;
+static void CallbackExtra(TreeListData *pData,BaseItem *pEntry,ExtraItem *pExtra,unsigned uItem,unsigned uSub,unsigned uFlags,int &iImage,unsigned &uTextSize,LPCTSTR &pText){
 
+	NMTVDISPINFO	sInfo;
 
 	sInfo.item.mask				= TVIF_HANDLE|TVIF_PARAM|TVIF_STATE|TVIF_SUBITEM|uFlags;
 	sInfo.item.lParam			= pEntry->lParam;
@@ -636,17 +610,16 @@ NMTVDISPINFO	sInfo;
 	sInfo.item.iSelectedImage	= I_IMAGECALLBACK;
 	sInfo.item.cChildren		= uSub;
 
-	if(uFlags&TVIF_TEXT)
-		{
+	if(uFlags&TVIF_TEXT){
 		pData->cTempText1[sizeof(pData->cTempText1)/sizeof(TCHAR)-1]	= 0;
 		pData->cTempText1[0]	= 0;
 		sInfo.item.pszText		= pData->cTempText1;
 		sInfo.item.cchTextMax	= sizeof(pData->cTempText1)/sizeof(TCHAR)-1;
-		}
+	}
 	else{
 		sInfo.item.pszText		= 0;
 		sInfo.item.cchTextMax	= 0;
-		}
+	}
 
 	sInfo.hdr.hwndFrom	= pData->hWnd;
     sInfo.hdr.idFrom	= GetWindowLong(pData->hWnd,GWL_ID);
@@ -658,11 +631,10 @@ NMTVDISPINFO	sInfo;
 
 
 	if(uFlags&TVIF_IMAGE)iImage = sInfo.item.iImage;
-	if(uFlags&TVIF_TEXT)
-		{
+	if(uFlags&TVIF_TEXT){
 		pText		= sInfo.item.pszText;
 		uTextSize	= str_len(sInfo.item.pszText);
-		}
+	}
 
 }
 
@@ -672,147 +644,128 @@ NMTVDISPINFO	sInfo;
 //*
 //*****************************************************************************
 //	Ist die Fensterfunktion für das Edit Fenster
-static LRESULT CALLBACK EditProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
-{
-TreeListData   *pData;
-WNDPROC			pProc;
-DWORD			dwStop;
-DWORD			dwStart;
-DWORD			dwCount;
-LRESULT			lResult;
-HWND			hParent;
-HWND			hCombo;
-int				iDelta;
-int				iState;
-int				iPos;
-int				iId;
+static LRESULT CALLBACK EditProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam){
+
+	TreeListData   *pData;
+	WNDPROC			pProc;
+	DWORD			dwStop;
+	DWORD			dwStart;
+	DWORD			dwCount;
+	LRESULT			lResult;
+	HWND			hParent;
+	HWND			hCombo;
+	int				iDelta;
+	int				iState;
+	int				iPos;
+	int				iId;
 
 
 	hParent = GetParent(hWnd);
 	iId		= GetWindowLong(hWnd,GWL_ID);
 
-	if(iId==3)
-		{
+	if(iId==3){
 		hCombo  = hWnd;
 		pData   = GetHandle(hParent);
 		pProc   = pData->pProcId3;
-		}
+	}
 	else{
 		hCombo  = hParent;
 		hParent = GetParent(hParent);
 		pData   = GetHandle(hParent);
 		pProc   = (WNDPROC)GetWindowLongPtr(hWnd,GWLP_USERDATA);
-		}
+	}
 
-	if(uMsg==WM_KEYDOWN)
-		{
-		if(wParam==VK_RETURN)
-			{
+	if(uMsg==WM_KEYDOWN){
+		if(wParam==VK_RETURN){
 			SendMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
 			return 0;
-			}
+		}
 
-		if(wParam==VK_ESCAPE)
-			{
+		if(wParam==VK_ESCAPE){
 			SendMessage(hParent,WM_COMMAND,MAKELONG(3,EN_ESCAPE),(LPARAM)hWnd);
 			return 0;
+		}
+
+		if((pData->uStyleEx&TVS_EX_STEPOUT) && !(GetAsyncKeyState(VK_SHIFT)&0x8000)){
+			switch(wParam){										// Aus Fenster springen
+				
+				case VK_UP:		if(pData->uEditMode)break;
+								PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
+								PostMessage(hParent,WM_KEYDOWN,VK_UP  ,0x00500001);
+								PostMessage(hParent,WM_KEYUP  ,VK_UP  ,0x00500001);
+								return 0;
+
+				case VK_DOWN:	if(pData->uEditMode)break;
+								PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
+								PostMessage(hParent,WM_KEYDOWN,VK_DOWN,0x00500001);
+								PostMessage(hParent,WM_KEYUP  ,VK_DOWN,0x00500001);
+								return 0;
+
+				case VK_LEFT:	if(pData->uEditMode && iId==3)break;
+								SendMessage(hWnd,EM_GETSEL,(WPARAM)&dwStart,(LPARAM)&dwStop);
+								if(dwStart || dwStop)break;
+								PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
+								PostMessage(hParent,WM_KEYDOWN,VK_LEFT,0x00500001);
+								PostMessage(hParent,WM_KEYUP  ,VK_LEFT,0x00500001);
+								return 0;
+
+				case VK_RIGHT:	if(pData->uEditMode && iId==3)break;
+								SendMessage(hWnd,EM_GETSEL,(WPARAM)&dwStart,(LPARAM)&dwStop);
+								   dwCount=(DWORD)SendMessage(hWnd,EM_LINELENGTH,0,0);
+								if(dwCount>dwStart)break;
+								if(dwCount>dwStop )break;
+
+								PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
+								PostMessage(hParent,WM_KEYDOWN,VK_RIGHT,0x00500001);
+								PostMessage(hParent,WM_KEYUP  ,VK_RIGHT,0x00500001);
+								return 0;
 			}
+		}
 
-		if((pData->uStyleEx&TVS_EX_STEPOUT) && !(GetAsyncKeyState(VK_SHIFT)&0x8000))
-			{
-			switch(wParam)										// Aus Fenster springen
-				{
-			case VK_UP:		if(pData->uEditMode)break;
-							PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
-							PostMessage(hParent,WM_KEYDOWN,VK_UP  ,0x00500001);
-							PostMessage(hParent,WM_KEYUP  ,VK_UP  ,0x00500001);
-							return 0;
-
-			case VK_DOWN:	if(pData->uEditMode)break;
-							PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
-							PostMessage(hParent,WM_KEYDOWN,VK_DOWN,0x00500001);
-							PostMessage(hParent,WM_KEYUP  ,VK_DOWN,0x00500001);
-							return 0;
-
-			case VK_LEFT:	if(pData->uEditMode && iId==3)break;
-							SendMessage(hWnd,EM_GETSEL,(WPARAM)&dwStart,(LPARAM)&dwStop);
-							if(dwStart || dwStop)break;
-							PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
-							PostMessage(hParent,WM_KEYDOWN,VK_LEFT,0x00500001);
-							PostMessage(hParent,WM_KEYUP  ,VK_LEFT,0x00500001);
-							return 0;
-
-			case VK_RIGHT:	if(pData->uEditMode && iId==3)break;
-							SendMessage(hWnd,EM_GETSEL,(WPARAM)&dwStart,(LPARAM)&dwStop);
-							   dwCount=(DWORD)SendMessage(hWnd,EM_LINELENGTH,0,0);
-							if(dwCount>dwStart)break;
-							if(dwCount>dwStop )break;
-
-							PostMessage(hParent,WM_COMMAND,MAKELONG(3,EN_RETURN),(LPARAM)hWnd);
-							PostMessage(hParent,WM_KEYDOWN,VK_RIGHT,0x00500001);
-							PostMessage(hParent,WM_KEYUP  ,VK_RIGHT,0x00500001);
-							return 0;
-				}
-			}
-
-
-		if(wParam==VK_DOWN && pData->uEditMode)
-			{
-			if(!SendMessage(hCombo,CB_GETDROPPEDSTATE,0,0))
-				{
+		if(wParam==VK_DOWN && pData->uEditMode){
+			if(!SendMessage(hCombo,CB_GETDROPPEDSTATE,0,0)){
 				SendMessage(hCombo,CB_SHOWDROPDOWN,1,0);
 				return 0;
-				}
 			}
 		}
-	else if(uMsg==WM_CHAR)
-		{
-		if(wParam==VK_RETURN)
-			{
+	}
+	else if(uMsg==WM_CHAR){
+		if(wParam==VK_RETURN){
 			return 0;
-			}
+		}
 
-		if(wParam==VK_ESCAPE)
-			{
+		if(wParam==VK_ESCAPE){
 			return 0;
-			}
 		}
-	else if(uMsg==WM_COMMAND)
-		{
-		if(wParam==MAKELONG(3,EN_ESCAPE) || wParam==MAKELONG(3,EN_RETURN))
-			{
+	}
+	else if(uMsg==WM_COMMAND){
+		if(wParam==MAKELONG(3,EN_ESCAPE) || wParam==MAKELONG(3,EN_RETURN)){
 			SendMessage(hParent,WM_COMMAND,wParam,(LPARAM)hWnd);
 			return 0;
-			}
 		}
-	else if(uMsg==WM_MOUSEWHEEL)
-		{
-		   iState=(int)CallWindowProc(pProc,hWnd,CB_GETDROPPEDSTATE,0,0);
-		if(iState)
-			{
+	}
+	else if(uMsg==WM_MOUSEWHEEL){
+		iState=(int)CallWindowProc(pProc,hWnd,CB_GETDROPPEDSTATE,0,0);
+		if(iState){
 			iDelta  = (short)HIWORD(wParam);
 			iDelta /= WHEEL_DELTA;
 			iPos	= (int)CallWindowProc(pProc,hWnd,CB_GETTOPINDEX,0,0);
 			iPos   -= iDelta;
 			CallWindowProc(pProc,hWnd,CB_SETTOPINDEX,iPos,0);
 			return 0;
-			}
 		}
-	else if(uMsg==WM_GETDLGCODE)								// Welche Tasten werden im Dialog benutzt
-		{
+	}
+	else if(uMsg==WM_GETDLGCODE){								// Welche Tasten werden im Dialog benutzt
 		return DLGC_WANTALLKEYS;
-		}
-	else if(uMsg==WM_SETTEXT)
-		{
+	}
+	else if(uMsg==WM_SETTEXT){
 		lResult = CallWindowProc(pProc,hWnd,uMsg,wParam,lParam);;
 		SendMessage(hParent,WM_COMMAND,MAKELONG(3,EN_SETTEXT),(LPARAM)hWnd);
 		return lResult;
-		}
+	}
 
-
-return CallWindowProc(pProc,hWnd,uMsg,wParam,lParam);
+	return CallWindowProc(pProc,hWnd,uMsg,wParam,lParam);
 }
-
 
 //*****************************************************************************
 //*
@@ -820,23 +773,20 @@ return CallWindowProc(pProc,hWnd,uMsg,wParam,lParam);
 //*
 //*****************************************************************************
 //	Ist die Fensterfunktion für das ToolTip Fenster
-static LRESULT CALLBACK ToolProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
-{
-TreeListData   *pData;
-POINT			sPoint;
-UINT			uPos;
+static LRESULT CALLBACK ToolProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam){
 
+	TreeListData   *pData;
+	POINT			sPoint;
+	UINT			uPos;
 
-	if(uMsg==WM_SETFOCUS)
-		{
+	if(uMsg==WM_SETFOCUS){
 		SetFocus((HWND)lParam);
 		return 0;
-		}
+	}
 
 	pData = (TreeListData*)GetWindowLongPtr(hWnd,GWLP_USERDATA);
 
-	if(uMsg>=WM_MOUSEFIRST && uMsg<=WM_MOUSELAST)				// Mausklicks auf Tooltip zum Elternfenster
-		{
+	if(uMsg>=WM_MOUSEFIRST && uMsg<=WM_MOUSELAST){				// Mausklicks auf Tooltip zum Elternfenster
 		sPoint.x = LOWORD(lParam);
 		sPoint.y = HIWORD(lParam);
 
@@ -846,10 +796,9 @@ UINT			uPos;
 		uPos = MAKELONG(sPoint.x,sPoint.y);
 
 		return TreeListProc(pData->hWnd,uMsg,wParam,uPos);
-		}
+	}
 
-
-return CallWindowProc(pData->pToolProc,hWnd,uMsg,wParam,lParam);
+	return CallWindowProc(pData->pToolProc,hWnd,uMsg,wParam,lParam);
 }
 
 //*****************************************************************************
@@ -860,36 +809,32 @@ return CallWindowProc(pData->pToolProc,hWnd,uMsg,wParam,lParam);
 //	Ändert die Größe der variablen Spalten
 //	pData		: Zeiger auf die Fensterdaten
 //	iDelta		: Ist die Größenänderung in Pixel
-static void ChangeColSize(TreeListData *pData,int iDelta)
-{
-unsigned 	uPos;
-HDITEM	 	sItem;
-RECT		sRect;
-TV_COLSIZE	sNotify;
-int			iWeight;
-int			iValue;
-int			iPoint;
-int			iStart;
-int			iSize;
-int			iRest;
-int			iOff;
-int			iNum;
-int			iCnt;
-int			iAll;
-int			iVar;
-int			iFix;
+static void ChangeColSize(TreeListData *pData,int iDelta){
 
-
+	unsigned 	uPos;
+	HDITEM	 	sItem;
+	RECT		sRect;
+	TV_COLSIZE	sNotify;
+	int			iWeight;
+	int			iValue;
+	int			iPoint;
+	int			iStart;
+	int			iSize;
+	int			iRest;
+	int			iOff;
+	int			iNum;
+	int			iCnt;
+	int			iAll;
+	int			iVar;
+	int			iFix;
 
 	sItem.mask	= HDI_WIDTH;
 	iAll		= pData->iAllWeight;
 	iCnt		= pData->uColumnCountVar;
 
-	if(iCnt<=1)											// Nur eine variable Spalte
-		{
-		for(uPos=0;uPos<pData->uColumnCount;uPos++)
-			{
-				iWeight=pData->aColumn[uPos].bWeight;
+	if(iCnt<=1){											// Nur eine variable Spalte
+		for(uPos=0;uPos<pData->uColumnCount;uPos++){
+			iWeight=pData->aColumn[uPos].bWeight;
 			if(!iWeight)continue;
 
 			iValue    =	pData->aColumn[uPos].sSize;
@@ -899,18 +844,15 @@ int			iFix;
 			pData->aColumn[uPos].sSize = (short)iValue;
 			pData->iVarSize            =        iValue;
 
-			if(sItem.cxy<pData->aColumn[uPos].sMin)
-				{
+			if(sItem.cxy<pData->aColumn[uPos].sMin){
 				sItem.cxy = pData->aColumn[uPos].sMin;
-				}
+			}
 
-			if(pData->aColumn[uPos].sReal!=sItem.cxy)	// Ändert sich die Breite
-				{
+			if(pData->aColumn[uPos].sReal!=sItem.cxy){	// Ändert sich die Breite
 				pData->aColumn[uPos].sReal	= (short)sItem.cxy;
 				Header_SetItem(pData->hHeader,uPos,&sItem);
 
-				if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY)
-					{
+				if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY){
 					sNotify.hdr.code			= TVN_COLUMNCHANGED;
 					sNotify.uColumn				= uPos;
 					sNotify.uIndex				= pData->aColumn[uPos].bIndex;
@@ -920,14 +862,14 @@ int			iFix;
 					UNLOCK(pData);
 					SendNotify(pData,&sNotify.hdr);
 					LOCK(pData);
-					}
 				}
-
-			break;
 			}
 
-		return;
+			break;
 		}
+
+		return;
+	}
 
 	if(iDelta>0)
 			iStart = (pData->uSizeX       )%iAll;
@@ -935,14 +877,13 @@ int			iFix;
 
 	iOff   = 0;
 
-	for(uPos=0;;uPos++)									// Suchen die Anfangsspalte
-		{
-			iWeight = pData->aColumn[uPos].bWeight;
+	for(uPos=0;;uPos++){									// Suchen die Anfangsspalte
+		iWeight = pData->aColumn[uPos].bWeight;
 		if(!iWeight)continue;
 
-		   iOff+=iWeight;
+		iOff+=iWeight;
 		if(iOff> iStart)break;
-		}
+	}
 
 
 	iPoint		= 0;
@@ -962,14 +903,12 @@ int			iFix;
 	pData->aColumn[uPos].sSize = (short)iValue;
 
 
-	if(iWeight>=pData->aColumn[uPos].bWeight)			// Wurde die ganze Spalte berechnet
-		{
+	if(iWeight>=pData->aColumn[uPos].bWeight){			// Wurde die ganze Spalte berechnet
 		iCnt--;
 		iOff=0;
-		}
+	}
 
-	while(iCnt>0)
-		{
+	while(iCnt>0){
 		uPos++;
 
 		if(uPos>=pData->uColumnCount)uPos=0;
@@ -979,51 +918,45 @@ int			iFix;
 		iValue		= pData->aColumn[uPos].sSize;
 
  		   iCnt--;
-		if(iCnt)
-			{
+		if(iCnt){
 			iValue += iSize*iWeight;
 			iPoint += iRest *iWeight;
 			iValue += iPoint/iAll;
 			iNum   -= iPoint/iAll;
 			iPoint %= iAll;
-			}
+		}
 		else{
 			iWeight-= iOff;
 			iValue += iSize*iWeight;
 			iValue += iNum;
-			}
-
-		pData->aColumn[uPos].sSize = (short)iValue;
 		}
 
+		pData->aColumn[uPos].sSize = (short)iValue;
+	}
 
 	iVar   =  0;
 	iFix   =  0;
 	iCnt   =  pData->uColumnCountVar;
 
-	for(uPos=0;iCnt>0;uPos++)							// Ausgeben der neuen Breiten
-		{
-			iWeight=pData->aColumn[uPos].bWeight;
-		if(!iWeight)
-			{
+	for(uPos=0;iCnt>0;uPos++){							// Ausgeben der neuen Breiten
+		iWeight=pData->aColumn[uPos].bWeight;
+		if(!iWeight){
 			iFix     +=	pData->aColumn[uPos].sSize;
 			continue;
-			}
+		}
 
-		    iVar     +=	pData->aColumn[uPos].sSize;
-		    sItem.cxy = pData->aColumn[uPos].sSize;
-		if( sItem.cxy < pData->aColumn[uPos].sMin)
-			{
+	    iVar     +=	pData->aColumn[uPos].sSize;
+	    sItem.cxy = pData->aColumn[uPos].sSize;
+
+		if( sItem.cxy < pData->aColumn[uPos].sMin){
 			sItem.cxy = pData->aColumn[uPos].sMin;
-			}
+		}
 
-		if(pData->aColumn[uPos].sReal!=sItem.cxy)		// Ändert sich die Breite
-			{
+		if(pData->aColumn[uPos].sReal!=sItem.cxy){		// Ändert sich die Breite
 			pData->aColumn[uPos].sReal  = (short)sItem.cxy;
 			Header_SetItem(pData->hHeader,uPos,&sItem);
 
-			if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY)
-				{
+			if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY){
 				sNotify.hdr.code			= TVN_COLUMNCHANGED;
 				sNotify.uColumn				= uPos;
 				sNotify.uIndex				= pData->aColumn[uPos].bIndex;
@@ -1033,20 +966,19 @@ int			iFix;
 				UNLOCK(pData);
 				SendNotify(pData,&sNotify.hdr);
 				LOCK(pData);
-				}
 			}
+		}
 
 		iCnt--;
-		}
+	}
 
 	pData->iFixSize = iFix;
 	pData->iVarSize = iVar;
 
-	if(iDelta>0)
-		{
+	if(iDelta>0){
 		GetClientRect (pData->hHeader,&sRect);
 		InvalidateRect(pData->hHeader,NULL,FALSE);
-		}
+	}
 
 }
 
@@ -1057,10 +989,9 @@ int			iFix;
 //*****************************************************************************
 //	Erzeugt ein ToolTip Fenster
 //	pData		: Zeiger auf die Fensterdaten
-static void CreateToolTip(TreeListData *pData)
-{
-TOOLINFO	sInfo;
+static void CreateToolTip(TreeListData *pData){
 
+	TOOLINFO	sInfo;
 
 	if(pData->hToolTip)return;
 
@@ -1080,9 +1011,6 @@ TOOLINFO	sInfo;
 	SetWindowLong   (pData->hToolTip,GWL_ID,2);
 	SetWindowLongPtr(pData->hToolTip,GWLP_USERDATA,(LPARAM)pData);
 	SetWindowLongPtr(pData->hToolTip,GWLP_WNDPROC ,(LPARAM)ToolProc);
-
-
-
 }
 
 //*****************************************************************************
@@ -1093,65 +1021,54 @@ TOOLINFO	sInfo;
 //	Erzeugt eine Image-Liste mit zwei Checkboxen
 //	pData		: Zeiger auf die Fensterdaten
 //	iMode		: Welche Imageliste soll erzeugt werden (0=hStates 1=hChecks)
-static void CreateStateImageList(TreeListData *pData,int iMode)
-{
-BITMAPINFO	sInfo;
-BYTE		aMem[0x1000];
-HDC			hDcSrc;
-HDC			hDc;
-HBITMAP		hBmp;
-HBITMAP		hBmpNew;
-RECT		sRect;
-int			iBits;
+static void CreateStateImageList(TreeListData *pData,int iMode){
+	
+	BITMAPINFO	sInfo;
+	BYTE		aMem[0x1000];
+	HDC			hDcSrc;
+	HDC			hDc;
+	HBITMAP		hBmp;
+	HBITMAP		hBmpNew;
+	RECT		sRect;
+	int			iBits;
 
-
-
-	if(pOpenThemeData)									// Über Thema zeichnen
-		{
-		if(!pData->hThemeBt)
-			{
+	if(pOpenThemeData){									// Über Thema zeichnen
+		if(!pData->hThemeBt){
 			pData->hThemeBt = pOpenThemeData(pData->hWnd,L"BUTTON");
-			}
+		}
 
-		if(pData->hThemeBt)
-			{
-			if(iMode)
-				{
-				if(pData->hChecks && pData->hChecks!=THEMEIMGLIST)
-					{
+		if(pData->hThemeBt){
+			if(iMode){
+				if(pData->hChecks && pData->hChecks!=THEMEIMGLIST){
 					ImageList_Destroy(pData->hChecks);
-					}
+				}
 
 				pData->hChecks		= THEMEIMGLIST;
 				pData->iChecksXsize	= 16;
 				pData->iChecksYsize	= 16;
 				pData->iChecksMode	= 1;
-				}
+			}
 			else{
-				if(pData->hStates && pData->hStates!=THEMEIMGLIST)
-					{
+				if(pData->hStates && pData->hStates!=THEMEIMGLIST){
 					ImageList_Destroy(pData->hStates);
-					}
+				}
 
 				pData->hStates		= THEMEIMGLIST;
 				pData->iStatesXsize	= 16;
 				pData->iStatesYsize	= 16;
 				pData->iStatesMode	= 1;
-				}
+			}
 
 			return;
-			}
 		}
+	}
 
-
-	if(iMode)
-		{
+	if(iMode){
 		if(pData->hChecks && pData->hChecks!=THEMEIMGLIST)return;
-		}
+	}
 	else{
 		if(pData->hStates && pData->hStates!=THEMEIMGLIST)return;
-		}
-
+	}
 
 	hDcSrc	= GetDC(NULL);
 	hDc		= CreateCompatibleDC(NULL);
@@ -1176,7 +1093,6 @@ int			iBits;
 
 	DrawFrameControl(hDc,&sRect,DFC_BUTTON,DFCS_BUTTONCHECK|DFCS_CHECKED|DFCS_FLAT);
 
-
 	iBits = GetDeviceCaps(hDc,BITSPIXEL);
 
 	sInfo.bmiHeader.biSize		  	= sizeof(BITMAPINFOHEADER);
@@ -1198,15 +1114,14 @@ int			iBits;
 
 	SetDIBits(hDc,hBmpNew,0,16,aMem,&sInfo,(iBits>8)?DIB_RGB_COLORS:DIB_PAL_COLORS);
 
-	if(iMode==0)
-		{
+	if(iMode==0){
 		pData->hStates		= ImageList_Create(16,16,ILC_COLORDDB|ILC_MASK,3,14);
 		pData->iStatesXsize	= 16;
 		pData->iStatesYsize	= 16;
 		pData->iStatesMode	= 1;
 
 		ImageList_AddMasked(pData->hStates,hBmpNew,GetSysColor(COLOR_HIGHLIGHT));
-		}
+	}
 	else{
 		pData->hChecks		= ImageList_Create(16,16,ILC_COLORDDB|ILC_MASK,3,14);
 		pData->iChecksXsize	= 16;
@@ -1214,15 +1129,12 @@ int			iBits;
 		pData->iChecksMode	= 1;
 
 		ImageList_AddMasked(pData->hChecks,hBmpNew,GetSysColor(COLOR_HIGHLIGHT));
-		}
-
+	}
 
 	DeleteObject(hBmpNew);
 	DeleteObject(hBmp);
 	DeleteDC(hDc);
 	ReleaseDC(NULL,hDcSrc);
-
-
 }
 
 //*****************************************************************************
@@ -1234,88 +1146,80 @@ int			iBits;
 //	pData		: Zeiger auf die Fensterdaten
 //	uSub		: Ist die Spalte für die das Drag-Image erzeugt werden soll
 //	Ergibt ein Handle mit der Imageliste oder NULL bei einem Fehler
-static HIMAGELIST CreateDragImage(TreeListData *pData,unsigned uItem,unsigned uSub)
-{
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
-HIMAGELIST	hList;
-BITMAPINFO	sInfo;
-BYTE	   *pMem;
-HDC			hDcSrc;
-HDC			hDc;
-HBITMAP		hBmp;
-HBITMAP		hBmpNew;
-RECT		sRect;
-unsigned	uTSize;
-int			iAdd;
-int			iBits;
-int			iWidth;
-int			iHeigh;
-int			iImage;
-int			iYpos;
-LPCTSTR		pText;
+static HIMAGELIST CreateDragImage(TreeListData *pData,unsigned uItem,unsigned uSub){
 
-
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
+	HIMAGELIST	hList;
+	BITMAPINFO	sInfo;
+	BYTE	   *pMem;
+	HDC			hDcSrc;
+	HDC			hDc;
+	HBITMAP		hBmp;
+	HBITMAP		hBmpNew;
+	RECT		sRect;
+	unsigned	uTSize;
+	int			iAdd;
+	int			iBits;
+	int			iWidth;
+	int			iHeigh;
+	int			iImage;
+	int			iYpos;
+	LPCTSTR		pText;
 
 	if(uItem>pData->uTreeItemsMax)return NULL;
 
-		pEntry = pData->pTreeItems[uItem];
+	pEntry = pData->pTreeItems[uItem];
 	if(!pEntry)return 0;
 
 	iHeigh = pData->iFontHeight;
 
-	if(uSub)												// Image für Extraeintrag erzeugen
-		{
+	if(uSub){												// Image für Extraeintrag erzeugen
 		if(uSub>=pData->uColumnCount)return 0;
 
-			pExtra = pData->pExtraItems[uSub-1][uItem];
-		if(!pExtra)
-			{
+		pExtra = pData->pExtraItems[uSub-1][uItem];
+		if(!pExtra){
 			pText  = _T("????");
 			uTSize = 4;
 			iImage = -1;
 			iWidth = pData->iFontHeight*4;
-			}
+		}
 		else{
 			pText  = pExtra->pText;
 			uTSize = pExtra->uTextSize;
 			iImage = pExtra->iImage;
 			iWidth = pExtra->iTextPixels;
 
-			if(pExtra->bCallback&(TVIF_IMAGE|TVIF_TEXT))
-				{
+			if(pExtra->bCallback&(TVIF_IMAGE|TVIF_TEXT)){
 				CallbackExtra(pData,pEntry,pExtra,uItem,uSub,pExtra->bCallback,iImage,uTSize,pText);
-				}
 			}
 		}
+	}
 	else{													// Image für Haupteintrag erzeugen
 		pText  = pEntry->pText;
 		uTSize = pEntry->uTextSize;
 		iImage = pEntry->iImage;
 		iWidth = pEntry->iTextPixels;
 
-		if(pEntry->bCallback&(TVIF_IMAGE|TVIF_TEXT))
-			{
+		if(pEntry->bCallback&(TVIF_IMAGE|TVIF_TEXT)){
 			CallbackEntry(pData,pEntry,uItem,pEntry->bCallback,iImage,uTSize,pText);
-			}
 		}
+	}
 
-	if(pData->hImages && iImage>=0)							// Größen für Images anpassen
-		{
+	if(pData->hImages && iImage>=0){							// Größen für Images anpassen
 		if(iHeigh<pData->iImagesYsize)iHeigh=pData->iImagesYsize;
 		iAdd    = pData->iImagesXsize+2;
 		iWidth += iAdd;
-		}
+	}
 	else{
 		iAdd   = 0;
 		iImage = 1;
-		}
-
+	}
 
 	if(iWidth>240)iWidth=240;
 	if(iHeigh>32 )iHeigh=32;
 
-		pMem = new BYTE[iHeigh*(iWidth+4)*4+1024];
+	pMem = new BYTE[iHeigh*(iWidth+4)*4+1024];
 	if(!pMem)return NULL;
 
 	hDcSrc	= GetDC(NULL);
@@ -1336,13 +1240,10 @@ LPCTSTR		pText;
 
 	ExtTextOut(hDc,iAdd,iYpos,ETO_OPAQUE|ETO_CLIPPED,&sRect,pText,uTSize,NULL);
 
-	if(iImage>=0)
-		{
+	if(iImage>=0){
 		SetBkColor(hDc,GetSysColor(COLOR_WINDOW));
 		ImageList_Draw(pData->hImages,iImage,hDc,0,0,ILD_TRANSPARENT);
-		}
-
-
+	}
 
 	iBits = GetDeviceCaps(hDc,BITSPIXEL);
 
@@ -1376,8 +1277,7 @@ LPCTSTR		pText;
 
 	delete pMem;
 
-
-return hList;
+	return hList;
 }
 
 
@@ -1388,13 +1288,12 @@ return hList;
 //*****************************************************************************
 //	Aktualisiert alle Farben
 //	pData		: Zeiger auf die Fensterdaten
-static void UpdateColors(TreeListData *pData)
-{
-unsigned	uColOdd;
-unsigned 	uColor;
-int 		iDiff;
-int 		iSum;
+static void UpdateColors(TreeListData *pData){
 
+	unsigned	uColOdd;
+	unsigned 	uColor;
+	int 		iDiff;
+	int 		iSum;
 
 	if(!pData->cColorChanged[TVC_BK     ])pData->uColors[TVC_BK     ]  = GetSysColor(COLOR_WINDOW);
 	if(!pData->cColorChanged[TVC_BOX    ])pData->uColors[TVC_BOX    ]  = GetSysColor(COLOR_BTNSHADOW);
@@ -1412,73 +1311,64 @@ int 		iSum;
 	if(!pData->cColorChanged[TVC_GRAYED ])pData->uColors[TVC_GRAYED ]  = GetSysColor(COLOR_SCROLLBAR);
 
 
-	if(pData->hTheme && !pData->cColorChanged[TVC_BOXBG] && !pData->cColorChanged[TVC_BOX] && !pData->cColorChanged[TVC_LINE])
-		{
+	if(pData->hTheme && !pData->cColorChanged[TVC_BOXBG] && !pData->cColorChanged[TVC_BOX] && !pData->cColorChanged[TVC_LINE]){
 		pData->cGlyphOk = 1;
-		}
+	}
 	else{
 		pData->cGlyphOk = 0;
-		}
+	}
 
 
-	if(!pData->cColorChanged[TVC_GRAYED])
-		{
+	if(!pData->cColorChanged[TVC_GRAYED]){
 		pData->uColors[TVC_GRAYED]  = (GetSysColor(COLOR_SCROLLBAR)&0x00FEFEFE)>>1;
 		pData->uColors[TVC_GRAYED] += (GetSysColor(COLOR_WINDOW   )&0x00FEFEFE)>>1;
-		}
+	}
 
-	if(!pData->cColorChanged[TVC_ODD])
-		{
+	if(!pData->cColorChanged[TVC_ODD]){
 		uColOdd = pData->uColors[TVC_ODD];
 		iDiff   = ((uColOdd    )&0xFF)-((pData->uColors[TVC_EVEN]    )&0xFF); iSum  = iDiff*iDiff;
 		iDiff   = ((uColOdd>> 8)&0xFF)-((pData->uColors[TVC_EVEN]>> 8)&0xFF); iSum += iDiff*iDiff;
 		iDiff   = ((uColOdd>>16)&0xFF)-((pData->uColors[TVC_EVEN]>>16)&0xFF); iSum += iDiff*iDiff;
 
-		if(iSum<64)												// Ist die alternierente Farbe fast gleich ?
-			{
+		if(iSum<64){												// Ist die alternierente Farbe fast gleich ?
 			uColOdd  =   pData->uColors[TVC_EVEN]&0x0000FFFF;
 			uColOdd |= ((pData->uColors[TVC_EVEN]&0x00FF0000)-0x00080000)&0x00FF0000;
-			}
-
-		pData->uColors[TVC_ODD] = uColOdd;
 		}
 
-	if(!pData->cColorChanged[TVC_COLBK])
-		{
-		   uColor = GetSysColor(COLOR_WINDOW);
+		pData->uColors[TVC_ODD] = uColOdd;
+	}
+
+	if(!pData->cColorChanged[TVC_COLBK]){
+		uColor = GetSysColor(COLOR_WINDOW);
 		if(uColor&0x00F00000)uColor-=0x00100000;
 		if(uColor&0x0000F000)uColor-=0x00001000;
 		if(uColor&0x000000F0)uColor-=0x00000010;
 
 		pData->uColors[TVC_COLBK] = uColor;
-		}
+	}
 
-	if(!pData->cColorChanged[TVC_COLODD])
-		{
-		   uColor = pData->uColors[TVC_ODD];
+	if(!pData->cColorChanged[TVC_COLODD]){
+		uColor = pData->uColors[TVC_ODD];
 		if(uColor&0x00F00000)uColor-=0x00100000;
 		if(uColor&0x0000F000)uColor-=0x00001000;
 		if(uColor&0x000000F0)uColor-=0x00000010;
 
 		pData->uColors[TVC_COLODD] = uColor;
-		}
+	}
 
-	if(!pData->cColorChanged[TVC_COLEVEN])
-		{
-		   uColor = GetSysColor(COLOR_WINDOW);
+	if(!pData->cColorChanged[TVC_COLEVEN]){
+		uColor = GetSysColor(COLOR_WINDOW);
 		if(uColor&0x00F00000)uColor-=0x00100000;
 		if(uColor&0x0000F000)uColor-=0x00001000;
 		if(uColor&0x000000F0)uColor-=0x00000010;
 
 		pData->uColors[TVC_COLEVEN] = uColor;
-		}
+	}
 
 	if(!pData->cColorChanged[TVC_MARKODD ])pData->uColors[TVC_MARKODD ]  =((pData->uColors[TVC_ODD     ]>>3)&0x1F1F1F)*7;
 	if(!pData->cColorChanged[TVC_MARKODD ])pData->uColors[TVC_MARKODD ] +=((GetSysColor(COLOR_HIGHLIGHT)>>3)&0x1F1F1F)*1;
 	if(!pData->cColorChanged[TVC_MARKEVEN])pData->uColors[TVC_MARKEVEN]  =((pData->uColors[TVC_EVEN    ]>>3)&0x1F1F1F)*7;
 	if(!pData->cColorChanged[TVC_MARKEVEN])pData->uColors[TVC_MARKEVEN] +=((GetSysColor(COLOR_HIGHLIGHT)>>3)&0x1F1F1F)*1;
-
-
 }
 
 //*****************************************************************************
@@ -1489,11 +1379,10 @@ int 		iSum;
 //	Prüft ob die Zeilenhöhe sich geäntert hat
 //	pData		: Zeiger auf die Fensterdaten
 //	Ergibt 1 bei Änderungen sonst 0
-static int UpdateHeight(TreeListData *pData)
-{
-int		iHeight;
-RECT	sRect;
+static int UpdateHeight(TreeListData *pData){
 
+	int		iHeight;
+	RECT	sRect;
 
 	if(pData->cFixedHeight)return 0;
 
@@ -1512,14 +1401,13 @@ RECT	sRect;
 
 	pData->iRowHeight	 = iHeight;
 
-	if(pData->uSizeY>pData->uStartPixel)
-		{
+	if(pData->uSizeY>pData->uStartPixel){
 		pData->uMaxEnties  = pData->uSizeY;
 		pData->uMaxEnties -= pData->uStartPixel;
-		}
+	}
 	else{
 		pData->uMaxEnties  = 0;
-		}
+	}
 
 	pData->uPageEnties	 = pData->uMaxEnties;
 	pData->uMaxEnties	+= pData->iRowHeight-1;
@@ -1529,8 +1417,7 @@ RECT	sRect;
 	GetClientRect (pData->hWnd,&sRect);
 	InvalidateRect(pData->hWnd,&sRect,FALSE);
 
-
-return 1;
+	return 1;
 }
 
 //*****************************************************************************
@@ -1543,19 +1430,17 @@ return 1;
 //	uItem		: Ist die Nummer des Eintrages
 //	uSub		: Ist die Spaltennummer
 //	Ergibt 1 wenn der Eintrag sichtbar war
-static int UpdateRect(TreeListData *pData,unsigned uItem,unsigned uSub)
-{
-BaseItem   *pEntry;
-RECT		sRect;
-UINT		uNext;
-UINT		uPos;
+static int UpdateRect(TreeListData *pData,unsigned uItem,unsigned uSub){
 
+	BaseItem   *pEntry;
+	RECT		sRect;
+	UINT		uNext;
+	UINT		uPos;
 
-
-	    pEntry = pData->pTreeItems[uItem];
+	pEntry = pData->pTreeItems[uItem];
 	if(!pEntry || !pEntry->uShowPos)return 0;				// Ist der Eintrag aufgeklappt
 
-	   uPos = pEntry->uShowPos-pData->uScrollY-1;
+	uPos = pEntry->uShowPos-pData->uScrollY-1;
 	if(uPos>=pData->uMaxEnties)return 0;					// Eintrag im Fenster sichtbar
 
 	uNext		  = pData->aColumn[uSub].bNext;
@@ -1569,9 +1454,7 @@ UINT		uPos;
 
 	InvalidateRect(pData->hWnd,&sRect,FALSE);
 
-
-
-return 1;
+	return 1;
 }
 
 //*****************************************************************************
@@ -1583,22 +1466,21 @@ return 1;
 //	pData		: Zeiger auf die Fensterdaten
 //	uColumn		: Die nummer der Spalte
 //	Ergibt 1 wenn der Eintrag sichtbar war
-static int UpdateColRect(TreeListData *pData,unsigned uColumn)
-{
-RECT	sRect;
-UINT	uNext;
+static int UpdateColRect(TreeListData *pData,unsigned uColumn){
 
+	RECT	sRect;
+	UINT	uNext;
 
 	if(uColumn>=pData->uColumnCount)return 0;
 
-	   sRect.left  = pData->aColumnXpos[uColumn];
-	   sRect.left -= pData->uScrollX;
+	sRect.left  = pData->aColumnXpos[uColumn];
+	sRect.left -= pData->uScrollX;
 	if(sRect.left>(int)pData->uSizeX)return 0;
 
 	uNext = pData->aColumn[uColumn].bNext;
 
-	   sRect.right = pData->aColumnXpos[uNext];
-	   sRect.right-= pData->uScrollX;
+	sRect.right = pData->aColumnXpos[uNext];
+	sRect.right-= pData->uScrollX;
 	if(sRect.right<0)return 0;
 
 	sRect.top      = 0;
@@ -1606,8 +1488,7 @@ UINT	uNext;
 
 	InvalidateRect(pData->hWnd,&sRect,FALSE);
 
-
-return 1;
+	return 1;
 }
 
 //*****************************************************************************
@@ -1619,18 +1500,16 @@ return 1;
 //	pData		: Zeiger auf die Fensterdaten
 //	uItem		: Ist die Nummer des Eintrages
 //	Ergibt 1 wenn der Eintrag sichtbar war
-static int UpdateRow(TreeListData *pData,unsigned uItem)
-{
-BaseItem   *pEntry;
-RECT		sRect;
-unsigned	uPos;
+static int UpdateRow(TreeListData *pData,unsigned uItem){
 
+	BaseItem   *pEntry;
+	RECT		sRect;
+	unsigned	uPos;
 
-
-	    pEntry = pData->pTreeItems[uItem];
+	pEntry = pData->pTreeItems[uItem];
 	if(!pEntry || !pEntry->uShowPos)return 0;				// Ist der Eintrag aufgeklappt
 
-	   uPos = pEntry->uShowPos-pData->uScrollY-1;
+	uPos = pEntry->uShowPos-pData->uScrollY-1;
 	if(uPos>=pData->uMaxEnties)return 0;					// Eintrag im Fenster sichtbar
 
 	sRect.left    = 0;
@@ -1640,9 +1519,7 @@ unsigned	uPos;
 	sRect.bottom  = pData->iRowHeight+sRect.top;
 	InvalidateRect(pData->hWnd,&sRect,FALSE);
 
-
-
-return 1;
+	return 1;
 }
 
 //*****************************************************************************
@@ -1653,15 +1530,13 @@ return 1;
 //	Zeichnet das ganze Fenster neu
 //	pData		: Zeiger auf die Fensterdaten
 //	Ergibt 1 wenn der Eintrag sichtbar war
-static void UpdateView(TreeListData *pData)
-{
-RECT	sRect;
+static void UpdateView(TreeListData *pData){
 
+	RECT	sRect;
 
 	GetClientRect (pData->hWnd,&sRect);
 	sRect.top =    pData->uStartPixel;
 	InvalidateRect(pData->hWnd,&sRect,FALSE);
-
 }
 
 //*****************************************************************************
@@ -1672,24 +1547,22 @@ RECT	sRect;
 //	Aktualisiert die X-Scroolbar
 //	pData		: Zeiger auf die Fensterdaten
 //	Ergibt 1 wenn der sich Einstellungen verändert haben
-static void UpdateScrollX(TreeListData *pData)
-{
-SCROLLINFO  sInfo;
-unsigned	uSize;
-unsigned	uCols;
+static void UpdateScrollX(TreeListData *pData){
 
+	SCROLLINFO  sInfo;
+	unsigned	uSize;
+	unsigned	uCols;
 
-
-	   uCols = pData->uColumnCount;
+	uCols = pData->uColumnCount;
 	if(uCols)
-			uSize = pData->aColumnXpos[uCols]-1;
-	else	uSize = pData->iMaxSizeX-1;
+		uSize = pData->aColumnXpos[uCols]-1;
+	else
+		uSize = pData->iMaxSizeX-1;
 
 
 	if(pData->uOldXCount==uSize)
-	if(pData->uOldXPage ==pData->uSizeX)
-		{
-		return;
+		if(pData->uOldXPage ==pData->uSizeX){
+			return;
 		}
 
 	pData->uOldXPage	= pData->uSizeX;
@@ -1705,38 +1578,31 @@ unsigned	uCols;
 	sInfo.nPos  	= pData->uScrollX;
 	sInfo.nTrackPos	= 0;
 
-
-	if(pData->uStyle&TVS_NOSCROLL)
-		{
+	if(pData->uStyle&TVS_NOSCROLL){
 		sInfo.nMax = 0;
-		}
-	else if(pData->uStyleEx&TVS_EX_AUTOHSCROLL)
-		{
+	}
+	else if(pData->uStyleEx&TVS_EX_AUTOHSCROLL){
 		sInfo.nMax = 0;
-		}
-	else if(sInfo.nMax>0)
-		{
+	}
+	else if(sInfo.nMax>0){
 		sInfo.nMax--;
-		}
+	}
 
 
-	if((int)sInfo.nPage>=sInfo.nMax && pData->uScrollX>0)
-		{
+	if((int)sInfo.nPage>=sInfo.nMax && pData->uScrollX>0){
 		sInfo.nPos      = 0;
 		pData->uScrollX = 0;
 
 		UpdateView(pData);
 
-		if(pData->hHeader)
-			{
+		if(pData->hHeader){
 			MoveWindow(pData->hHeader,0,0,pData->uSizeX,pData->uStartPixel,TRUE);
-			}
 		}
+	}
 
 	SetScrollInfo(pData->hWnd,SB_HORZ,&sInfo,TRUE);
 
 	LOCK(pData);
-
 }
 
 //*****************************************************************************
@@ -1747,16 +1613,14 @@ unsigned	uCols;
 //	Aktualisiert die Y-Scroolbar
 //	pData		: Zeiger auf die Fensterdaten
 //	Ergibt 1 wenn der sich Einstellungen verändert haben
-static void UpdateScrollY(TreeListData *pData)
-{
-SCROLLINFO  sInfo;
+static void UpdateScrollY(TreeListData *pData){
 
+	SCROLLINFO  sInfo;
 
 	if(pData->uOldYCount==pData->uItemPosCount)
-	if(pData->uOldYPage ==pData->uPageEnties  )
-		{
+	if(pData->uOldYPage ==pData->uPageEnties  ){
 		return;
-		}
+	}
 
 	pData->uOldYPage	= pData->uPageEnties;
 	pData->uOldYCount	= pData->uItemPosCount;
@@ -1771,28 +1635,20 @@ SCROLLINFO  sInfo;
 	sInfo.nPos  	= pData->uScrollY;
 	sInfo.nTrackPos	= 0;
 
-	if(pData->uStyle&TVS_NOSCROLL)
-		{
+	if(pData->uStyle&TVS_NOSCROLL){
 		sInfo.nMax = 0;
-		}
+	}
 
-	if((int)sInfo.nPage>=sInfo.nMax && pData->uScrollY>0)
-		{
+	if((int)sInfo.nPage>=sInfo.nMax && pData->uScrollY>0){
 		sInfo.nPos      = 0;
 		pData->uScrollY = 0;
 
 		UpdateView(pData);
-		}
-
+	}
 
 	SetScrollInfo(pData->hWnd,SB_VERT,&sInfo,TRUE);
 
-
 	LOCK(pData);
-
-
-
-
 }
 
 //*****************************************************************************
@@ -1804,55 +1660,45 @@ SCROLLINFO  sInfo;
 //	pData	: Zeiger auf Fensterdaten
 //	uItem	: Item auf den der Mauszeiger zeigt
 //	uFlags	: Flags vom HitTest
-static void UpdateToolTip(TreeListData *pData,unsigned uItem,unsigned uFlags)
-{
-TCHAR			cTemp[INFOTIPSIZE];
-HWND			hToolTip;
-NMTVGETINFOTIP	sToolNv;
-NMTREEVIEW		sNotify;
-TOOLINFO		sInfo;
-ExtraItem	   *pExtra;
-BaseItem	   *pEntry;
-LPCTSTR	    	pText;
-RECT			sRect;
-unsigned		uSize;
-unsigned		uCol;
-unsigned		uLen;
-LRESULT			lRet;
-int				iTemp;
+static void UpdateToolTip(TreeListData *pData,unsigned uItem,unsigned uFlags){
 
-
-
-															// Tooltip ausbelnden
-	if(!uItem || (uItem==pData->uEditItem && TVHT_SUBTOCOL(uFlags)==pData->uEditSub))
-		{
+	TCHAR			cTemp[INFOTIPSIZE];
+	HWND			hToolTip;
+	NMTVGETINFOTIP	sToolNv;
+	NMTREEVIEW		sNotify;
+	TOOLINFO		sInfo;
+	ExtraItem	   *pExtra;
+	BaseItem	   *pEntry;
+	LPCTSTR	    	pText;
+	RECT			sRect;
+	unsigned		uSize;
+	unsigned		uCol;
+	unsigned		uLen;
+	LRESULT			lRet;
+	int				iTemp;
+	// Tooltip ausbelnden
+	if(!uItem || (uItem==pData->uEditItem && TVHT_SUBTOCOL(uFlags)==pData->uEditSub)){
 		if(pData->uToolTipItem)goto ExitTip;
 		return;
-		}
-
+	}
 
 	pEntry=pData->pTreeItems[uItem];
 
-	if(uFlags&TVHT_ONITEM)
-		{
-		if(pData->uToolTipItem!=uItem || pData->uToolTipSub!=0)
-			{
-			if(!pData->pTreeItems[uItem])					// Existiert der Eintag noch ?
-				{
+	if(uFlags&TVHT_ONITEM){
+		if(pData->uToolTipItem!=uItem || pData->uToolTipSub!=0){
+			if(!pData->pTreeItems[uItem]){					// Existiert der Eintag noch ?
 				goto ExitTip;
-				}
+			}
 
 			TreeListGetItemRect(pData,uItem,TVIR_GETCOLUMN|TVIR_TEXT,&sRect);
 
-			if(sRect.right>(int)pData->uSizeX)
-				{
+			if(sRect.right>(int)pData->uSizeX){
 				sRect.right = pData->uSizeX;
-				}
+			}
 
 			lRet = 0;
 
-			if(pData->uStyleEx&TVS_EX_TOOLTIPNOTIFY)		// Tooltip-Daten via speziellem Notify holen
-				{
+			if(pData->uStyleEx&TVS_EX_TOOLTIPNOTIFY){		// Tooltip-Daten via speziellem Notify holen
 				sNotify.hdr.code			= TVN_ITEMTOOLTIP;
 				sNotify.action				= 0;
 				sNotify.itemNew.mask		= TVIF_HANDLE|TVIF_PARAM|TVIF_STATE|TVIF_SUBITEM;
@@ -1872,9 +1718,8 @@ int				iTemp;
 				LOCK(pData);
 
 				if(lRet)goto UserTip;
-				}
-			else if(pData->uStyle&TVS_INFOTIP)				// Tooltip-Daten via normalem Notify holen
-				{
+			}
+			else if(pData->uStyle&TVS_INFOTIP){				// Tooltip-Daten via normalem Notify holen
 				sToolNv.hdr.code			= TVN_GETINFOTIP;
 				sToolNv.cchTextMax			= INFOTIPSIZE;
 				sToolNv.hItem				= (HTREEITEM)uItem;
@@ -1900,32 +1745,27 @@ int				iTemp;
 				sNotify.ptDrag.y			= sRect.top;
 
 				goto UserTip;
-				}
-
+			}
 															// Passt der Text in die Spalte
-			if(sRect.right-sRect.left<=pEntry->iTextPixels+4)
-				{
+			if(sRect.right-sRect.left<=pEntry->iTextPixels+4){
 				pText	= pEntry->pText;
 				uSize	= pEntry->uTextSize;
 
-				if(pEntry->bCallback&TVIF_TEXT)
-					{
+				if(pEntry->bCallback&TVIF_TEXT){
 					CallbackEntry(pData,pEntry,uItem,TVIF_TEXT,iTemp,uSize,pText);
-					}
+				}
 
 				if(!pText || *pText==0)goto ExitTip;
 
-				   uLen = str_len(pText)+1;
-				if(uLen>=pData->uToolTipSize)				// Tooltipspeicher vergrößern
-					{
+				uLen = str_len(pText)+1;
+				if(uLen>=pData->uToolTipSize){				// Tooltipspeicher vergrößern
 					delete pData->pToolTipText;
 					pData->uToolTipSize = (uLen+255)&~0xFF;
 					pData->pToolTipText = new TCHAR[pData->uToolTipSize+4];
-					}
+				}
 
 				memcpy(pData->pToolTipText,pText,uLen*sizeof(TCHAR));
 				pData->hFontT =(pEntry->uState&TVIS_BOLD)? pData->hFontB:pData->hFontN;
-
 
 				hToolTip				= pData->hToolTip;
 				pData->sToolTipPos.x	= sRect.left;
@@ -1939,11 +1779,10 @@ int				iTemp;
 				sInfo.hwnd				= pData->hWnd;
 				sInfo.uId				= (UINT_PTR)pData->hWnd;
 
-				if(pData->uToolTipItem)
-					{
+				if(pData->uToolTipItem){
 					SendMessage(pData->hToolTip,TTM_TRACKACTIVATE,0,(LPARAM)&sInfo);
 					pData->uToolTipItem = 0;
-					}
+				}
 
 				SendMessage(pData->hToolTip,TTM_TRACKPOSITION,0,MAKELONG(pData->sToolTipPos.x,pData->sToolTipPos.y));
 				SendMessage(pData->hToolTip,TTM_TRACKACTIVATE,1,(LPARAM)&sInfo);
@@ -1955,43 +1794,38 @@ int				iTemp;
 				pData->uToolTipSub		= 0;
 
 				SetTimer(pData->hWnd,ID_TOOLTIPCHECK,1500,NULL);
-				}
+			}
 			else{
 				if(pData->uToolTipItem)goto ExitTip;
-				}
 			}
-
-		return;
 		}
 
-	if(uFlags&(TVHT_ONSUBICON|TVHT_ONSUBLABEL))
-		{
-		if(pData->uToolTipItem!=uItem || TVHT_SUBTOCOL(uFlags)!=pData->uToolTipSub)
-			{
+		return;
+	}
+
+	if(uFlags&(TVHT_ONSUBICON|TVHT_ONSUBLABEL)){
+		if(pData->uToolTipItem!=uItem || TVHT_SUBTOCOL(uFlags)!=pData->uToolTipSub){
 			lRet   = 0;
 			uCol   = TVHT_SUBTOCOL(uFlags);
 			pExtra = pData->pExtraItems[uCol-1][uItem];
 
-			if(pData->uStyleEx&TVS_EX_TOOLTIPNOTIFY)		// Tooltip-Daten via Notify holen
-				{
+			if(pData->uStyleEx&TVS_EX_TOOLTIPNOTIFY){		// Tooltip-Daten via Notify holen
 				TreeListGetItemRect(pData,uItem,TVIR_GETCOLUMN|TVIR_TEXT|TVIR_COLTOSUB(uCol),&sRect);
 
-				if(sRect.right>(int)pData->uSizeX)
-					{
+				if(sRect.right>(int)pData->uSizeX){
 					sRect.right = pData->uSizeX;
-					}
+				}
 
-				if(pExtra)
-					{
+				if(pExtra){
 					sNotify.itemNew.state		= pExtra->uState;
 					sNotify.itemNew.pszText		= pExtra->pText;
 					sNotify.itemNew.cchTextMax	= pExtra->uTextSize;
-					}
+				}
 				else{
 					sNotify.itemNew.state		= 0;
 					sNotify.itemNew.cchTextMax	= 0;
 					sNotify.itemNew.pszText		= _T("");
-					}
+				}
 
 				sNotify.hdr.code			= TVN_ITEMTOOLTIP;
 				sNotify.action				= 0;
@@ -2009,36 +1843,31 @@ int				iTemp;
 				LOCK(pData);
 
 				if(lRet)goto UserTip;
-				}
+			}
 
-			if(pExtra)										// Tooltip auf Unterspalte ?
-				{
+			if(pExtra){										// Tooltip auf Unterspalte ?
 				TreeListGetItemRect(pData,uItem,TVIR_GETCOLUMN|TVIR_TEXT|TVIR_COLTOSUB(uCol),&sRect);
 
-				if(sRect.right>(int)pData->uSizeX)
-					{
+				if(sRect.right>(int)pData->uSizeX){
 					sRect.right = pData->uSizeX;
-					}
+				}
 
-				if(sRect.right-sRect.left<=pExtra->iTextPixels+4)
-					{
+				if(sRect.right-sRect.left<=pExtra->iTextPixels+4){
 					pText	= pExtra->pText;
 					uSize	= pExtra->uTextSize;
 
-					if(pExtra->bCallback&TVIF_TEXT)
-						{
+					if(pExtra->bCallback&TVIF_TEXT){
 						CallbackExtra(pData,pEntry,pExtra,uItem,uCol,TVIF_TEXT,iTemp,uSize,pText);
-						}
+					}
 
 					if(!pText || *pText==0)goto ExitTip;
 
-					   uLen = str_len(pText)+1;
-					if(uLen>=pData->uToolTipSize)			// Tooltipspeicher vergrößern
-						{
+					uLen = str_len(pText)+1;
+					if(uLen>=pData->uToolTipSize){			// Tooltipspeicher vergrößern
 						delete pData->pToolTipText;
 						pData->uToolTipSize = (uLen+255)&~0xFF;
 						pData->pToolTipText = new TCHAR[pData->uToolTipSize+4];
-						}
+					}
 
 					memcpy(pData->pToolTipText,pText,uLen*sizeof(TCHAR));
 					pData->hFontT =(pExtra->uState&TVIS_BOLD)? pData->hFontB:pData->hFontN;
@@ -2055,11 +1884,10 @@ int				iTemp;
 					sInfo.hwnd				= pData->hWnd;
 					sInfo.uId				= (UINT_PTR)pData->hWnd;
 
-					if(pData->uToolTipItem)
-						{
+					if(pData->uToolTipItem){
 						SendMessage(pData->hToolTip,TTM_TRACKACTIVATE,0,(LPARAM)&sInfo);
 						pData->uToolTipItem = 0;
-						}
+					}
 
 					SendMessage(pData->hToolTip,TTM_TRACKPOSITION,0,MAKELONG(pData->sToolTipPos.x,pData->sToolTipPos.y));
 					SendMessage(pData->hToolTip,TTM_TRACKACTIVATE,1,(LPARAM)&sInfo);
@@ -2071,23 +1899,22 @@ int				iTemp;
 					pData->uToolTipShow 	= 0;
 
 					SetTimer(pData->hWnd,ID_TOOLTIPCHECK,1500,NULL);
-					}
+				}
 				else{
 					if(pData->uToolTipItem)goto ExitTip;
-					}
-				}
-			else{
-				if(pData->uToolTipItem)goto ExitTip;
 				}
 			}
+			else{
+				if(pData->uToolTipItem)goto ExitTip;
+			}
+		}
 
 		return;
- 		}
+	}
 
 ExitTip:
 
-	if(pData->uToolTipItem)									// Tooltip ausblenden
-		{
+	if(pData->uToolTipItem){									// Tooltip ausblenden
 		UNLOCK(pData);
 
 		sInfo.cbSize			= sizeof(sInfo);
@@ -2103,11 +1930,9 @@ ExitTip:
 		pData->uToolTipShow = 0;
 
 		KillTimer(pData->hWnd,ID_TOOLTIPCHECK);
-		}
-
+	}
 
 	return;
-
 
 UserTip:
 
@@ -2118,13 +1943,13 @@ UserTip:
 
 	if(!pText ||*pText==0)goto ExitTip;
 
-	   uLen = str_len(pText)+1;
-	if(uLen>=pData->uToolTipSize)							// Tooltipspeicher vergrößern
-		{
+	uLen = str_len(pText)+1;
+	if(uLen>=pData->uToolTipSize){							// Tooltipspeicher vergrößern
+
 		delete pData->pToolTipText;
 		pData->uToolTipSize = (uLen+255)&~0xFF;
 		pData->pToolTipText = new TCHAR[pData->uToolTipSize+4];
-		}
+	}
 
 	memcpy(pData->pToolTipText,pText,uLen*sizeof(TCHAR));
 	pData->hFontT		= (pEntry->uState&TVIS_BOLD)? pData->hFontB:pData->hFontN;
@@ -2133,8 +1958,7 @@ UserTip:
 	pData->sToolTipPos	= sNotify.ptDrag;
 	hToolTip			= pData->hToolTip;
 															// Tooltip verzögert anzeigen
-	if((sNotify.itemNew.mask&TVIF_TOOLTIPTIME) && sNotify.itemNew.lParam>0)
-		{
+	if((sNotify.itemNew.mask&TVIF_TOOLTIPTIME) && sNotify.itemNew.lParam>0){
 		pData->uToolTipShow = (unsigned)(sNotify.itemNew.lParam+499)/500;
 		pData->uToolTipSub	= sNotify.itemNew.cChildren;
 		pData->uToolTipItem = uItem;
@@ -2142,7 +1966,7 @@ UserTip:
 		SetTimer(pData->hWnd,ID_TOOLTIPCHECK,500,NULL);
 
 		return;
-		}
+	}
 
 	UNLOCK(pData);
 
@@ -2150,11 +1974,10 @@ UserTip:
 	sInfo.hwnd			= pData->hWnd;
 	sInfo.uId			= (UINT_PTR)pData->hWnd;
 
-	if(pData->uToolTipItem)									// Tooltip Fenster aktivieren
-		{
+	if(pData->uToolTipItem){									// Tooltip Fenster aktivieren
 		SendMessage(pData->hToolTip,TTM_TRACKACTIVATE,0,(LPARAM)&sInfo);
 		pData->uToolTipItem = 0;
-		}
+	}
 
 	SendMessage(pData->hToolTip,TTM_TRACKPOSITION,0,MAKELONG(sNotify.ptDrag.x,sNotify.ptDrag.y));
 	SendMessage(pData->hToolTip,TTM_TRACKACTIVATE,1,(LPARAM)&sInfo);
@@ -2166,8 +1989,6 @@ UserTip:
 	pData->uToolTipSub	= sNotify.itemNew.cChildren;
 
 	SetTimer(pData->hWnd,ID_TOOLTIPCHECK,1500,NULL);
-
-
 }
 
 //*****************************************************************************
@@ -2179,42 +2000,37 @@ UserTip:
 //	pData		: Zeiger auf die Fensterdaten
 //	iRedraw		: Soll das Fenster neugezeichnet werden
 //	Ergibt 1 wenn der Font verändert wurde
-static int UpdateFont(TreeListData *pData)
-{
-int			iPos;
-int			iRet;
-HDC			hDc;
-LOGFONT		sLog;
-SIZE		sSize;
-TEXTMETRIC	sMetrics;
-BaseItem   *pEntry;
-BaseItem  **pList;
-ExtraItem  *pExtra;
-ExtraItem **pItems;
-unsigned	uSub;
+static int UpdateFont(TreeListData *pData){
 
+	int			iPos;
+	int			iRet;
+	HDC			hDc;
+	LOGFONT		sLog;
+	SIZE		sSize;
+	TEXTMETRIC	sMetrics;
+	BaseItem   *pEntry;
+	BaseItem  **pList;
+	ExtraItem  *pExtra;
+	ExtraItem **pItems;
+	unsigned	uSub;
 
-
-	if(!hDefaultFontN)										// Den Standard-Font erzeugen
-		{
+	if(!hDefaultFontN){										// Den Standard-Font erzeugen
 		SystemParametersInfo(SPI_GETICONTITLELOGFONT,sizeof(sLog),&sLog,0);
 		sLog.lfWeight=FW_NORMAL;hDefaultFontN=CreateFontIndirect(&sLog);
 		sLog.lfWeight=FW_BOLD  ;hDefaultFontB=CreateFontIndirect(&sLog);
-		}
+	}
 
 
 	if(!pData->hFontN)pData->hFontN = hDefaultFontN;
 
-	if(pData->hFontN==hDefaultFontN)						// Ist der Standard-Font eingestellt
-		{
+	if(pData->hFontN==hDefaultFontN){						// Ist der Standard-Font eingestellt
 		pData->hFontB=hDefaultFontB;
-		}
+	}
 	else{
 		pData->hFontB=pData->hFontN;
-		}
+	}
 
-	if(pData->hFontN!=pData->hFontL)
-		{
+	if(pData->hFontN!=pData->hFontL){
 		pData->hFontL=pData->hFontN;
 
 		hDc = GetDC(NULL);
@@ -2228,36 +2044,33 @@ unsigned	uSub;
 		pList = pData->pTreeItems;
 		iPos  = pData->uTreeItemsMax;
 
-		for(;iPos>=0;iPos--)								// Alle Textbreiten zurücksetzen
-			{
-				pEntry = pList[iPos];
-			if(!pEntry)continue;
+		for(;iPos>=0;iPos--){								// Alle Textbreiten zurücksetzen
+			pEntry = pList[iPos];
+			if(!pEntry)
+				continue;
 
 			pEntry->iTextPixels=0;
-			}
+		}
 
 
-		for(uSub=1;uSub<pData->uColumnCount;uSub++)
-			{
+		for(uSub=1;uSub<pData->uColumnCount;uSub++){
 			iPos    = pData->uTreeItemsMax;
 			pItems 	= pData->pExtraItems[uSub-1];
 
-			for(;iPos>=0;iPos--)
-				{
-					pExtra = pItems[iPos];
-				if(!pExtra)continue;
+			for(;iPos>=0;iPos--){
+				pExtra = pItems[iPos];
+				if(!pExtra)
+					continue;
 
 				pExtra->iTextPixels=0;
-				}
 			}
-
+		}
 
 		iRet=1;
-		}
+	}
 	else{
 		iRet=0;
-		}
-
+	}
 
 	hDc = GetDC(NULL);										// Breite der "..." Texte
 	SelectObject(hDc,pData->hFontN);
@@ -2268,10 +2081,7 @@ unsigned	uSub;
 	pData->uTrippleB =  sSize.cx;
 	ReleaseDC(NULL,hDc);
 
-
-
-
-return iRet;
+	return iRet;
 }
 
 
@@ -2283,41 +2093,38 @@ return iRet;
 //	Berechnet die Positionen der Zeilen für die sichtbaren Einträge
 //	pData		: Zeiger auf die Fensterdaten
 //	uItem		: Ist der Eintrag ab dem begonnen wird
-static void UpdateItems(TreeListData *pData,unsigned uItem)
-{
-unsigned	uPos;
-unsigned	uOld;
-unsigned	uNum;
-unsigned	uTemp;
-unsigned	uStart;
-unsigned   *pLines;
-BaseItem  **pItems;
-BaseItem   *pEntry;
-BaseItem   *pTemp;
-RECT		sRect;
+static void UpdateItems(TreeListData *pData,unsigned uItem){
 
+	unsigned	uPos;
+	unsigned	uOld;
+	unsigned	uNum;
+	unsigned	uTemp;
+	unsigned	uStart;
+	unsigned   *pLines;
+	BaseItem  **pItems;
+	BaseItem   *pEntry;
+	BaseItem   *pTemp;
+	RECT		sRect;
 
 	uOld	= pData->uItemPosCount;
 	pLines	= pData->pItemPos;
 	pItems	= pData->pTreeItems;
 
-
-	if(!uItem)												// Am Anfang beginnen
-		{
-			uItem = pData->uFirstChild;
-		if(!uItem)											// Leere Liste
-			{
+	if(!uItem){												// Am Anfang beginnen
+		uItem = pData->uFirstChild;
+		if(!uItem){											// Leere Liste
 			if(!uOld)return;
 
-			for(uNum=0;uNum<uOld;uNum++)					// Die alten Einträge zurücksetzen
-				{
-					uTemp = pLines[uNum];
-				if(!uTemp)continue;
-					pLines[uNum]=0;
-					pTemp = pItems[uTemp];
-				if(!pTemp)continue;
-					pTemp->uShowPos = 0;
-				}
+			for(uNum=0;uNum<uOld;uNum++){					// Die alten Einträge zurücksetzen
+				uTemp = pLines[uNum];
+				if(!uTemp)
+					continue;
+				pLines[uNum]=0;
+				pTemp = pItems[uTemp];
+				if(!pTemp)
+					continue;
+				pTemp->uShowPos = 0;
+			}
 
 			pData->uItemPosCount = 0;
 
@@ -2326,107 +2133,101 @@ RECT		sRect;
 
 			memset(pLines,0,sizeof(unsigned)*uOld);
 			return;
-			}
+		}
 
-
-		for(uNum=0;uNum<uOld;uNum++)						// Die alten Einträge zurücksetzen
-			{
-				uTemp = pLines[uNum];
-			if(!uTemp)continue;
-				pLines[uNum]=0;
-				pTemp = pItems[uTemp];
-			if(!pTemp)continue;
-				pTemp->uShowPos = 0;
-			}
+		for(uNum=0;uNum<uOld;uNum++){						// Die alten Einträge zurücksetzen
+			uTemp = pLines[uNum];
+			if(!uTemp)
+				continue;
+			pLines[uNum]=0;
+			pTemp = pItems[uTemp];
+			if(!pTemp)
+				continue;
+			pTemp->uShowPos = 0;
+		}
 
 		pEntry			 = pItems[uItem];
 		pEntry->uShowPos = 1;
 		pLines[0]		 = uItem;
 		uPos			 = 1;
 		uStart			 = 0;
-		}
+	}
 	else{													// Bei einem Eintrag beginnen
 		pEntry			 = pItems[uItem];
 		uPos			 = pEntry->uShowPos;
-		if(uPos)uStart	 = uPos-1;
-		else	uStart	 = 0;
+		if(uPos)
+			uStart	 = uPos-1;
+		else
+			uStart	 = 0;
 
-		for(uNum=uPos;uNum<uOld;uNum++)						// Die alten Einträge zurücksetzen
-			{
-				uTemp = pLines[uNum];
-			if(!uTemp)continue;
-				pLines[uNum]=0;
-				pTemp = pItems[uTemp];
-			if(!pTemp)continue;
-				pTemp->uShowPos = 0;
-			}
+		for(uNum=uPos;uNum<uOld;uNum++){						// Die alten Einträge zurücksetzen
+			uTemp = pLines[uNum];
+			if(!uTemp)
+				continue;
+			pLines[uNum]=0;
+			pTemp = pItems[uTemp];
+			if(!pTemp)
+				continue;
+			pTemp->uShowPos = 0;
 		}
+	}
 
-
-	for(;;)													// Die Zeilen neu zuordnen
-		{
-		if(pEntry->uFirstChild && (pEntry->uState&TVIS_EXPANDED))
-			{
+	for(;;){													// Die Zeilen neu zuordnen
+		if(pEntry->uFirstChild && (pEntry->uState&TVIS_EXPANDED)){
 			uItem=pEntry->uFirstChild;
-			}
-		else if(pEntry->uNextItem)
-			{
+		}
+		else if(pEntry->uNextItem){
 			uItem=pEntry->uNextItem;
-			}
+		}
 		else{
-			for(;;)
-				{
-					uItem = pEntry->uParent;
-				if(!uItem)break;
+			for(;;){
+				uItem = pEntry->uParent;
+				if(!uItem)
+					break;
 
-				   pEntry = pItems[uItem];
-				if(pEntry->uNextItem)						// Gibt es etwas in der gleichen Ebene
-					{
+				pEntry = pItems[uItem];
+				if(pEntry->uNextItem){						// Gibt es etwas in der gleichen Ebene
 					uItem = pEntry->uNextItem;
 					break;
-					}
 				}
-
-			if(!uItem)break;
 			}
+
+			if(!uItem)
+				break;
+		}
 
 		pEntry = pItems[uItem];
 
-		if(pLines[uPos]!=uItem)
-			{
+		if(pLines[uPos]!=uItem){
 			pLines[uPos] = uItem;
-			}
+		}
 		else{
-			if(uStart==uPos)uStart++;
-			}
+			if(uStart==uPos)
+				uStart++;
+		}
 
 		uPos++;
 		pEntry->uShowPos = uPos;
-		}
-
+	}
 
 	pData->uItemPosCount = uPos;
 
-
 	if(uStart>pData->uScrollY)								// Neu zu zeichnenten Bereich bestimmen
-			uStart-= pData->uScrollY;
-	else	uStart = 0;
+		uStart-= pData->uScrollY;
+	else
+		uStart = 0;
 
 	GetClientRect(pData->hWnd,&sRect);
 
 	sRect.top = pData->uStartPixel+pData->iRowHeight*uStart;
 
-	if(sRect.top<=sRect.bottom)
-		{
+	if(sRect.top<=sRect.bottom){
 		InvalidateRect(pData->hWnd,&sRect,FALSE);
-		}
+	}
 
-	if(uOld!=uPos)UpdateScrollY(pData);
-
-
-
+	if(uOld!=uPos)
+		UpdateScrollY(pData);
 }
-
 
 //*****************************************************************************
 //*
@@ -2436,18 +2237,17 @@ RECT		sRect;
 //	Prüft ob es Veränderungen in Spaltenbreiten gab
 //	pData		: Zeiger auf die Fensterdaten
 //	Ergibt die Breite ab der die Spalten verändert wurden oder 0x10000
-static int UpdateColumns(TreeListData *pData)
-{
-HWND	hHeader;
-UINT	uNext;
-UINT	uCol;
-UINT	uSub;
-int		iSize;
-int		iNum;
-int		iNow;
-int		iOld;
-int		iRet;
+static int UpdateColumns(TreeListData *pData){
 
+	HWND	hHeader;
+	UINT	uNext;
+	UINT	uCol;
+	UINT	uSub;
+	int		iSize;
+	int		iNum;
+	int		iNow;
+	int		iOld;
+	int		iRet;
 
 	hHeader = pData->hHeader;
 	pData->aColumnXpos[0] = 0;
@@ -2456,8 +2256,7 @@ int		iRet;
 	iOld = 0;
 	iNow = 0;
 
-	for(uCol=0;uCol<pData->uColumnCount;)					// Suche die erste geänderte Spalte
-		{
+	for(uCol=0;uCol<pData->uColumnCount;){					// Suche die erste geänderte Spalte
 		uSub  = pData->aColumnPos[uCol];
 		iSize = pData->aColumn[uSub].sReal;
 		uSub  = pData->aColumn[uSub].bNext;
@@ -2465,52 +2264,47 @@ int		iRet;
 		iNow += iSize;
 		uCol += 1;
 
-		if(uCol==1  )iNow -= 1;
-		if(iNow<iOld)iNow  = iOld;
+		if(uCol==1)
+			iNow -= 1;
+		if(iNow<iOld)
+			iNow  = iOld;
 		if(uSub==pData->uColumnCount)
-		if(iNow>=(int)pData->uSizeX-1)
-			{
-			iNow++;
+			if(iNow>=(int)pData->uSizeX-1){
+				iNow++;
 			}
 
 		iNum = pData->aColumnXpos[uSub];
 
-		if(iNum==iNow)continue;
-		if(iNum==0)iNum=iOld;
-		if(iNum>=iNow)
-			{
+		if(iNum==iNow)
+			continue;
+		if(iNum==0)
+			iNum=iOld;
+		if(iNum>=iNow){
 			iRet = iOld;
-			}
+		}
 		else{
 			iRet = iOld;
 
-			if(pData->uSelectedItem)						// Problem bei ausgewählten leeren Einträgen
-				{
-				   uNext = pData->aColumn[pData->uSelectedSub].bNext;
-				if(uNext==uSub)
-					{
+			if(pData->uSelectedItem){						// Problem bei ausgewählten leeren Einträgen
+				uNext = pData->aColumn[pData->uSelectedSub].bNext;
+				if(uNext==uSub){
 					UpdateRect(pData,pData->uSelectedItem,pData->uSelectedSub);
-					}
-				}
-
-			if(pData->uTrackedItem)
-				{
-				   uNext = pData->aColumn[pData->uTrackedSub].bNext;
-				if(uNext==uSub)
-					{
-					UpdateRect(pData,pData->uTrackedItem,pData->uTrackedSub);
-					}
 				}
 			}
 
+			if(pData->uTrackedItem){
+				uNext = pData->aColumn[pData->uTrackedSub].bNext;
+				if(uNext==uSub){
+					UpdateRect(pData,pData->uTrackedItem,pData->uTrackedSub);
+				}
+			}
+		}
 
 		pData->aColumnXpos[uSub] = iNow;
 		break;
-		}
+	}
 
-
-	while(uCol<pData->uColumnCount)							// Restliche Spalten berechen
-		{
+	while(uCol<pData->uColumnCount){							// Restliche Spalten berechen
 		iOld  = iNow;
 		uSub  = pData->aColumnPos[uCol];
 		iNow += pData->aColumn[uSub].sReal;
@@ -2518,19 +2312,16 @@ int		iRet;
 		uCol += 1;
 
 		if(uCol==pData->uColumnCount)
-		if(iNow>=(int)pData->uSizeX-1)
-			{
-			iNow++;
+			if(iNow>=(int)pData->uSizeX-1){
+				iNow++;
 			}
 
 		pData->aColumnXpos[uSub] = iNow;
-		}
+	}
 
 	pData->aColumnXpos[pData->uColumnCount+1] = pData->uSizeX+1;
 
-
-
-return iRet;
+	return iRet;
 }
 
 //*****************************************************************************
@@ -2546,93 +2337,80 @@ return iRet;
 //				  Der erste Eintrag muss 0 immer sein.
 //	Ergibt   1 = Ok
 //			 0 = Fehler
-static int TreeListSetOrderArray(TreeListData *pData,unsigned uItems,unsigned *pArray)
-{
-BYTE		aFlags[MAX_COLUMNS+1];
-UINT		aArray[MAX_COLUMNS+1];
-TV_COLSIZE	sNotify;
-UINT		uDiff;
-UINT		uCol;
-UINT 		uSub;
+static int TreeListSetOrderArray(TreeListData *pData,unsigned uItems,unsigned *pArray){
 
+	BYTE		aFlags[MAX_COLUMNS+1];
+	UINT		aArray[MAX_COLUMNS+1];
+	TV_COLSIZE	sNotify;
+	UINT		uDiff;
+	UINT		uCol;
+	UINT 		uSub;
 
-	if(!pArray)												// Spezialreihenfolge setzen
-		{
-		if(uItems==FROM_HEADER)								// Array aus Header holen
-			{
-			if(!Header_GetOrderArray(pData->hHeader,pData->uColumnCount,aArray))
-				{
+	if(!pArray){												// Spezialreihenfolge setzen
+		if(uItems==FROM_HEADER){								// Array aus Header holen
+			if(!Header_GetOrderArray(pData->hHeader,pData->uColumnCount,aArray)){
 				return 0;
-				}
-
-			if(aArray[0]!=0)
-				{
-				return 0;
-				}
 			}
+
+			if(aArray[0]!=0){
+				return 0;
+			}
+		}
 		else{
-			for(uCol=pData->uColumnCount;uCol>0;uCol++)		// Standartreihenfolge
-				{
+			for(uCol=pData->uColumnCount;uCol>0;uCol++){		// Standartreihenfolge
 				uCol--;
 				aArray[uCol] = uCol;
-				}
 			}
+		}
 
 		uItems = pData->uColumnCount;
 		pArray = aArray;
-		}
+	}
 	else{													// Prüfe Array
-		if(pData->uColumnCount!=uItems || uItems==0 || *pArray)
-			{
+		if(pData->uColumnCount!=uItems || uItems==0 || *pArray){
 			return 0;
-			}
 		}
-
+	}
 
 	memset(aFlags,0,sizeof(aFlags)-1);
 
-	for(uCol=0,uDiff=0;uCol<uItems;uCol++)					// Die Einträge prüfen
-		{
-		   uSub	= pArray[uCol];
-		if(uSub>=uItems)return 0;
-		if(aFlags[uSub])return 0;
+	for(uCol=0,uDiff=0;uCol<uItems;uCol++){					// Die Einträge prüfen
+		uSub	= pArray[uCol];
+		if(uSub>=uItems)
+			return 0;
+		if(aFlags[uSub])
+			return 0;
 
 		aFlags[uSub] = (BYTE)uCol;
 
 		uDiff |= uCol^pData->aColumnPos[uSub];
-		}
+	}
 
-	if(uDiff==0)											// Alles blieb gleich
-		{
+	if(uDiff==0){											// Alles blieb gleich
 		return 1;
-		}
+	}
 
 	aFlags[0     ] = 0;
 	aFlags[uItems] = (BYTE)uItems;
 
-	for(uCol=1;uCol<uItems;uCol++)							// Die Einträge anpassen
-		{
+	for(uCol=1;uCol<uItems;uCol++){							// Die Einträge anpassen
 		pData->aColumnPos[uCol]		= (BYTE)pArray[uCol];
-		}
+	}
 
-	for(uCol=0;uCol<uItems;uCol++)
-		{
+	for(uCol=0;uCol<uItems;uCol++){
 		uSub						= aFlags[uCol];
 		pData->aColumn[uCol].bIndex	= (BYTE)uSub;
 		pData->aColumn[uCol].bNext	= pData->aColumnPos[uSub+1];
-		}
+	}
 
 	Header_SetOrderArray(pData->hHeader,uItems,pArray);
 	UpdateColumns(pData);
 	UpdateView(pData);
 
-
-	if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY)				// Alle Spalten haben sich verändert
-		{
+	if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY){				// Alle Spalten haben sich verändert
 		UNLOCK(pData);
 
-		for(uCol=0;uCol<uItems;uCol++)
-			{
+		for(uCol=0;uCol<uItems;uCol++){
  			sNotify.hdr.code	= TVN_COLUMNCHANGED;
 			sNotify.uColumn		= uCol;
 			sNotify.uIndex		= pData->aColumn[uCol].bIndex;
@@ -2640,14 +2418,12 @@ UINT 		uSub;
 			sNotify.iSize		= pData->aColumn[uCol].sReal;
 
 			SendNotify(pData,&sNotify.hdr);
-			}
-
-		LOCK(pData);
 		}
 
-
-
-return 1;
+		LOCK(pData);
+	}
+	
+	return 1;
 }
 
 //*****************************************************************************
@@ -2663,32 +2439,30 @@ return 1;
 //	Ergibt  -1 = Fehler
 //			 0 = Ausgeführt
 //			 1 = Abbruch
-static int TreeListToggleItem(TreeListData *pData,unsigned uItem,unsigned uAddFlags)
-{
-NMTREEVIEW	sNotify;
-BaseItem  **pList;
-BaseItem   *pEntry;
-BaseItem   *pTemp;
-unsigned	uAction;
-unsigned	uLevel;
-unsigned	uNext;
-LRESULT		lRet;
-BOOL		bDo;
+static int TreeListToggleItem(TreeListData *pData,unsigned uItem,unsigned uAddFlags){
 
+	NMTREEVIEW	sNotify;
+	BaseItem  **pList;
+	BaseItem   *pEntry;
+	BaseItem   *pTemp;
+	unsigned	uAction;
+	unsigned	uLevel;
+	unsigned	uNext;
+	LRESULT		lRet;
+	BOOL		bDo;
 
+	if(uItem>pData->uTreeItemsMax)
+		return 0;
 
-	if(uItem>pData->uTreeItemsMax)return 0;
+	pList  = pData->pTreeItems;
+	pEntry = pList[uItem];
+	if(!pEntry)
+		return -1;
 
-		pList  = pData->pTreeItems;
-		pEntry = pList[uItem];
-	if(!pEntry)return -1;
-
-
-		uAction= uAddFlags&0x0F;
-	if(!uAction)
-		{
+	uAction= uAddFlags&0x0F;
+	if(!uAction){
 		uAction	= ((pEntry->uState^TVIS_EXPANDED)&(TVIS_EXPANDED|TVIS_EXPANDPARTIAL))? TVE_EXPAND:TVE_COLLAPSE;
-		}
+	}
 
 	sNotify.action				=  uAction;
 	sNotify.hdr.code			=  TVN_ITEMEXPANDING;
@@ -2703,7 +2477,6 @@ BOOL		bDo;
 	sNotify.ptDrag.x			=  0;
 	sNotify.ptDrag.y			=  0;
 
-
 	UNLOCK(pData);
 
 	lRet=SendNotify(pData,&sNotify.hdr);
@@ -2713,68 +2486,58 @@ BOOL		bDo;
 	pList  = pData->pTreeItems;
 	pEntry = pList[uItem];
 
-	if(pEntry==0)return -1;									// Eintrag inzischen gelöscht ?
-	if(lRet  !=0)return  1;									// User-Abbruch ?
+	if(pEntry==0)
+		return -1;									// Eintrag inzischen gelöscht ?
+	if(lRet  !=0)
+		return  1;									// User-Abbruch ?
 
-
-
-	if(uAction==TVE_EXPAND)									// Aufklappen
-		{
-		if(pEntry->uState&TVIS_EXPANDED)
-			{
+	if(uAction==TVE_EXPAND){									// Aufklappen
+		if(pEntry->uState&TVIS_EXPANDED){
 			bDo = FALSE;									// Nur von + auf -
-			}
+		}
 		else{
 			pEntry->uState |= TVIS_EXPANDED;				// Kinder Aufklappen
 			bDo = TRUE;
-			}
 		}
+	}
 	else{													// Zuklappen
 		pEntry->uState &= ~TVIS_EXPANDED;
 		bDo	   = TRUE;
-		}
+	}
 
 	pEntry->uState &= ~TVIS_EXPANDPARTIAL;
 	pEntry->uState |=  uAddFlags&~0x0F;
 
-
-	if(pEntry->uShowPos && bDo)
-		{
-		if(pEntry->uState&TVIS_EXPANDED)					// Kinderfenster aktuallisieren
-			{
+	if(pEntry->uShowPos && bDo){
+		if(pEntry->uState&TVIS_EXPANDED){					// Kinderfenster aktuallisieren
 			uLevel			=  0;
 			uNext			=  pEntry->uFirstChild;
 
-			while(uNext)
-				{
+			while(uNext){
 				pTemp = pList[uNext];
 				pTemp->uShowPos = 0;
 
-				if(pTemp->uFirstChild)
-					{
+				if(pTemp->uFirstChild){
 					uNext=pTemp->uFirstChild;
 					uLevel++;
 					continue;
-					}
+				}
 
-				if(pTemp->uNextItem)
-					{
+				if(pTemp->uNextItem){
 					uNext=pTemp->uNextItem;
 					continue;
-					}
+				}
 
-				if(uLevel==0)break;
+				if(uLevel==0)
+					break;
 
 				uNext = pList[pTemp->uParent]->uNextItem;
 				uLevel--;
-				}
 			}
-
-		UpdateItems(pData,uItem);
 		}
 
-
-
+		UpdateItems(pData,uItem);
+	}
 
 	sNotify.action				=  uAction;
 	sNotify.hdr.code			=  TVN_ITEMEXPANDED;
@@ -2798,41 +2561,34 @@ BOOL		bDo;
 	pList  = pData->pTreeItems;
 	pEntry = pData->pTreeItems[uItem];
 
-	if(!pEntry)return -1;									// Eintrag inzischen gelöscht ?
+	if(!pEntry)
+		return -1;									// Eintrag inzischen gelöscht ?
 
-	if(uAction==TVE_EXPAND)									// ONCE setzen nach Expandieren
-		{
+	if(uAction==TVE_EXPAND){									// ONCE setzen nach Expandieren
 		pEntry->uState|= TVIS_EXPANDEDONCE;
-		}
+	}
 
-	if(pData->uSelectedItem && bDo)							// Ist der ausgewählten Eintrag sichtbar ?
-		{
-			pEntry = pList[pData->uSelectedItem];
-		if(!pEntry)
-			{
+	if(pData->uSelectedItem && bDo){							// Ist der ausgewählten Eintrag sichtbar ?
+		pEntry = pList[pData->uSelectedItem];
+		if(!pEntry){
 			pData->uSelectedItem = 0;
 			pData->uSelectedSub	 = 0;
-			}
-		else if(!pEntry->uShowPos)
-			{
-			while(!pEntry->uShowPos)
-				{
+		}
+		else if(!pEntry->uShowPos){
+			while(!pEntry->uShowPos){
 				uItem  = pEntry->uParent;
 				pEntry = pList[uItem];
-				}
+			}
 
 			TreeListSelectItem(pData,uItem,pData->uSelectedSub,TVC_UNKNOWN);
-			}
 		}
+	}
 
-	if(bDo==FALSE)											// Nur von + auf -
-		{
+	if(bDo==FALSE){											// Nur von + auf -
 		UpdateRect(pData,uItem,0);
-		}
+	}
 
-
-
-return 0;
+	return 0;
 }
 
 //*****************************************************************************
@@ -2847,115 +2603,97 @@ return 0;
 //				  Bit 7   : 1=nur Spalte
 //				  Bit 24.. : Spaltennummer
 //	Ergibt 1 wenn der Eintrag sichtbar war
-static int TreeListGetItemRect(TreeListData *pData,unsigned uItem,unsigned uFlags,RECT *pRect)
-{
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
-unsigned	uNext;
-unsigned	uPos;
-unsigned	uSub;
+static int TreeListGetItemRect(TreeListData *pData,unsigned uItem,unsigned uFlags,RECT *pRect){
 
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
+	unsigned	uNext;
+	unsigned	uPos;
+	unsigned	uSub;
 
-
-	if(uItem>pData->uTreeItemsMax)
-		{
+	if(uItem>pData->uTreeItemsMax){
 		memset(pRect,0,sizeof(RECT));
 		return 0;
-		}
+	}
 
-	    pEntry = pData->pTreeItems[uItem];
-	if(!pEntry->uShowPos)									// Ist der Eintrag aufgeklappt
-		{
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry->uShowPos){									// Ist der Eintrag aufgeklappt
 		memset(pRect,0,sizeof(RECT));
 		return 0;
-		}
+	}
 
-	   uPos = pEntry->uShowPos-pData->uScrollY-1;
-	if(uPos>=pData->uMaxEnties)								// Eintrag im Fenster sichtbar
-		{
+	uPos = pEntry->uShowPos-pData->uScrollY-1;
+	if(uPos>=pData->uMaxEnties){								// Eintrag im Fenster sichtbar
 		memset(pRect,0,sizeof(RECT));
 		return 0;
-		}
+	}
 
 	pRect->top     = pData->uStartPixel;
 	pRect->top    += pData->iRowHeight*uPos;
 	pRect->bottom  = pData->iRowHeight+pRect->top;
 
-	if((uFlags&0xFC)==TVIR_GETCOLUMN)						// Nur Spalten
-		{
-		   uSub = uFlags>>24;
-		if(uSub>=pData->uColumnCount)uSub=0;
+	if((uFlags&0xFC)==TVIR_GETCOLUMN){						// Nur Spalten
+		uSub = uFlags>>24;
+		if(uSub>=pData->uColumnCount)
+			uSub=0;
 
 		uNext		   = pData->aColumn[uSub].bNext;
 		pRect->left    = pData->aColumnXpos[uSub];
 		pRect->left   -= pData->uScrollX;
 		pRect->right   = pData->aColumnXpos[uNext];
 		pRect->right  -= pData->uScrollX;
-		}
+	}
 	else{
 		uSub		   = 0;
 		pRect->left    = 0;
 		pRect->left   -= pData->uScrollX;
 		pRect->right   = pData->uSizeX;
-		}
+	}
 
-
-	if(uFlags&TVIR_TEXT)									// Nur Text ausgeben
-		{
-		if(uSub>0)
-			{
+	if(uFlags&TVIR_TEXT){									// Nur Text ausgeben
+		if(uSub>0){
 			pExtra =  pData ->pExtraItems[uSub-1][uItem];
 
-			if(pData->aColumn[uSub].bEdit==TVAX_CHECK)
-				{
-				   pRect->left+=pData->iChecksXsize;
+			if(pData->aColumn[uSub].bEdit==TVAX_CHECK){
+				pRect->left+=pData->iChecksXsize;
 				if(pRect->left>pRect->right)pRect->left=pRect->right;
-				}
-			else if(pExtra && pExtra->bFlags&TVIX_HASIMAGE)
-				{
-				   pRect->left+=pData->iImagesXsize;
-				if(pRect->left>pRect->right)pRect->left=pRect->right;
-				}
 			}
+			else if(pExtra && pExtra->bFlags&TVIX_HASIMAGE){
+				pRect->left+=pData->iImagesXsize;
+				if(pRect->left>pRect->right)pRect->left=pRect->right;
+			}
+		}
 		else{
-			if(pData->cHasRootRow)							// Root-Linien ausgleichen
-				{
+			if(pData->cHasRootRow){							// Root-Linien ausgleichen
 				pRect->left += pData->iIndent;
-				}
+			}
 
 			pRect->left += pData->iIndent*pEntry->uLevel;
 
-			if(pData->hStates)
-				{
+			if(pData->hStates){
 				pRect->left += pData->iStatesXsize;
-				}
+			}
 
-			if(!(pData->uStyle&TVS_HASLINES))
-				{
+			if(!(pData->uStyle&TVS_HASLINES)){
 				pRect->left -= 1;
-				}
+			}
 
-			if(pData->uStyleEx&TVS_EX_ITEMLINES)
-				{
+			if(pData->uStyleEx&TVS_EX_ITEMLINES){
 				pRect->left += 1;
 				if(pEntry->bFlags&TVIX_HASIMAGE)pRect->left++;
-				}
+			}
 
-			if(pEntry->bFlags&TVIX_HASIMAGE)
-				{
+			if(pEntry->bFlags&TVIX_HASIMAGE){
 				pRect->left += pData->iImagesXsize;
-				}
+			}
 
-			if(pRect->left>pRect->right)
-				{
+			if(pRect->left>pRect->right){
 				pRect->left=pRect->right;
-				}
 			}
 		}
+	}
 
-
-
-return 1;
+	return 1;
 }
 
 //*****************************************************************************
@@ -2970,118 +2708,117 @@ return 1;
 //						0xFFFFFFFF nur Zeile
 //						FIRST_LINE als oberster Eintrag
 //	Ergibt 1 wenn nur zum Eintrag gescrollt wurde bzw. 0 wenn aufgeklapt wurde
-static int TreeListEnsureVisible(TreeListData *pData,unsigned uItem,unsigned uSub)
-{
-BaseItem   *pEntry;
-BaseItem   *pTemp;
-unsigned	uTemp;
-unsigned	uNext;
-unsigned	uPos;
-int			iNum;
-int			iAnf;
-int			iOff;
-int			iEnd;
-int			iMax;
-int			iRet;
+static int TreeListEnsureVisible(TreeListData *pData,unsigned uItem,unsigned uSub){
 
+	BaseItem   *pEntry;
+	BaseItem   *pTemp;
+	unsigned	uTemp;
+	unsigned	uNext;
+	unsigned	uPos;
+	int			iNum;
+	int			iAnf;
+	int			iOff;
+	int			iEnd;
+	int			iMax;
+	int			iRet;
 
+	if(uItem>pData->uTreeItemsMax)
+		return -1;
 
-	if(uItem>pData->uTreeItemsMax)return -1;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return -1;
 
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return -1;
+	uPos = pEntry->uShowPos;
+	if(!uPos){												// Zweige aufklappen wenn Eintrag zugeklappt
 
-		uPos = pEntry->uShowPos;
-	if(!uPos)												// Zweige aufklappen wenn Eintrag zugeklappt
-		{
 		iRet = 0;
 
-		for(pTemp=pEntry;;)
-			{
-				uTemp = pTemp->uParent;
-				pTemp = pData->pTreeItems[uTemp];
-			if(!pTemp)break;
-			if((pTemp->uState&TVIS_EXPANDED)==0)
-				{
-				if(TreeListToggleItem(pData,uTemp,0))return 0;
-				}
+		for(pTemp=pEntry;;){
+			uTemp = pTemp->uParent;
+			pTemp = pData->pTreeItems[uTemp];
+			if(!pTemp)
+				break;
+			if((pTemp->uState&TVIS_EXPANDED)==0){
+				if(TreeListToggleItem(pData,uTemp,0))
+					return 0;
 			}
-
-			pEntry = pData->pTreeItems[uItem];
-		if(!pEntry)return 0;
-
-			uPos = pEntry->uShowPos;
-		if(!uPos)return 0;
 		}
+
+		pEntry = pData->pTreeItems[uItem];
+		if(!pEntry)
+			return 0;
+
+		uPos = pEntry->uShowPos;
+		if(!uPos)
+			return 0;
+	}
 	else{													// Nur Scrollen
 		iRet = 1;
-		}
+	}
 
-
-	   uPos--;
-	if(uPos<pData->uScrollY)								// Vor erster Zeile
-		{
+	uPos--;
+	if(uPos<pData->uScrollY){								// Vor erster Zeile
 		pData->uScrollY	= uPos;
 		SetScrollPos(pData->hWnd,SB_VERT,uPos,TRUE);
 		UpdateView(pData);
-		}
-	else if(uSub==FIRST_LINE)								// Als ersten Eintrag
-		{
-		if(uPos!=pData->uScrollY)
-			{
+	}
+	else if(uSub==FIRST_LINE){								// Als ersten Eintrag
+		if(uPos!=pData->uScrollY){
 			pData->uScrollY	= uPos;
 			SetScrollPos(pData->hWnd,SB_VERT,uPos,TRUE);
 			UpdateView(pData);
-			}
+		}
 
 		return iRet;
-		}
-	else if(uPos>=pData->uScrollY+pData->uPageEnties)		// Nach letzter Zeile
-		{
+	}
+	else if(uPos>=pData->uScrollY+pData->uPageEnties){		// Nach letzter Zeile
 		iOff  = uPos-(pData->uPageEnties-1);
 		iMax  = pData->uItemPosCount;
 		iMax -=	pData->uPageEnties-1;
 
-		if(iOff>=iMax)iOff=iMax;
-		if(iOff<0)iOff=0;
-		if(iOff!=(int)pData->uScrollY)
-			{
+		if(iOff>=iMax)
+			iOff=iMax;
+		if(iOff<0)
+			iOff=0;
+		if(iOff!=(int)pData->uScrollY){
 			pData->uScrollY	= iOff;
 			SetScrollPos(pData->hWnd,SB_VERT,iOff,TRUE);
 			UpdateView(pData);
-			}
 		}
+	}
 
-
-	if(uSub<pData->uColumnCount)							// Horizontal einrichten
-		{
+	if(uSub<pData->uColumnCount){							// Horizontal einrichten
 		uNext = pData->aColumn[uSub].bNext;
 		iNum  = pData->uSizeX;
 		iOff  = pData->uScrollX;
 		iAnf  = pData->aColumnXpos[uSub ];
 		iEnd  = pData->aColumnXpos[uNext];
 
-		if(iOff+iNum< iAnf)iOff=iAnf;
-		if(iOff     >=iEnd)iOff=iAnf;
-		if(iOff+iNum< iEnd)iOff=iEnd-iNum;
-		if(iOff     > iAnf)iOff=iAnf;
+		if(iOff+iNum< iAnf)
+			iOff=iAnf;
+		if(iOff     >=iEnd)
+			iOff=iAnf;
+		if(iOff+iNum< iEnd)
+			iOff=iEnd-iNum;
+		if(iOff     > iAnf)
+			iOff=iAnf;
 
 		iMax  = pData->aColumnXpos[pData->uColumnCount];
 		iMax -= pData->uSizeX/2;
 
-		if(iOff>iMax)iOff=iMax;
-		if(iOff<   0)iOff=0;
-		if(iOff!=(int)pData->uScrollX)
-			{
+		if(iOff>iMax)
+			iOff=iMax;
+		if(iOff<   0)
+			iOff=0;
+		if(iOff!=(int)pData->uScrollX){
 			pData->uScrollX	= iOff;
 			SetScrollPos(pData->hWnd,SB_HORZ,iOff,TRUE);
 			UpdateView(pData);
 			MoveWindow(pData->hHeader,-iOff,0,iNum+iOff,pData->uStartPixel,TRUE);
-			}
 		}
-
-
-return iRet;
+	}
+	return iRet;
 }
 
 //*****************************************************************************
@@ -3101,74 +2838,73 @@ return iRet;
 //					2 = Eintrag ist aufgeklappt und teilweise sichtbar
 //					3 = Eintrag ist aufgeklappt und Spalte ist nur teilweise sichtbar
 //					4 = Eintrag ist aufgeklappt und ganz sichtbar
-static int TreeListIsVisible(TreeListData *pData,unsigned uItem,unsigned uSub)
-{
-BaseItem   *pEntry;
-unsigned	uNext;
-unsigned	uPos;
-int			iNum;
-int			iAnf;
-int			iOff;
-int			iEnd;
+static int TreeListIsVisible(TreeListData *pData,unsigned uItem,unsigned uSub){
 
+	BaseItem   *pEntry;
+	unsigned	uNext;
+	unsigned	uPos;
+	int			iNum;
+	int			iAnf;
+	int			iOff;
+	int			iEnd;
 
+	if(uItem>pData->uTreeItemsMax)
+		return -1;
 
-	if(uItem>pData->uTreeItemsMax)return -1;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return -1;
 
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return -1;
-
-		uPos = pEntry->uShowPos;
-	if(!uPos)												// Ist der Eintrag zugeklappt
-		{
+	uPos = pEntry->uShowPos;
+	if(!uPos){												// Ist der Eintrag zugeklappt
 		return 0;
-		}
+	}
 
-	   uPos--;
-	if(uPos<pData->uScrollY)								// Vor erster Zeile
-		{
+	uPos--;
+	if(uPos<pData->uScrollY){								// Vor erster Zeile
+
 		return 1;
-		}
+	}
 
-	if(uPos>=pData->uScrollY+pData->uMaxEnties)				// Nach letzter Zeile
-		{
+	if(uPos>=pData->uScrollY+pData->uMaxEnties){				// Nach letzter Zeile
 		return 1;
-		}
+	}
 
-	if(uPos==pData->uScrollY+pData->uPageEnties)			// Auf halbsichtbarer Zeile
-		{
-		if(uSub<pData->uColumnCount)
-			{
+	if(uPos==pData->uScrollY+pData->uPageEnties){			// Auf halbsichtbarer Zeile
+		if(uSub<pData->uColumnCount){
 			uNext = pData->aColumn[uSub].bNext;
 			iNum  = pData->uSizeX;
 			iOff  = pData->uScrollX;
 			iAnf  = pData->aColumnXpos[uSub ];
 			iEnd  = pData->aColumnXpos[uNext];
 
-			if(iOff+iNum< iAnf)return 1;
-			if(iOff     >=iEnd)return 1;
-			}
-
-		return 2;
+			if(iOff+iNum< iAnf)
+				return 1;
+			if(iOff     >=iEnd)
+				return 1;
 		}
 
-	if(uSub<pData->uColumnCount)							// Spalte prüfen
-		{
+		return 2;
+	}
+
+	if(uSub<pData->uColumnCount){							// Spalte prüfen
 		uNext = pData->aColumn[uSub].bNext;
 		iNum  = pData->uSizeX;
 		iOff  = pData->uScrollX;
 		iAnf  = pData->aColumnXpos[uSub ];
 		iEnd  = pData->aColumnXpos[uNext];
 
-		if(iOff+iNum< iAnf)return 1;
-		if(iOff     >=iEnd)return 1;
-		if(iOff+iNum< iEnd)return 3;
-		if(iOff     > iAnf)return 3;
-		}
+		if(iOff+iNum< iAnf)
+			return 1;
+		if(iOff     >=iEnd)
+			return 1;
+		if(iOff+iNum< iEnd)
+			return 3;
+		if(iOff     > iAnf)
+			return 3;
+	}
 
-
-
-return 4;
+	return 4;
 }
 
 //*****************************************************************************
@@ -3184,89 +2920,79 @@ return 4;
 //					1 = Eintrag löschen und neu zeichnen
 //					2 = Nur Kindereinträge löschen und neu zeichnen
 //	Ergibt 1 wenn der Eintrag gelöscht wurde.
-static int TreeListDeleteItem(TreeListData *pData,unsigned uItem,int iMode)
-{
-NMTREEVIEW	sNotify;
-ExtraItem **pList;
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
-BaseItem   *pTemp;
-unsigned	uPos;
-int			iOff;
-int			iMax;
+static int TreeListDeleteItem(TreeListData *pData,unsigned uItem,int iMode){
 
+	NMTREEVIEW	sNotify;
+	ExtraItem **pList;
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
+	BaseItem   *pTemp;
+	unsigned	uPos;
+	int			iOff;
+	int			iMax;
 
-	if(pData->cLockChanges)return 0;
+	if(pData->cLockChanges)
+		return 0;
 
-	if(uItem>pData->uTreeItemsMax)							// Prüfe den Eintrag
-		{
-		if(uItem != U(TVI_ROOT))return 0;					// Alles löschen
-		if(pData->uLastChild==0)return 0;
-
-		while(pData->uLastChild)
-			{
-			TreeListDeleteItem(pData,pData->uLastChild,0);
-			}
-
-		pData->uItemPosCount = 0;
-
-		UpdateScrollY(pData);
-		UpdateView   (pData);
-
-		return 1;
-		}
-
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)												// Prüfe den Eintrag
-		{
-		if(uItem!=NULL)return 0;							// Alles löschen
-		if(pData->uLastChild==0)return 0;
-
-		while(pData->uLastChild)
-			{
-			TreeListDeleteItem(pData,pData->uLastChild,0);
-			}
-
-		pData->uItemPosCount = 0;
-
-		UpdateScrollY(pData);
-		UpdateView   (pData);
-
-		return 1;
-		}
-
-
-	if(iMode==2)											// Nur Kindereinträge löschen
-		{
-		if(!pEntry->uFirstChild)
-			{
+	if(uItem>pData->uTreeItemsMax){							// Prüfe den Eintrag
+		if(uItem != U(TVI_ROOT))
+			return 0;					// Alles löschen
+		if(pData->uLastChild==0)
 			return 0;
-			}
 
-		while(pEntry->uLastChild)							// Alle Kinder löschen
-			{
-			TreeListDeleteItem(pData,pEntry->uLastChild,0);
-			}
+		while(pData->uLastChild){
+			TreeListDeleteItem(pData,pData->uLastChild,0);
+		}
 
-		   uPos = pEntry->uShowPos;
-		if(uPos)
-			{
-			UpdateItems(pData,uItem);
-			}
+		pData->uItemPosCount = 0;
+
+		UpdateScrollY(pData);
+		UpdateView   (pData);
 
 		return 1;
+	}
+
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry){												// Prüfe den Eintrag
+		if(uItem!=NULL)
+			return 0;							// Alles löschen
+		if(pData->uLastChild==0)
+			return 0;
+
+		while(pData->uLastChild){
+			TreeListDeleteItem(pData,pData->uLastChild,0);
 		}
 
+		pData->uItemPosCount = 0;
 
+		UpdateScrollY(pData);
+		UpdateView   (pData);
 
-	while(pEntry->uLastChild)								// Alle Kinder löschen
-		{
+		return 1;
+	}
+
+	if(iMode==2){											// Nur Kindereinträge löschen
+		if(!pEntry->uFirstChild){
+			return 0;
+		}
+
+		while(pEntry->uLastChild){							// Alle Kinder löschen
+			TreeListDeleteItem(pData,pEntry->uLastChild,0);
+		}
+
+		uPos = pEntry->uShowPos;
+		if(uPos){
+			UpdateItems(pData,uItem);
+		}
+
+		return 1;
+	}
+
+	while(pEntry->uLastChild){								// Alle Kinder löschen
 		TreeListDeleteItem(pData,pEntry->uLastChild,0);
-		}
+	}
 
-
-	if(uItem==pData->uSelectedItem)							// Einen ausgewählten Eintrag löschen
-		{
+	if(uItem==pData->uSelectedItem){							// Einen ausgewählten Eintrag löschen
 		sNotify.hdr.code			= TVN_SELCHANGED;
 		sNotify.action				= TVC_UNKNOWN;
 		sNotify.itemOld.mask		= TVIF_HANDLE|TVIF_PARAM|TVIF_STATE|TVIF_SUBITEM|TVIF_PARAM;
@@ -3294,8 +3020,7 @@ int			iMax;
 
 		pData->uSelectedItem = 0;
 		pData->uSelectedSub  = 0;
-		}
-
+	}
 
 	sNotify.hdr.code			= TVN_DELETEITEM;
 	sNotify.itemNew.mask		= 0;
@@ -3313,144 +3038,122 @@ int			iMax;
 	SendNotify(pData,&sNotify.hdr);
 	LOCK(pData);
 
-		pEntry = pData->pTreeItems[uItem];					// Prüfen ob der Eintrag noch existiert
+	pEntry = pData->pTreeItems[uItem];					// Prüfen ob der Eintrag noch existiert
 	if(!pEntry)return 0;
 
-
-
-	if(uItem==pData->uTrackedItem)							// Einen unterstrichenen Eintrag löschen
-		{
+	if(uItem==pData->uTrackedItem){							// Einen unterstrichenen Eintrag löschen
 		pData->uTrackedItem  = 0;
 		pData->uTrackedSub   = 0;
-		}
+	}
 
-	if(pData->uInsertMark==uItem)
-		{
+	if(pData->uInsertMark==uItem){
 		pData->uInsertMark = 0;
-		}
+	}
 
-	if(pData->uSingleSel==uItem)
-		{
+	if(pData->uSingleSel==uItem){
 		pData->uSingleSel = 0;
-		}
+	}
 
-	if(pEntry->uPrevItem)									// Gibt es einen vorherigen Eintrag
-		{
+	if(pEntry->uPrevItem){									// Gibt es einen vorherigen Eintrag
 		pTemp			 = pData->pTreeItems[pEntry->uPrevItem];
 		pTemp->uNextItem = pEntry->uNextItem;
-		}
+	}
 	else{
-		if(pEntry->uParent)									// Neues erstes Kind in Elterneintrag
-			{
+		if(pEntry->uParent){									// Neues erstes Kind in Elterneintrag
 			pTemp			   = pData->pTreeItems[pEntry->uParent];
 			pTemp->uFirstChild = pEntry->uNextItem;
-			}
+		}
 		else{
 			pData->uFirstChild = pEntry->uNextItem;
-			}
 		}
+	}
 
-	if(pEntry->uNextItem)									// Gibt es einen vorherigen Eintrag
-		{
+	if(pEntry->uNextItem){									// Gibt es einen vorherigen Eintrag
 		pTemp			 = pData->pTreeItems[pEntry->uNextItem];
 		pTemp->uPrevItem = pEntry->uPrevItem;
-		}
+	}
 	else{
-		if(pEntry->uParent)									// Neues letztes Kind in Elterneintrag
-			{
+		if(pEntry->uParent){									// Neues letztes Kind in Elterneintrag
 			pTemp			  = pData->pTreeItems[pEntry->uParent];
 			pTemp->uLastChild = pEntry->uPrevItem;
 
-			if(pTemp->uFirstChild==0 && pTemp->uLastChild==0)
-				{
+			if(pTemp->uFirstChild==0 && pTemp->uLastChild==0){
 				pTemp->bFlags &= ~TVIX_HASBUTTON;
-				}
-			}
-		else{
-			pData->uLastChild = pEntry->uPrevItem;
 			}
 		}
+		else{
+			pData->uLastChild = pEntry->uPrevItem;
+		}
+	}
 
-
-	for(uPos=1;uPos<pData->uColumnCount;uPos++)				// Alle Extraeinträge löschen
-		{
+	for(uPos=1;uPos<pData->uColumnCount;uPos++){				// Alle Extraeinträge löschen
 		pList = pData->pExtraItems[uPos-1];
 
-			pExtra = pList[uItem];
-		if(!pExtra)continue;
+		pExtra = pList[uItem];
+		if(!pExtra)
+			continue;
 
 		pList[uItem] = NULL;
 
-		if(pExtra->pText)
-			{
+		if(pExtra->pText){
 			pExtra->uTextSize=0;
 			delete pExtra->pText;
-			}
+		}
 
 		delete pExtra;
-		}
+	}
 
 
 	pData->pTreeItems[uItem] = NULL;						// Den Eintrag löschen
 
-	if(pEntry->pText)
-		{
+	if(pEntry->pText){
 		pEntry->uTextSize=0;
 		delete pEntry->pText;
+	}
+
+	if(iMode){												// Den Eintrag neuzeichnen
+		uItem =   pEntry->uPrevItem;
+		if(!uItem && !pEntry->uNextItem){
+			uItem = pEntry->uParent;
+			if(!uItem)
+				uPos=1;
+			else
+				uPos = pData->pTreeItems[uItem]->uShowPos;
 		}
-
-
-	if(iMode)												// Den Eintrag neuzeichnen
-		{
-			uItem =   pEntry->uPrevItem;
-		if(!uItem && !pEntry->uNextItem)
-			{
-				uItem = pEntry->uParent;
-			if(!uItem)uPos=1;
-			else uPos = pData->pTreeItems[uItem]->uShowPos;
-			}
 		else{
 			uPos = pEntry->uShowPos;
-			}
-
-		if(uPos)
-			{
-			UpdateItems(pData,uItem);
-			}
 		}
 
-
+		if(uPos){
+			UpdateItems(pData,uItem);
+		}
+	}
 
 	if(pEntry->uState&TVIS_SELECTED)						// Ausgewählte Einträge runterzählen
-	if(pData->uSelectedCount>0)
-		{
-		pData->uSelectedCount--;
+		if(pData->uSelectedCount>0){
+			pData->uSelectedCount--;
 		}
 
-	delete pEntry;
+		delete pEntry;
 
 	pData->uTreeItemsCount--;
-
 
 	iOff  = pData->uScrollY;								// Prüfe die Scrollposition
 	iMax  = pData->uItemPosCount;
 	iMax -=	pData->uPageEnties-1;
 
-	if(iOff>=iMax)iOff=iMax;
-	if(iOff<0)iOff=0;
-	if(iOff!=(int)pData->uScrollY)
-		{
+	if(iOff>=iMax)
+		iOff=iMax;
+	if(iOff<0)
+		iOff=0;
+	if(iOff!=(int)pData->uScrollY){
 		pData->uScrollY	= iOff;
 		SetScrollPos(pData->hWnd,SB_VERT,iOff,TRUE);
 		UpdateView(pData);
-		}
+	}
 
-
-
-return 1;
+	return 1;
 }
-
-
 
 //*****************************************************************************
 //*
@@ -3466,18 +3169,18 @@ return 1;
 //						TVC_UNKNOWN
 //	Ergibt		1 wenn der Eintrag ab/angewählt wurde
 //				0 wenn der Eintrag nicht verändert wurde
-static int TreeListXorSelectItem(TreeListData *pData,unsigned uItem,int iMode)
-{
-NMTREEVIEW	sNotify;
-BaseItem   *pEntry;
-unsigned	uOld;
-unsigned	uRet;
+static int TreeListXorSelectItem(TreeListData *pData,unsigned uItem,int iMode){
 
+	NMTREEVIEW	sNotify;
+	BaseItem   *pEntry;
+	unsigned	uOld;
+	unsigned	uRet;
 
-
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return 0;
-	if(uItem==pData->uSelectedItem)return 0;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return 0;
+	if(uItem==pData->uSelectedItem)
+		return 0;
 
 	uOld = pEntry->uState;
 
@@ -3506,11 +3209,13 @@ unsigned	uRet;
 	uRet=U(SendNotify(pData,&sNotify.hdr));
 	LOCK(pData);
 
-	if(uRet)return 0;
+	if(uRet)
+		return 0;
 
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return 0;
-		pEntry->uState ^= TVIS_SELECTED;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return 0;
+	pEntry->uState ^= TVIS_SELECTED;
 
 	sNotify.hdr.code			= TVN_SELCHANGED;
 	sNotify.action				= iMode;
@@ -3537,24 +3242,21 @@ unsigned	uRet;
 	SendNotify(pData,&sNotify.hdr);
 	LOCK(pData);
 
-		pEntry = pData->pTreeItems[uItem];
+	pEntry = pData->pTreeItems[uItem];
 	if(!pEntry)return 0;
-	if( pEntry->uShowPos)
-		{
+	if( pEntry->uShowPos){
 		if(pData->uStyleEx&TVS_EX_FULLROWMARK)
-				UpdateRow (pData,uItem);
+			UpdateRow (pData,uItem);
 		else	UpdateRect(pData,uItem,0);
-		}
+	}
 
-	if((uOld^pEntry->uState)&TVIS_SELECTED)
-		{
+	if((uOld^pEntry->uState)&TVIS_SELECTED){
 		if(pEntry->uState&TVIS_SELECTED)
-				pData->uSelectedCount++;
+			pData->uSelectedCount++;
 		else	pData->uSelectedCount--;
-		}
+	}
 
-
-return 1;
+	return 1;
 }
 
 
@@ -3565,37 +3267,35 @@ return 1;
 //*****************************************************************************
 //	Wählt den Focus ab
 //	pData		: Zeiger auf die Fensterdaten
-static void TreeListRemoveFocus(TreeListData *pData)
-{
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
-unsigned	uItem;
-unsigned	uSub;
+static void TreeListRemoveFocus(TreeListData *pData){
 
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
+	unsigned	uItem;
+	unsigned	uSub;
 
-	if(!pData->uFocusItem)return;
+	if(!pData->uFocusItem)
+		return;
 
 	uItem  = pData->uFocusItem;
 	pEntry = pData->pTreeItems[uItem];
 
-	if(pEntry)
-		{
+	if(pEntry){
 		pEntry->bFlags &= ~TVIX_FOCUSED;
 
 		uSub = pData->uFocusSub;
 
-		if(uSub)
-			{
-			   pExtra= pData->pExtraItems[uSub-1][uItem];
-			if(pExtra)pExtra->bFlags &= ~TVIX_FOCUSED;
-			}
+		if(uSub){
+			pExtra= pData->pExtraItems[uSub-1][uItem];
+			if(pExtra)
+				pExtra->bFlags &= ~TVIX_FOCUSED;
+		}
 
 		UpdateRect(pData,uItem,uSub);
-		}
+	}
 
 	pData->uFocusItem = 0;
 	pData->uFocusSub  = 0;
-
 }
 
 //*****************************************************************************
@@ -3608,128 +3308,117 @@ unsigned	uSub;
 //	uItem		: Eintrag für den Focus (0xFFFFFFFF=keine Änderung)
 //	uSub		: Spalte für den Focus	(0xFFFFFFFF=keine Änderung)
 //	Ergibt 1 wenn der Focus gesetzt wurde, bzw 0 bei einem Fehler
-static int  TreeListSetFocus(TreeListData *pData,unsigned uItem,unsigned uSub)
-{
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
-BaseItem   *pTemp;
-unsigned	uTemp;
-unsigned	uCol;
+static int  TreeListSetFocus(TreeListData *pData,unsigned uItem,unsigned uSub){
 
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
+	BaseItem   *pTemp;
+	unsigned	uTemp;
+	unsigned	uCol;
 
-
-	if(pData->uFocusItem)
-		{
-		if(uSub ==0xFFFFFFFF)uSub =pData->uFocusSub;
-		if(uItem==0xFFFFFFFF)uItem=pData->uFocusItem;
-		}
+	if(pData->uFocusItem){
+		if(uSub ==0xFFFFFFFF)
+			uSub =pData->uFocusSub;
+		if(uItem==0xFFFFFFFF)
+			uItem=pData->uFocusItem;
+	}
 	else{
-		if(uSub ==0xFFFFFFFF)uSub =pData->uSelectedSub;
-		if(uItem==0xFFFFFFFF)uItem=pData->uSelectedItem;
-		}
-
+		if(uSub ==0xFFFFFFFF)
+			uSub =pData->uSelectedSub;
+		if(uItem==0xFFFFFFFF)
+			uItem=pData->uSelectedItem;
+	}
 
 	if(pData->uFocusItem==uItem)
-	if(pData->uFocusSub ==uSub )return 1;
+		if(pData->uFocusSub ==uSub )
+			return 1;
 
-
-	if(!uItem)												// Focus abwählen
-		{
+	if(!uItem){												// Focus abwählen
 		TreeListRemoveFocus(pData);
 		return 1;
-		}
+	}
 
 
-	if(uItem>pData->uTreeItemsMax)							// Den Eintrag prüfen
-		{
+	if(uItem>pData->uTreeItemsMax){							// Den Eintrag prüfen
 		return 0;
-		}
+	}
 
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)
-		{
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry){
 		return 0;
-		}
+	}
 
-	if(!(pData->uStyleEx&TVS_EX_SUBSELECT))uSub=0;
+	if(!(pData->uStyleEx&TVS_EX_SUBSELECT))
+		uSub=0;
 
-	if(!(pData->uStyleEx&TVS_EX_MULTISELECT))				// Einzel auswahl
-		{
+	if(!(pData->uStyleEx&TVS_EX_MULTISELECT)){				// Einzel auswahl
 		return TreeListSelectItem(pData,uItem,uSub,TVC_UNKNOWN);
-		}
-
+	}
 
 	uTemp  = pData->uFocusItem;
 	pTemp  = pData->pTreeItems[uTemp];
 
-	if(pTemp)												// Den alten Eintrag abwählen
-		{
+	if(pTemp){												// Den alten Eintrag abwählen
 		pTemp->bFlags &= ~TVIX_FOCUSED;
 		uCol = pData->uFocusSub;
 
-		if(uCol)
-			{
-			   pExtra= pData->pExtraItems[uCol-1][uTemp];
-			if(pExtra)pExtra->bFlags &= ~TVIX_FOCUSED;
-			}
+		if(uCol){
+			pExtra= pData->pExtraItems[uCol-1][uTemp];
+			if(pExtra)
+				pExtra->bFlags &= ~TVIX_FOCUSED;
+		}
 
 		UpdateRect(pData,uItem,uSub);
-		}
+	}
 
 
-	if(uSub)												// Neuen Eintrag wählen
-		{
-		   pExtra =pData->pExtraItems[uSub-1][uItem];
-		if(pExtra)pExtra->bFlags |= TVIX_FOCUSED;
-		}
+	if(uSub){												// Neuen Eintrag wählen
+		pExtra =pData->pExtraItems[uSub-1][uItem];
+		if(pExtra)
+			pExtra->bFlags |= TVIX_FOCUSED;
+	}
 	else{
 		pEntry->bFlags |= TVIX_FOCUSED;
-		}
-
+	}
 
 	pData->uFocusItem = uItem;
 	pData->uFocusSub  = uSub;
 
-
-	if(pEntry->uState&TVIS_SELECTED)						// Auch die Auswahl nachziehen
-		{
-		if(pData->uSelectedItem!=uItem)
-			{
+	if(pEntry->uState&TVIS_SELECTED){						// Auch die Auswahl nachziehen
+		if(pData->uSelectedItem!=uItem){
 			uTemp = pData->uSelectedItem;
 			uCol  = pData->uSelectedSub;
-			}
+		}
 		else{
 			uTemp = 0;
 			uCol  = pData->uSelectedSub;
-			}
+		}
 
 		pData->uSelectedItem = uItem;
 		pData->uSelectedSub  = uSub;
 
-		if(pData->uStyleEx&TVS_EX_FULLROWMARK)
-			{
+		if(pData->uStyleEx&TVS_EX_FULLROWMARK){
 			uCol = uSub+1;
-			}
+		}
 
-		if(uTemp)
-			{
+		if(uTemp){
 			if(uCol!=uSub)
-					UpdateRow (pData,uTemp);
-			else	UpdateRect(pData,uTemp,uCol);
-			}
+				UpdateRow (pData,uTemp);
+			else	
+				UpdateRect(pData,uTemp,uCol);
+		}
 
 
 		if(uCol!=uSub)
-				UpdateRow (pData,uItem);
-		else	UpdateRect(pData,uItem,uCol);
-		}
+			UpdateRow (pData,uItem);
+		else	
+			UpdateRect(pData,uItem,uCol);
+	}
 	else{
 		UpdateRect(pData,uItem,uSub);
-		}
+	}
 
-
-
-return 1;
+	return 1;
 }
 
 //*****************************************************************************
@@ -3751,112 +3440,105 @@ return 1;
 //	Ergibt		2 wenn der Eintrag gewählt und umgeklapt wurde
 //				1 wenn der Eintrag gewählt wurde
 //				0 wenn der Eintrag nicht gewählt wurde
-static int TreeListSelectItem(TreeListData *pData,unsigned uItem,unsigned uSubItem,int iMode)
-{
-NMTREEVIEW	sNotify;
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
-BaseItem   *pTemp;
-LPARAM		lParam;
-LPARAM		lPaOld;
-unsigned	uState;
-unsigned	uStOld;
-unsigned	uNext;
-unsigned	uPos;
-unsigned	uOld;
-unsigned	uSub;
-unsigned	uRet;
-int			iDel;
-int			iSel;
+static int TreeListSelectItem(TreeListData *pData,unsigned uItem,unsigned uSubItem,int iMode){
 
-
+	NMTREEVIEW	sNotify;
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
+	BaseItem   *pTemp;
+	LPARAM		lParam;
+	LPARAM		lPaOld;
+	unsigned	uState;
+	unsigned	uStOld;
+	unsigned	uNext;
+	unsigned	uPos;
+	unsigned	uOld;
+	unsigned	uSub;
+	unsigned	uRet;
+	int			iDel;
+	int			iSel;
 
 	uOld = pData->uSelectedItem;
 	uSub = pData->uSelectedSub;
 
-
-	if(uSubItem>=pData->uColumnCount && uSubItem>0)return 0;
-	if(uItem   > pData->uTreeItemsMax)return 0;
+	if(uSubItem>=pData->uColumnCount && uSubItem>0)
+		return 0;
+	if(uItem   > pData->uTreeItemsMax)
+		return 0;
 	if(uItem   ==uOld)
-	if(uSubItem==uSub)
-	if(pData->uSelectedCount<=1 || !(pData->uStyleEx&TVS_EX_MULTISELECT))
-		{
-		return 1;
-		}
+		if(uSubItem==uSub)
+			if(pData->uSelectedCount<=1 || !(pData->uStyleEx&TVS_EX_MULTISELECT)){
+				return 1;
+			}
 
-
-	if(pData->uStyleEx&TVS_EX_MULTISELECT)					// Ist die Mehrfachauswahl möglich
-		{
-			iSel = iMode&TVC_UNSELECT;
-			iDel = iMode&TVC_DESELECT;
-		if(!iDel)
-			{
+	if(pData->uStyleEx&TVS_EX_MULTISELECT){					// Ist die Mehrfachauswahl möglich
+		iSel = iMode&TVC_UNSELECT;
+		iDel = iMode&TVC_DESELECT;
+		if(!iDel){
 			if(pData->uStyleEx&(TVS_EX_FULLROWMARK|TVS_EX_SUBSELECT))
-					UpdateRow (pData,uOld);
-			else	UpdateRect(pData,uOld,uSub);
+				UpdateRow (pData,uOld);
+			else	
+				UpdateRect(pData,uOld,uSub);
 
 			uOld = 0;
 			uSub = 0;
-			}
+		}
 		else{												// Alle gewählten Einträge abwählen
-			if(pData->uSelectedCount>1 && pData->uTreeItemsMax)
-				{
-				for(uPos=pData->uTreeItemsMax;uPos;uPos--)
-					{
+			if(pData->uSelectedCount>1 && pData->uTreeItemsMax){
+				for(uPos=pData->uTreeItemsMax;uPos;uPos--){
 					pEntry = pData->pTreeItems[uPos];
-					if(!pEntry || !(pEntry->uState&TVIS_SELECTED))continue;
+					if(!pEntry || !(pEntry->uState&TVIS_SELECTED))
+						continue;
 					if(TreeListXorSelectItem(pData,uPos,iMode))
-					if(!pData->uSelectedCount)break;		// Wurden alle Einträge abgewählt
-					}
+						if(!pData->uSelectedCount)
+							break;		// Wurden alle Einträge abgewählt
 				}
 			}
 		}
+	}
 	else{													// Altes Select löschen
 		iMode &= ~TVC_ONLYFOCUS;
 		iDel   =  1;
 		iSel   =  0;
-		}
+	}
 
 	iMode &= ~(TVC_DESELECT|TVC_UNSELECT);
 
-
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)												// Neuen Statatus holen
-		{
-		if(uItem)return 0;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry){												// Neuen Statatus holen
+		if(uItem)
+			return 0;
 		uState = 0;
 		lParam = 0;
-		}
+	}
 	else{
 		uState = pEntry->uState;
 		lParam = pEntry->lParam;
 
-		if(uSubItem)
-			{
+		if(uSubItem){
 			uState &= TVIS_BASEFLAGS;
 			pExtra  = pData->pExtraItems[uSubItem-1][uItem];
-			if(pExtra)uState|=pExtra->uState;
-			}
+			if(pExtra)
+				uState|=pExtra->uState;
 		}
+	}
 
-		pTemp = pData->pTreeItems[uOld];
-	if(!pTemp)												// Alten Status holen
-		{
+	pTemp = pData->pTreeItems[uOld];
+	if(!pTemp){												// Alten Status holen
 		uStOld = 0;
 		lPaOld = 0;
-		}
+	}
 	else{
 		uStOld = pTemp->uState;
 		lPaOld = pTemp->lParam;
 
-		if(uSub)
-			{
+		if(uSub){
 			uStOld &= TVIS_BASEFLAGS;
 			pExtra  = pData->pExtraItems[uSub-1][uOld];
-			if(pExtra)uStOld|=pExtra->uState;
-			}
+			if(pExtra)
+				uStOld|=pExtra->uState;
 		}
-
+	}
 
 	sNotify.hdr.code			= TVN_SELCHANGING;
 	sNotify.action				= iMode;
@@ -3882,109 +3564,99 @@ int			iSel;
 
 	UNLOCK(pData);
 
-	if(SendNotify(pData,&sNotify.hdr))						// Abfragen ob der Eintrag gewählt werden darf
-		{
+	if(SendNotify(pData,&sNotify.hdr)){						// Abfragen ob der Eintrag gewählt werden darf
 		LOCK(pData);
 		return 0;
-		}
+	}
 
 	LOCK(pData);
 
-	if(uItem)												// Prüfen ob der Eintrag noch existiert
-		{
-			pEntry = pData->pTreeItems[uItem];
-		if(!pEntry)return 0;
-		}
+	if(uItem){												// Prüfen ob der Eintrag noch existiert
+		pEntry = pData->pTreeItems[uItem];
+		if(!pEntry)
+			return 0;
+	}
 
-	if(iDel)
-		{
+	if(iDel){
 		uOld    = pData->uSelectedItem;
 		pTemp	= pData->pTreeItems[uOld];
+	}
+
+
+	if(pTemp){												// Den alten Eintrag abwählen
+		if(pTemp->uShowPos){									// Den Eintrag neu zeichnen
+			if((pData->uStyleEx&TVS_EX_FULLROWMARK) || pData->uSelectedSub)
+				UpdateRow (pData,uOld);
+			else	
+				UpdateRect(pData,uOld,uSub);
 		}
 
-
-	if(pTemp)												// Den alten Eintrag abwählen
-		{
-		if(pTemp->uShowPos)									// Den Eintrag neu zeichnen
-			{
-			if((pData->uStyleEx&TVS_EX_FULLROWMARK) || pData->uSelectedSub)
-					UpdateRow (pData,uOld);
-			else	UpdateRect(pData,uOld,uSub);
-			}
-
-		if(pTemp->uState&TVIS_SELECTED)
-			{
+		if(pTemp->uState&TVIS_SELECTED){
 			uStOld		  &= ~TVIS_SELECTED;
 			pTemp->uState &= ~TVIS_SELECTED;
 
-			if(pData->uSelectedCount>0)
-				{
+			if(pData->uSelectedCount>0){
 				pData->uSelectedCount -= 1;
-				}
 			}
+		}
 
 		pData->uSelectedSub    = 0;
 		pData->uSelectedItem   = 0;
-		}
+	}
 	else{
 		uOld  = 0;
-		}
+	}
 
 
-	if(uItem)												// Den neuen Eintrag wählen
-		{
-		if(iSel)
-			{
-			if(pEntry->uState&TVIS_SELECTED)
-				{
+	if(uItem){												// Den neuen Eintrag wählen
+		if(iSel){
+			if(pEntry->uState&TVIS_SELECTED){
 				uState				  &= ~TVIS_SELECTED;
 				pEntry->uState        &= ~TVIS_SELECTED;
-				if(pData->uSelectedCount)pData->uSelectedCount--;
-				}
+				if(pData->uSelectedCount)
+					pData->uSelectedCount--;
 			}
+		}
 		else{
-			if(!(pEntry->uState&TVIS_SELECTED))
-				{
+			if(!(pEntry->uState&TVIS_SELECTED)){
 				uState				  |= TVIS_SELECTED;
 				pEntry->uState        |= TVIS_SELECTED;
 				pData->uSelectedCount += 1;
-				}
 			}
+		}
 
-		if(uSubItem && uSubItem<pData->uColumnCount)
-			{
-				pExtra = pData->pExtraItems[uSubItem-1][uItem];
-			if(!pExtra)
-				{
+		if(uSubItem && uSubItem<pData->uColumnCount){
+			pExtra = pData->pExtraItems[uSubItem-1][uItem];
+			if(!pExtra){
 				pExtra  = new ExtraItem;
 				memset(pExtra,0,sizeof(ExtraItem));
 				pExtra->iImage = TV_NOIMAGE;
 				pExtra->uState = pEntry->uState&(TVIS_BOLD|TVIS_UNTERLINE);
 				pData->pExtraItems[uSubItem-1][uItem] = pExtra;
-				}
+			}
 
 			uState  = pExtra->uState;
 			uState |= pEntry->uState&TVIS_BASEFLAGS;
-			}
+		}
 		else{
 			uState  = pEntry->uState;
-			}
+		}
 
-		if(pEntry->uShowPos)								// Den Eintrag neu zeichnen
-			{
+		if(pEntry->uShowPos){								// Den Eintrag neu zeichnen
 			if(pData->uStyleEx&(TVS_EX_FULLROWMARK|TVS_EX_SUBSELECT))
-					UpdateRow (pData,uItem);
-			else	UpdateRect(pData,uItem,uSubItem);
-			}
+				UpdateRow (pData,uItem);
+			else	
+				UpdateRect(pData,uItem,uSubItem);
+		}
 
 		pData->uSelectedSub  = uSubItem;
 		pData->uSelectedItem = uItem;
-		}
+	}
 	else{
 		pData->uSelectedItem = 0;
 		pData->uSelectedSub  = 0;
 		uState				 = 0;
-		}
+	}
 
 	sNotify.hdr.code			= TVN_SELCHANGED;
 	sNotify.action				= iMode;
@@ -4011,19 +3683,17 @@ int			iSel;
 	SendNotify(pData,&sNotify.hdr);
 	LOCK(pData);
 
-	if(!(pData->uStyle&TVS_SINGLEEXPAND))					// Einzelmodus aktiv
-		{
+	if(!(pData->uStyle&TVS_SINGLEEXPAND)){					// Einzelmodus aktiv
 		if(pData->uStyle&TVS_SHOWSELALWAYS)
-		if(pData->uSelectedItem)
-			{
-			TreeListEnsureVisible(pData,pData->uSelectedItem,pData->uSelectedSub);
+			if(pData->uSelectedItem){
+				TreeListEnsureVisible(pData,pData->uSelectedItem,pData->uSelectedSub);
 			}
 
-		return 1;
-		}
+			return 1;
+	}
 
 
-//*****************************************************************************
+	//*****************************************************************************
 
 
 	sNotify.hdr.code			= TVN_SINGLEEXPAND;
@@ -4053,88 +3723,76 @@ int			iSel;
 	pTemp	= pData->pTreeItems[uOld ];						// Zeiger neu holen falls es Änderungen gab
 	pEntry	= pData->pTreeItems[uItem];
 
-
-
-	while(pTemp && pEntry)									// Beide Zweige sysnchronisieren
-		{
-		if(pEntry->uLevel>pTemp->uLevel)
-			{
+	while(pTemp && pEntry){									// Beide Zweige sysnchronisieren
+		if(pEntry->uLevel>pTemp->uLevel){
 			uNext  = pEntry->uParent;
 
 			if(!(uRet&TVNRET_SKIPNEW))
-			if(!(pEntry->uState&TVIS_EXPANDED))
-				{
-				TreeListToggleItem(pData,uItem,0);
+				if(!(pEntry->uState&TVIS_EXPANDED)){
+					TreeListToggleItem(pData,uItem,0);
 				}
 
-			pEntry = pData->pTreeItems[uNext];
-			uItem  = uNext;
+				pEntry = pData->pTreeItems[uNext];
+				uItem  = uNext;
 
-			if(!uItem)break;
+				if(!uItem)
+					break;
 
-			continue;
-			}
+				continue;
+		}
 
-		if(uItem==uOld)goto EndSel;							// Bis zum gleichen Knoten
+		if(uItem==uOld)
+			goto EndSel;							// Bis zum gleichen Knoten
 
 		uNext  = pTemp->uParent;
 
 		if(!(uRet&TVNRET_SKIPOLD))
-		if(pTemp->uState&TVIS_EXPANDED)
-			{
-			TreeListToggleItem(pData,uOld,0);
-			}
-
-		pTemp  = pData->pTreeItems[uNext];
-		uOld   = uNext;
-		}
-
-	if(!uItem)
-		{
-		if(!(uRet&TVNRET_SKIPOLD))
-		while(pTemp)										// Alten Zweig zuklappen
-			{
-			uNext = pTemp->uParent;
-
-			if(pTemp->uState&TVIS_EXPANDED)
-				{
+			if(pTemp->uState&TVIS_EXPANDED){
 				TreeListToggleItem(pData,uOld,0);
-				}
-
-			pTemp = pData->pTreeItems[uNext];
-			uOld  = uNext;
 			}
 
-		goto EndSel;
-		}
+			pTemp  = pData->pTreeItems[uNext];
+			uOld   = uNext;
+	}
 
-	if(!uOld)
-		{
+	if(!uItem){
+		if(!(uRet&TVNRET_SKIPOLD))
+			while(pTemp){										// Alten Zweig zuklappen
+				uNext = pTemp->uParent;
+
+				if(pTemp->uState&TVIS_EXPANDED){
+					TreeListToggleItem(pData,uOld,0);
+				}
+
+				pTemp = pData->pTreeItems[uNext];
+				uOld  = uNext;
+			}
+
+			goto EndSel;
+	}
+
+	if(!uOld){
 		if(!(uRet&TVNRET_SKIPNEW))
-		while(pEntry)										// Neuen Zweig aufklappen
-			{
-			uNext = pEntry->uParent;
+			while(pEntry){										// Neuen Zweig aufklappen
+				uNext = pEntry->uParent;
 
-			if(!(pEntry->uState&TVIS_EXPANDED))
-				{
-				TreeListToggleItem(pData,uItem,0);
+				if(!(pEntry->uState&TVIS_EXPANDED)){
+					TreeListToggleItem(pData,uItem,0);
 				}
 
-			pEntry = pData->pTreeItems[uNext];
-			uItem  = uNext;
+				pEntry = pData->pTreeItems[uNext];
+				uItem  = uNext;
 			}
-		}
+	}
 
-EndSel:
+	EndSel:
 
 	if(pData->uStyle&TVS_SHOWSELALWAYS)
-	if(pData->uSelectedItem)
-		{
-		TreeListEnsureVisible(pData,pData->uSelectedItem,pData->uSelectedSub);
+		if(pData->uSelectedItem){
+			TreeListEnsureVisible(pData,pData->uSelectedItem,pData->uSelectedSub);
 		}
 
-
-return 2;
+		return 2;
 }
 
 //*****************************************************************************
@@ -4148,57 +3806,48 @@ return 2;
 //	iMode		: Bit 0 = Untereintäge auch ändern
 //				  Bit 1 = Einträge abwählen
 //	Ergibt 1 wenn die Auswahl funktioniert hat, bzw. 0 bei einem Fehler
-static int TreeListSelectChilds(TreeListData *pData,unsigned uItem,int iMode)
-{
-BaseItem   *pEntry;
-unsigned	uLevel;
-unsigned	uXor;
+static int TreeListSelectChilds(TreeListData *pData,unsigned uItem,int iMode){
 
+	BaseItem   *pEntry;
+	unsigned	uLevel;
+	unsigned	uXor;
 
-	if(!(pData->uStyleEx&TVS_EX_MULTISELECT))return 0;
-
+	if(!(pData->uStyleEx&TVS_EX_MULTISELECT))
+		return 0;
 
 	uLevel = 0;
 
-	if(uItem==U(TVI_ROOT))
-		{
+	if(uItem==U(TVI_ROOT)){
 		uItem  = pData->uFirstChild;
-		}
+	}
 	else{
-		if(uItem>pData->uTreeItemsMax)return 0;
-		}
+		if(uItem>pData->uTreeItemsMax)
+			return 0;
+	}
 
-
-	if(!pData->pTreeItems[uItem])
-		{
+	if(!pData->pTreeItems[uItem]){
 		return 0;
-		}
+	}
 
 
 	uXor   = (iMode&TVIS_DESELECT)? 0:TVIS_SELECTED;
 	iMode &= TVIS_WITHCHILDS;
 
-
-	for(;;)
-		{
+	for(;;){
 		pEntry = pData->pTreeItems[uItem];
 
-		if((pEntry->uState^uXor)&TVIS_SELECTED)
-			{
+		if((pEntry->uState^uXor)&TVIS_SELECTED){
 			TreeListXorSelectItem(pData,uItem,TVC_UNKNOWN);
-			}
+		}
 
-		if(iMode && pEntry->uFirstChild)					// Auch Kinder ändern
-			{
+		if(iMode && pEntry->uFirstChild){					// Auch Kinder ändern
 			uItem = pEntry->uFirstChild;
 			uLevel++;
 			continue;
-			}
+		}
 
-
-		for(;;)												// Eine Ebene höher
-			{
-			   uItem = pEntry->uNextItem;
+		for(;;){												// Eine Ebene höher
+			uItem = pEntry->uNextItem;
 			if(uItem !=0)break;
 			if(uLevel==0)return 1;
 
@@ -4206,9 +3855,8 @@ unsigned	uXor;
 
 			uItem  = pEntry->uParent;
 			pEntry = pData->pTreeItems[uItem];
-			}
 		}
-
+	}
 }
 
 //*****************************************************************************
@@ -4220,67 +3868,60 @@ unsigned	uXor;
 //	pData		: Zeiger auf die Fensterdaten
 //	pInsert		: Zeiger auf die ein zu fügenden Daten
 //	Ergibt die Einfügeposition des neuen Eintrages oder 0 bei einem Fehler
-static unsigned TreeListInsertItem(TreeListData *pData,TV_INSERTSTRUCT *pInsert)
-{
-char	   *pTemp;
-BYTE		bFlag;
-LPCTSTR	    pText;
-LPCTSTR	    pTextTemp;
-PFNTVSORTEX pCompare;
-ExtraItem **pExOld[MAX_COLUMNS];
-ExtraItem **pExNew[MAX_COLUMNS];
-BaseItem   *pNew;
-BaseItem  **pOld;
-BaseItem  **pItems;
-BaseItem   *pEntry;
-BaseItem   *pParent;
-unsigned   *pPosNew;
-unsigned   *pPosOld;
-unsigned   *pFirst;
-unsigned   *pLast;
-unsigned	uBefore;
-unsigned	uParent;
-unsigned	uAfter;
-unsigned	uFirst;
-unsigned	uSize;
-unsigned	uBits;
-unsigned	uItem;
-unsigned	uNext;
-unsigned	uMax;
-unsigned	uPos;
-unsigned	uNum;
-int			iCmp;
-int			iNone;
-int			iCount;
-int			iShift;
+static unsigned TreeListInsertItem(TreeListData *pData,TV_INSERTSTRUCT *pInsert){
 
+	char	   *pTemp;
+	BYTE		bFlag;
+	LPCTSTR	    pText;
+	LPCTSTR	    pTextTemp;
+	PFNTVSORTEX pCompare;
+	ExtraItem **pExOld[MAX_COLUMNS];
+	ExtraItem **pExNew[MAX_COLUMNS];
+	BaseItem   *pNew;
+	BaseItem  **pOld;
+	BaseItem  **pItems;
+	BaseItem   *pEntry;
+	BaseItem   *pParent;
+	unsigned   *pPosNew;
+	unsigned   *pPosOld;
+	unsigned   *pFirst;
+	unsigned   *pLast;
+	unsigned	uBefore;
+	unsigned	uParent;
+	unsigned	uAfter;
+	unsigned	uFirst;
+	unsigned	uSize;
+	unsigned	uBits;
+	unsigned	uItem;
+	unsigned	uNext;
+	unsigned	uMax;
+	unsigned	uPos;
+	unsigned	uNum;
+	int			iCmp;
+	int			iNone;
+	int			iCount;
+	int			iShift;
 
-	if(pData->cLockChanges)return 0;
+	if(pData->cLockChanges)
+		return 0;
 
-
-	   uParent=U(pInsert->hParent);
-	if(uParent>pData->uTreeItemsMax)						// Prüfe das Elternelement
-		{
-		if(pInsert->hParent!=TVI_ROOT)
-			{
+	uParent=U(pInsert->hParent);
+	if(uParent>pData->uTreeItemsMax){						// Prüfe das Elternelement
+		if(pInsert->hParent!=TVI_ROOT){
 			return 0;
-			}
+		}
 
 		pParent = NULL;
-		}
+	}
 	else{
-			pParent = pData->pTreeItems[uParent];
-		if(!pParent)
-			{
+		pParent = pData->pTreeItems[uParent];
+		if(!pParent){
 			if(uParent)return 0;
 			pParent = NULL;
-			}
 		}
+	}
 
-
-
-	if(pData->uTreeItemsCount+1>pData->uTreeItemsMax)		// Größe der Liste erhöhen
-		{
+	if(pData->uTreeItemsCount+1>pData->uTreeItemsMax){		// Größe der Liste erhöhen
 		pPosOld = pData->pItemPos;
 		pOld	= pData->pTreeItems;
 		uMax	= pData->uTreeItemsMax;
@@ -4288,76 +3929,66 @@ int			iShift;
 		uMax   += 64;
 		pItems  = new BaseItem*[uMax+1];
 
-		if(!pItems)
-			{
+		if(!pItems){
 			return 0;
-			}
+		}
 
-			pPosNew = new unsigned[uMax];
-		if(!pPosNew)
-			{
+		pPosNew = new unsigned[uMax];
+		if(!pPosNew){
 			delete pItems;
 			return 0;
-			}
+		}
 
-		for(uPos=1;uPos<pData->uColumnCount;uPos++)
-			{
+		for(uPos=1;uPos<pData->uColumnCount;uPos++){
 			pExOld[uPos] = pData->pExtraItems[uPos-1];
 			pExNew[uPos] = new ExtraItem*[uMax+1];
 
-			if(!pExNew[uPos])
-				{
-				for(uPos--;uPos>0;uPos--)delete pExNew[uPos];
+			if(!pExNew[uPos]){
+				for(uPos--;uPos>0;uPos--)
+					delete pExNew[uPos];
 				delete pPosNew;
 				delete pItems;
 				return 0;
-				}
 			}
+		}
 
 		memcpy(pItems ,pData->pTreeItems       ,sizeof(BaseItem*)*(     pData->uTreeItemsMax+1));
 		memset(pItems +pData->uTreeItemsMax+1,0,sizeof(BaseItem*)*(uMax-pData->uTreeItemsMax  ));
 		memcpy(pPosNew,pData->pItemPos         ,sizeof(unsigned )*(     pData->uTreeItemsCount));
 		memset(pPosNew+pData->uTreeItemsCount,0,sizeof(unsigned )*(uMax-pData->uTreeItemsCount));
 
-		for(uPos=1;uPos<pData->uColumnCount;uPos++)
-			{
+		for(uPos=1;uPos<pData->uColumnCount;uPos++){
 			memcpy(pExNew[uPos],pExOld[uPos]            ,sizeof(ExtraItem*)*(     pData->uTreeItemsMax+1));
 			memset(pExNew[uPos]+pData->uTreeItemsMax+1,0,sizeof(ExtraItem*)*(uMax-pData->uTreeItemsMax  ));
 			pData->pExtraItems[uPos-1]=pExNew[uPos];
 			delete pExOld[uPos];
-			}
+		}
 
 		pData->uTreeItemsMax = uMax;
 		pData->pTreeItems	 = pItems;
 		pData->pItemPos		 = pPosNew;
 		delete pPosOld;
 		delete pOld;
-		}
+	}
 
-
-//******************** Den neuen Eintrag erzeugen *****************************
-
-
+	//******************** Den neuen Eintrag erzeugen *****************************
 	pItems	= pData->pTreeItems;
 	uPos	= pData->uNextSeachPos+1;
 	pTemp	= new char[sizeof(BaseItem)+pData->uUserDataSize];
 	pNew	= (BaseItem*)pTemp;
 
-	if(!pNew)												// Konnte der Speicher reserviert werden
-		{
+	if(!pNew){												// Konnte der Speicher reserviert werden
 		return 0;
-		}
+	}
 
-	if(pData->uUserDataSize)								// Die Userdaten auf 0 setzen
-		{
+	if(pData->uUserDataSize){								// Die Userdaten auf 0 setzen
 		memset(pTemp+sizeof(BaseItem),0,pData->uUserDataSize);
-		}
+	}
 
-	for(;;uPos++)											// Suche freie Position
-		{
+	for(;;uPos++){											// Suche freie Position
 		if(uPos>pData->uTreeItemsMax)uPos=1;
 		if(pItems[uPos]==NULL)break;
-		}
+	}
 
 	pData->uNextSeachPos = uPos;
 
@@ -4365,84 +3996,74 @@ int			iShift;
 
 	uBits = pInsert->item.mask;
 
-	if(uBits&TVIF_STATE)
-		{
+	if(uBits&TVIF_STATE){
 		pNew->uState = pInsert->item.state&pInsert->item.stateMask;
-		}
+	}
 	else{
 		if(  pData->uStyle  &TVS_CHECKBOXES)
-		if(!(pData->uStyleEx&TVS_EX_BITCHECKBOX))
-			{
-			pNew->uState=0x1000;
+			if(!(pData->uStyleEx&TVS_EX_BITCHECKBOX)){
+				pNew->uState=0x1000;
 			}
-		}
+	}
 
-	if(uBits&TVIF_PARAM)
-		{
+	if(uBits&TVIF_PARAM){
 		pNew->lParam = pInsert->item.lParam;
-		}
+	}
 
-	if(uBits&TVIF_IMAGE)
-		{
-		   pNew->iImage = pInsert->item.iImage;
-		if(pNew->iImage==I_IMAGECALLBACK)pNew->bCallback|=TVIF_IMAGE;
-		}
+	if(uBits&TVIF_IMAGE){
+		pNew->iImage = pInsert->item.iImage;
+		if(pNew->iImage==I_IMAGECALLBACK)
+			pNew->bCallback|=TVIF_IMAGE;
+	}
 
-	if(uBits&TVIF_SELECTEDIMAGE)
-		{
-		   pNew->iSelectedImage = pInsert->item.iSelectedImage;
-		if(pNew->iSelectedImage==I_IMAGECALLBACK)pNew->bCallback|=TVIF_SELECTEDIMAGE;
-		}
+	if(uBits&TVIF_SELECTEDIMAGE){
+		pNew->iSelectedImage = pInsert->item.iSelectedImage;
+		if(pNew->iSelectedImage==I_IMAGECALLBACK)
+			pNew->bCallback|=TVIF_SELECTEDIMAGE;
+	}
 
-	if(uBits&TVIF_CHILDREN)									// Art der Schaltflächen
-		{
-		switch(pInsert->item.cChildren)
-			{
-		case  0:											break;
-		case  1:		pNew->bFlags   |=TVIX_HASBUTTON;	break;
-		case  I_CCB:	pNew->bCallback|=TVIF_CHILDREN;		break;
-		default:		pNew->bFlags   |=TVIX_VARBUTTON;	break;
-			}
+	if(uBits&TVIF_CHILDREN){									// Art der Schaltflächen
+		switch(pInsert->item.cChildren){
+			case  0:											break;
+			case  1:		pNew->bFlags   |=TVIX_HASBUTTON;	break;
+			case  I_CCB:	pNew->bCallback|=TVIF_CHILDREN;		break;
+			default:		pNew->bFlags   |=TVIX_VARBUTTON;	break;
 		}
+	}
 	else{
 		pNew->bFlags |=TVIX_VARBUTTON;
-		}
+	}
 
-	if(pData->uStyle&TVS_SINGLEEXPAND)						// Nicht aufklappen bei Einzelmodus
-		{
+	if(pData->uStyle&TVS_SINGLEEXPAND){						// Nicht aufklappen bei Einzelmodus
 		pNew->uState &= ~TVIS_EXPANDED;
-		}
+	}
 
-	if(uBits&TVIF_TEXT)										// Text einfügen
-		{
-		if(pInsert->item.pszText==LPSTR_TEXTCALLBACK)
-			{
+	if(uBits&TVIF_TEXT){										// Text einfügen
+		if(pInsert->item.pszText==LPSTR_TEXTCALLBACK){
 			pNew->bCallback|= TVIF_TEXT;
 			pNew->uTextSize = 0;
 			pNew->pText		= 0;
-			}
+		}
 		else{
 			pNew->uTextSize	= (WORD)str_len(pInsert->item.pszText);
 			pNew->pText		= new TCHAR[pNew->uTextSize+1];
 			memcpy(pNew->pText,pInsert->item.pszText,sizeof(TCHAR)*(pNew->uTextSize+1));
-			}
 		}
+	}
 	else{
 		pNew->pText		= new TCHAR[1];
 		pNew->pText[0]	= 0;
 		pNew->uTextSize	= 0;
-		}
+	}
 
-
-	if(!pParent)											// Einen Root-Eintrag einfügen
-		{
+	if(!pParent){											// Einen Root-Eintrag einfügen
 		pNew->uParent	= 0;
 		uParent			= 0;
 		bFlag			= 0;
 		uFirst			= 0xFFFFFFFF;
 		pFirst			= &pData->uFirstChild;
 		pLast			= &pData->uLastChild;
-		}
+	}
 	else{													// Einen Tree-Eintrag einfügen
 		pNew->uParent	=  uParent;
 		pNew->uLevel	=  pParent->uLevel+1;
@@ -4451,38 +4072,30 @@ int			iShift;
 		pLast			= &pParent->uLastChild;
 		bFlag			=  pParent->bFlags;
 
-		if(pParent->bFlags&TVIX_VARBUTTON)
-			{
+		if(pParent->bFlags&TVIX_VARBUTTON){
 			pParent->bFlags|=TVIX_HASBUTTON;
-			}
 		}
+	}
 
-
-//******************** Eintrage einfügen **************************************
-
-
+	//******************** Eintrage einfügen **************************************
 	uAfter = U(pInsert->hInsertAfter);
 
-	switch(uAfter)
-		{
-	case U(TVI_BEFORE):										// Nach einem Eintrag einfügen
-
-			if(pParent)										// Einen Root-Eintrag einfügen
-				{
+	switch(uAfter){
+		case U(TVI_BEFORE):										// Nach einem Eintrag einfügen
+			if(pParent){										// Einen Root-Eintrag einfügen
 				pEntry  = pParent;
 				pParent ->bFlags  = bFlag;
 				uParent = pParent->uParent;
 				pParent = pItems  [uParent];
 
-				if(!pParent)
-					{
+				if(!pParent){
 					pNew->uParent	= 0;
 					pNew->uLevel	= 0;
 					uParent			= 0;
 					uFirst			= 0xFFFFFFFF;
 					pFirst			= &pData->uFirstChild;
 					pLast			= &pData->uLastChild;
-					}
+				}
 				else{										// Einen Tree-Eintrag einfügen
 					pNew->uParent	=  uParent;
 					pNew->uLevel	=  pParent->uLevel+1;
@@ -4490,87 +4103,71 @@ int			iShift;
 					pFirst			= &pParent->uFirstChild;
 					pLast			= &pParent->uLastChild;
 
-					if(pParent->bFlags&TVIX_VARBUTTON)
-						{
+					if(pParent->bFlags&TVIX_VARBUTTON){
 						pParent->bFlags|=TVIX_HASBUTTON;
-						}
 					}
+				}
 
-				if(pEntry->uPrevItem)
-					{
+				if(pEntry->uPrevItem){
 					uAfter = pEntry->uPrevItem;
 					goto DoInsert;
-					}
 				}
+			}
 
-	case U(TVI_FIRST):										// Am Anfang einfügen
-
-			if(pFirst[0])									// Gibt es schon Einträge
-				{
+		case U(TVI_FIRST):										// Am Anfang einfügen
+			if(pFirst[0]){									// Gibt es schon Einträge
 				pEntry = pItems[pFirst[0]];
 				pEntry->uPrevItem = uPos;
-				}
+			}
 			else{
 				pFirst[0] = uPos;
 				pLast [0] = uPos;
 				break;
-				}
+			}
 
 			pNew ->uNextItem = pFirst[0];					// Eintrag einfügen
 			pFirst[0]		 = uPos;
-
 			break;
 
-
-	case U(TVI_ROOT):										// Als Root-Eintrag einfügen
-
+		case U(TVI_ROOT):										// Als Root-Eintrag einfügen
 			pNew->uParent	= 0;
 			uParent			= 0;
 			pFirst			= &pData->uFirstChild;
 			pLast			= &pData->uLastChild;
 
-
-	case U(TVI_LAST):										// Am Ende einfügen
-
-			if(pLast[0])									// Gibt es schon Einträge
-				{
+		case U(TVI_LAST):										// Am Ende einfügen
+			if(pLast[0]){									// Gibt es schon Einträge
 				pEntry = pItems[pLast[0]];
 				pEntry->uNextItem = uPos;
-				}
+			}
 			else{
 				pFirst[0] = uPos;
 				pLast [0] = uPos;
 				break;
-				}
+			}
 
 			pNew ->uPrevItem = pLast[0];					// Eintrag einfügen
 			pLast[0]		 = uPos;
-
-
 			break;
 
 
-	case U(TVI_SORTEX):										// Einfügen mittels Funktion
-
-				uItem = pFirst[0];
-			if(!uItem)										// Gibt es keine Kindeinträge
-				{
+		case U(TVI_SORTEX):										// Einfügen mittels Funktion
+			uItem = pFirst[0];
+			if(!uItem){										// Gibt es keine Kindeinträge
 				pFirst[0] = uPos;
 				pLast [0] = uPos;
 				break;
-				}
+			}
 
-			if(pNew->bCallback&TVIF_TEXT)					// Text über Callback holen
-				{
+			if(pNew->bCallback&TVIF_TEXT){					// Text über Callback holen
 				uSize=1;
 				LOCK(pData);
 				CallbackEntry(pData,pNew,uPos,TVIF_TEXT,iNone,uSize,pText);
 				UNLOCK(pData);
-				}
+			}
 			else{
 				pText = pNew->pText;
-				}
-
+			}
 
 			pData->cLockChanges=1;
 
@@ -4579,105 +4176,88 @@ int			iShift;
 			iCount	 = 0;
 			uBefore  = 0;
 
-			while(uNext)									// Zähle die Einträge
-				{
+			while(uNext){									// Zähle die Einträge
 				iCount++;
 				uNext = pItems[uNext]->uNextItem;
-				}
+			}
 
-			while(iCount>0)
-				{											// Binary-Seach Algorithnus
+			while(iCount>0){											// Binary-Seach Algorithnus
 				iShift = iCount/2;
 				uNext  = uItem;
 
-
-				while(iShift>0)
-					{
+				while(iShift>0){
 					uNext  = pItems[uNext]->uNextItem;
 					iShift--;
-					}
+				}
 
-
-				   pEntry  = pItems[uNext];
-				if(pEntry->bCallback&TVIF_TEXT)				// Text über Callback holen
-					{
+				pEntry  = pItems[uNext];
+				if(pEntry->bCallback&TVIF_TEXT){				// Text über Callback holen
 					uSize=0;
 					LOCK(pData);
 					CallbackEntry(pData,pEntry,uItem,TVIF_TEXT,iNone,uSize,pTextTemp);
 					UNLOCK(pData);
-					}
+				}
 				else{
 					pTextTemp = pEntry->pText;
-					}
+				}
 
-				   iCmp = pCompare(pData->hWnd,(HTREEITEM)uNext,pTextTemp,pText,pEntry->lParam,pInsert->item.lParam);
-				if(iCmp<0)
-					{
+				iCmp = pCompare(pData->hWnd,(HTREEITEM)uNext,pTextTemp,pText,pEntry->lParam,pInsert->item.lParam);
+				if(iCmp<0){
 					iCount -= (iCount+1)/2;
 					continue;
-					}
+				}
 
-				if(iCmp>0)
-					{
+				if(iCmp>0){
 					iCount -= iCount/2+1;
 					uBefore = uNext;
 					uItem   = pItems[uNext]->uNextItem;
 					continue;
-					}
+				}
 
 				uBefore	= pEntry->uPrevItem;
 				uItem	= uNext;
 				break;
-				}
-
+			}
 
 			pData->cLockChanges=0;
 
 			pNew->uNextItem = uItem;
 			pNew->uPrevItem = uBefore;
 
-			if(uBefore)										// Vorherigen Eintrag anpassen
-				{
+			if(uBefore){										// Vorherigen Eintrag anpassen
 				pEntry = pItems[uBefore];
 				pEntry->uNextItem = uPos;
-				}
+			}
 			else{											// Am Anfang einfügen
 				pFirst[0] = uPos;
-				}
+			}
 
-			if(uItem)										// Nächsten Eintrag anpassen
-				{
+			if(uItem){										// Nächsten Eintrag anpassen
 				pEntry = pItems[uItem];
 				pEntry->uPrevItem = uPos;
-				}
+			}
 			else{											// Am Ende anhängen
 				pLast[0] = uPos;
-				}
-
+			}
 			break;
 
-
-	case U(TVI_SORT):										// Alphapetisch einfügen
-
-				uItem = pFirst[0];
-			if(!uItem)										// Gibt es keine Kindeinträge
-				{
+		case U(TVI_SORT):										// Alphapetisch einfügen
+			uItem = pFirst[0];
+			if(!uItem){										// Gibt es keine Kindeinträge
 				pFirst[0] = uPos;
 				pLast [0] = uPos;
 				break;
-				}
+			}
 
-			if(pNew->bCallback&TVIF_TEXT)					// Text über Callback holen
-				{
+			if(pNew->bCallback&TVIF_TEXT){					// Text über Callback holen
 				uSize=1;
 				LOCK(pData);
 				CallbackEntry(pData,pNew,uPos,TVIF_TEXT,iNone,uSize,pText);
 				UNLOCK(pData);
-				}
+			}
 			else{
 				pText = pNew->pText;
-				}
-
+			}
 
 			pData->cLockChanges=1;
 
@@ -4685,57 +4265,50 @@ int			iShift;
 			iCount	= 0;
 			uBefore = 0;
 
-			while(uNext)									// Zähle die Einträge
-				{
+			while(uNext){									// Zähle die Einträge
 				iCount++;
 				uNext = pItems[uNext]->uNextItem;
-				}
+			}
 
-			while(iCount>0)
-				{											// Binary-Seach Algorithnus
+			while(iCount>0){											// Binary-Seach Algorithnus
 				iShift = iCount/2;
 				uNext  = uItem;
 
-
-				while(iShift>0)
-					{
+				while(iShift>0){
 					uNext  = pItems[uNext]->uNextItem;
 					iShift--;
-					}
+				}
 
 
-				   pEntry  = pItems[uNext];
-				if(pEntry->bCallback&TVIF_TEXT)				// Text über Callback holen
-					{
+				pEntry  = pItems[uNext];
+				if(pEntry->bCallback&TVIF_TEXT){				// Text über Callback holen
 					uSize=0;
 					LOCK(pData);
 					CallbackEntry(pData,pEntry,uItem,TVIF_TEXT,iNone,uSize,pTextTemp);
 					UNLOCK(pData);
-					}
+				}
 				else{
 					pTextTemp = pEntry->pText;
-					}
+				}
 
 				iCmp = str_icmp(pText,pTextTemp);
 
-				if(iCmp<0)
-					{
+				if(iCmp<0){
 					iCount -= (iCount+1)/2;
 					continue;
-					}
+				}
 
-				if(iCmp>0)
-					{
+				if(iCmp>0){
 					iCount -= iCount/2+1;
 					uBefore = uNext;
 					uItem   = pItems[uNext]->uNextItem;
 					continue;
-					}
+				}
 
 				uBefore	= pEntry->uPrevItem;
 				uItem	= uNext;
 				break;
-				}
+			}
 
 
 			pData->cLockChanges=0;
@@ -4743,46 +4316,39 @@ int			iShift;
 			pNew->uNextItem = uItem;
 			pNew->uPrevItem = uBefore;
 
-			if(uBefore)										// Vorherigen Eintrag anpassen
-				{
+			if(uBefore){										// Vorherigen Eintrag anpassen
 				pEntry = pItems[uBefore];
 				pEntry->uNextItem = uPos;
-				}
+			}
 			else{											// Am Anfang einfügen
 				pFirst[0] = uPos;
-				}
+			}
 
-			if(uItem)										// Nächsten Eintrag anpassen
-				{
+			if(uItem){										// Nächsten Eintrag anpassen
 				pEntry = pItems[uItem];
 				pEntry->uPrevItem = uPos;
-				}
+			}
 			else{											// Am Ende anhängen
 				pLast[0] = uPos;
-				}
-
+			}
 			break;
 
-
-	case U(TVI_AFTER):										// Nach einem Eintrag einfügen
-
+		case U(TVI_AFTER):										// Nach einem Eintrag einfügen
 			uAfter  = uParent;
 
-			if(pParent)										// Einen Root-Eintrag einfügen
-				{
+			if(pParent){										// Einen Root-Eintrag einfügen
 				pParent ->bFlags  = bFlag;
 				uParent = pParent->uParent;
 				pParent = pItems  [uParent];
 
-				if(!pParent)
-					{
+				if(!pParent){
 					pNew->uParent	= 0;
 					pNew->uLevel	= 0;
 					uParent			= 0;
 					uFirst			= 0xFFFFFFFF;
 					pFirst			= &pData->uFirstChild;
 					pLast			= &pData->uLastChild;
-					}
+				}
 				else{										// Einen Tree-Eintrag einfügen
 					pNew->uParent	=  uParent;
 					pNew->uLevel	=  pParent->uLevel+1;
@@ -4790,152 +4356,135 @@ int			iShift;
 					pFirst			= &pParent->uFirstChild;
 					pLast			= &pParent->uLastChild;
 
-					if(pParent->bFlags&TVIX_VARBUTTON)
-						{
+					if(pParent->bFlags&TVIX_VARBUTTON){
 						pParent->bFlags|=TVIX_HASBUTTON;
-						}
 					}
 				}
+			}
 
- 	default:												// Hinter einen Eintrag einfügen
-	DoInsert:
-				uItem = pFirst[0];
-			if(!uItem)										// Gibt es keine Kindeinträge
-				{
+		default:												// Hinter einen Eintrag einfügen
+DoInsert:
+			uItem = pFirst[0];
+			if(!uItem){										// Gibt es keine Kindeinträge
 				pFirst[0] = uPos;
 				pLast [0] = uPos;
 				break;
-				}
+			}
 
-			if(uAfter>pData->uTreeItemsMax)
-				{
-				if((uAfter&0xFFF00000)==0xFFE00000)			// In einer genauen Reihe nach Patent einfügen
-					{
+			if(uAfter>pData->uTreeItemsMax){
+				if((uAfter&0xFFF00000)==0xFFE00000){			// In einer genauen Reihe nach Patent einfügen
 					uAfter &= 0xFFFFF;
 
-						uItem = pFirst[0];
-					if(!uItem)								// Gibt es keine Kindeinträge
-						{
+					uItem = pFirst[0];
+					if(!uItem){								// Gibt es keine Kindeinträge
 						pFirst[0] = uPos;
 						pLast [0] = uPos;
 						break;
-						}
+					}
 
-					if(uAfter==0)							// In die erste Reihe einfügen
-						{
+					if(uAfter==0){							// In die erste Reihe einfügen
 						pEntry = pItems[uItem];
 						pEntry->uPrevItem = uPos;
 						pNew  ->uNextItem = uItem;
 						pFirst[0]		  = uPos;
 						break;
-						}
+					}
 
 					uNum    = 1;
 					uBefore	= 0;
-															// Suche Einfügereihe
-					for(;uItem;uItem=pItems[uItem]->uNextItem)
-						{
+					// Suche Einfügereihe
+					for(;uItem;uItem=pItems[uItem]->uNextItem){
 						uBefore = uItem;
 
-						if(uNum==uAfter)
-							{
+						if(uNum==uAfter){
 							uItem = pItems[uItem]->uNextItem;
 							break;
-							}
+						}
 
 						uNum++;
-						}
+					}
 
 					pNew->uNextItem = uItem;
 					pNew->uPrevItem = uBefore;
 
-					if(uBefore)								// Vorherigen Eintrag anpassen
-						{
+					if(uBefore){								// Vorherigen Eintrag anpassen
 						pEntry = pItems[uBefore];
 						pEntry->uNextItem = uPos;
-						}
+					}
 					else{									// Am Anfang einfügen
 						pFirst[0] = uPos;
-						}
-
-					if(uItem)								// Nächsten Eintrag anpassen
-						{
-						pEntry = pItems[uItem];
-						pEntry->uPrevItem = uPos;
-						}
-					else{									// Am Ende anhängen
-						pLast[0] = uPos;
-						}
-
-					break;
 					}
 
-				pEntry  = NULL;
+					if(uItem){								// Nächsten Eintrag anpassen
+						pEntry = pItems[uItem];
+						pEntry->uPrevItem = uPos;
+					}
+					else{									// Am Ende anhängen
+						pLast[0] = uPos;
+					}
+
+					break;
 				}
+
+				pEntry  = NULL;
+			}
 			else{
 				pEntry  = pItems[uAfter];
-				}
+			}
 
-
-			if(pEntry && uParent==pEntry->uParent)			// Stimmt der Elterneintrag ?
-				{
+			if(pEntry && uParent==pEntry->uParent){			// Stimmt der Elterneintrag ?
 				uItem   = pEntry->uNextItem;
 				uBefore = uAfter;
-				}
+			}
 			else{
 				uItem   = 0;
 				uBefore = pLast[0];
 				pEntry  = pItems[uBefore];
-				}
+			}
 
 			pNew->uNextItem = uItem;
 			pNew->uPrevItem = uBefore;
 
-			if(uBefore)										// Vorherigen Eintrag anpassen
-				{
+			if(uBefore){										// Vorherigen Eintrag anpassen
 				pEntry->uNextItem = uPos;
-				}
+			}
 			else{											// Am Anfang einfügen
 				pFirst[0] = uPos;
-				}
+			}
 
-			if(uItem)										// Nächsten Eintrag anpassen
-				{
+			if(uItem){										// Nächsten Eintrag anpassen
 				pEntry = pItems[uItem];
 				pEntry->uPrevItem = uPos;
-				}
+			}
 			else{											// Am Ende anhängen
 				pLast[0] = uPos;
-				}
+			}
 
 			break;
-		}
-
+	}
 
 	pItems[uPos] = pNew;
 	pData->uTreeItemsCount++;
-															// Die Anzeigezeilen akualisieren
-	if(!pParent || !uFirst || (pParent->uState&TVIS_EXPANDED))
-		{
-			uItem = pNew->uPrevItem;
-		if(!uItem)uItem = uParent;
+	// Die Anzeigezeilen akualisieren
+	if(!pParent || !uFirst || (pParent->uState&TVIS_EXPANDED)){
+		uItem = pNew->uPrevItem;
+		if(!uItem)
+			uItem = uParent;
 
-		if(!uItem)UpdateItems(pData,0);
+		if(!uItem)
+			UpdateItems(pData,0);
 		else{
-			   pEntry = pItems[uItem];
-			if(pEntry && pEntry->uShowPos)UpdateItems(pData,uItem);
-			}
+			pEntry = pItems[uItem];
+			if(pEntry && pEntry->uShowPos)
+				UpdateItems(pData,uItem);
 		}
+	}
 
-	if(pNew->uState&TVIS_SELECTED)							// Den ausgewählten Eintrag auswählen
-		{
+	if(pNew->uState&TVIS_SELECTED){							// Den ausgewählten Eintrag auswählen
 		TreeListSelectItem(pData,uPos,0,TVC_UNKNOWN);
-		}
+	}
 
-
-
-
-return uPos;
+	return uPos;
 }
 
 //*****************************************************************************
@@ -4947,367 +4496,339 @@ return uPos;
 //	pData		: Zeiger auf die Fensterdaten
 //	pItem		: Zeiger auf die ein zu ändernden Daten
 //	Ergibt 1 wenn ok oder 0 bei einem Fehler
-static int TreeListSetItem(TreeListData *pData,const TV_ITEM *pItem)
-{
-BYTE			bCall;
-BYTE			bFlags;
-ExtraItem	  **pList;
-ExtraItem	   *pExtra;
-BaseItem	   *pEntry;
-unsigned		uChange;
-unsigned		uMask;
-unsigned		uBits;
-unsigned		uItem;
-unsigned		uSub;
-unsigned		uLen;
-int				iVal;
-int				iRet;
+static int TreeListSetItem(TreeListData *pData,const TV_ITEM *pItem){
 
+	BYTE			bCall;
+	BYTE			bFlags;
+	ExtraItem	  **pList;
+	ExtraItem	   *pExtra;
+	BaseItem	   *pEntry;
+	unsigned		uChange;
+	unsigned		uMask;
+	unsigned		uBits;
+	unsigned		uItem;
+	unsigned		uSub;
+	unsigned		uLen;
+	int				iVal;
+	int				iRet;
 
 	uChange = 0;
 
+	uItem = U(pItem->hItem);
+	if(uItem>pData->uTreeItemsMax)
+		return 0;
 
-	   uItem = U(pItem->hItem);
-	if(uItem>pData->uTreeItemsMax)return 0;
-
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return 0;
-
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return 0;
 
 	uBits = pItem->mask;
 
-	if(uBits&TVIF_SUBITEM)									// Einen Extraeintrag ändern
-		{
-		   uSub = pItem->cChildren;
-		if(uSub>0)
-			{
-			if(uSub>= pData->uColumnCount)return 0;
+	if(uBits & TVIF_SUBITEM){									// Einen Extraeintrag ändern
+		uSub = pItem->cChildren;
+		if(uSub>0){
+			if(uSub>= pData->uColumnCount)
+				return 0;
 			pList	= pData->pExtraItems[uSub-1];
 			pExtra	= pList[uItem];
 
-			if(!pExtra)										// Einen neuen Eintrag erzeugen
-				{
+			if(!pExtra){										// Einen neuen Eintrag erzeugen
 				pExtra  = new ExtraItem;
 				memset(pExtra,0,sizeof(ExtraItem));
 				pExtra->iImage = TV_NOIMAGE;
 				pExtra->uState = pEntry->uState&(TVIS_BOLD|TVIS_UNTERLINE);
 				pList[uItem]   = pExtra;
-				}
+			}
 
-			if(uBits&TVIF_PARAM)
-				{
+			if(uBits & TVIF_PARAM){
 				pEntry->lParam	= pItem->lParam;
-				}
+			}
 
-			if((uBits&TVIF_IMAGE) && pExtra->iImage!=pItem->iImage)
-				{
-				if(pData->hImages)uChange=1;
-					pExtra->iImage =pItem->iImage;
+			if((uBits & TVIF_IMAGE) && pExtra->iImage!=pItem->iImage){
+				if(pData->hImages)
+					uChange=1;
+				pExtra->iImage =pItem->iImage;
 				if( pExtra->iImage==I_IMAGECALLBACK)
-						pExtra->bCallback |= TVIF_IMAGE;
-				else	pExtra->bCallback &= TVIF_IMAGE;
-				}
+					pExtra->bCallback |= TVIF_IMAGE;
+				else	
+					pExtra->bCallback &= TVIF_IMAGE;
+			}
 
-			if(uBits&TVIF_TEXT)								// Einen neuen Text einstellen
-				{
-				if(pItem->pszText==LPSTR_TEXTCALLBACK)
-					{
-					if(pExtra->pText)delete pExtra->pText;
+			if(uBits & TVIF_TEXT){								// Einen neuen Text einstellen
+				if(pItem->pszText==LPSTR_TEXTCALLBACK){
+					if(pExtra->pText)
+						delete pExtra->pText;
 					pExtra->bCallback|= TVIF_TEXT;
 					pExtra->uTextSize = 0;
 					pExtra->pText	  = 0;
 					uChange			  = 1;
-					}
+				}
 				else{
 					uLen = str_len(pItem->pszText);
 
-					if(uLen>pExtra->uTextSize || !pExtra->pText)
-						{
-						if(pExtra->pText)delete pExtra->pText;
+					if(uLen>pExtra->uTextSize || !pExtra->pText){
+						if(pExtra->pText)
+							delete pExtra->pText;
 						pExtra->pText=new TCHAR[uLen+1];
-						}
+					}
 
 					memcpy(pExtra->pText,pItem->pszText,(uLen+1)*sizeof(TCHAR));
 					pExtra->bCallback  &=~TVIF_TEXT;
 					pExtra->uTextSize   = (WORD)uLen;
 					pExtra->iTextPixels = 0;
 					uChange=1;
-					}
 				}
+			}
 
-			if(uBits&TVIF_STATE)							// Den Status ändern
-				{
+			if(uBits & TVIF_STATE){							// Den Status ändern
 				uMask			=  pItem->stateMask&~TVIS_BASEFLAGS;
 				uBits			=  uMask&(pExtra->uState^pItem->state);
 				uBits		   |= (pItem->stateMask& TVIS_BASEFLAGS)&(pEntry->uState^pItem->state);
 				pExtra->uState &= ~uMask;
 				pExtra->uState |=  uMask&pItem->state;
 
-				if((uBits&TVIS_OVERLAYMASK|TVIS_CUT) && (pData->hImages || pData->aColumn[uSub].bEdit>=TVAX_CHECK))
-					{
+				if((uBits & TVIS_OVERLAYMASK|TVIS_CUT) && (pData->hImages || pData->aColumn[uSub].bEdit>=TVAX_CHECK)){
 					uChange=1;								// Ein Icon hats sich verändert
-					}
-
-				if(uBits&(TVIS_BOLD|TVIS_DROPHILITED))
-					{
-					pExtra->iTextPixels=0;
-					uChange=1;
-					}
-
-				if((uBits&TVIS_EXPANDED) && pEntry->uFirstChild)
-					{
-					   iVal=TreeListToggleItem(pData,uItem,0);
-					if(iVal<0)return 0;
-
-						pEntry = pData->pTreeItems[uItem];
-					if(!pEntry)return 0;
-					}
-
-				if(uBits&TVIS_SELECTED)						// Hat sich die Auswahl geändert
-					{
-					iVal = (pData->uStyleEx&TVS_EX_SUBSELECT)? uSub:0;
-
-					if(pItem->state&TVIS_SELECTED)
-						{
-						iRet = TreeListSelectItem(pData,uItem,iVal,TVC_UNKNOWN);
-						}
-					else if(pData->uStyleEx&TVS_EX_MULTISELECT)
-						{
-							   TreeListSelectItem   (pData,0  ,0,TVC_UNKNOWN);
-						iRet = TreeListXorSelectItem(pData,uItem,TVC_UNKNOWN);
-						}
-					else{
-						iRet = TreeListSelectItem(pData,0,0,TVC_UNKNOWN);
-						}
-
-
-						pEntry = pData->pTreeItems[uItem];
-					if(!pEntry)return 0;
-
-					if(iRet>=2)
-						{
-							pList	= pData->pExtraItems[uSub-1];
-							pExtra	= pList[uItem];
-						if(!pExtra)return 0;
-						}
-					else if(iRet==1)
-						{
-						uChange=1;
-						}
-					}
 				}
 
-			if(!uChange || !pEntry->uShowPos)return 1;		// Neuzeichnen des Eintrages
+				if(uBits & (TVIS_BOLD|TVIS_DROPHILITED)){
+					pExtra->iTextPixels=0;
+					uChange=1;
+				}
+
+				if((uBits & TVIS_EXPANDED) && pEntry->uFirstChild){
+					iVal=TreeListToggleItem(pData,uItem,0);
+					if(iVal<0)
+						return 0;
+
+					pEntry = pData->pTreeItems[uItem];
+					if(!pEntry)
+						return 0;
+				}
+
+				if(uBits & TVIS_SELECTED){						// Hat sich die Auswahl geändert
+					iVal = (pData->uStyleEx&TVS_EX_SUBSELECT) ? uSub : 0;
+
+					if(pItem->state & TVIS_SELECTED){
+						iRet = TreeListSelectItem(pData,uItem,iVal,TVC_UNKNOWN);
+					}
+					else if(pData->uStyleEx & TVS_EX_MULTISELECT){
+						TreeListSelectItem(pData,0  ,0,TVC_UNKNOWN);
+						iRet = TreeListXorSelectItem(pData,uItem,TVC_UNKNOWN);
+					}
+					else{
+						iRet = TreeListSelectItem(pData,0,0,TVC_UNKNOWN);
+					}
+
+					pEntry = pData->pTreeItems[uItem];
+					if(!pEntry)
+						return 0;
+
+					if(iRet>=2){
+						pList	= pData->pExtraItems[uSub-1];
+						pExtra	= pList[uItem];
+						if(!pExtra)
+							return 0;
+					}
+					else 
+						if(iRet==1){
+							uChange=1;
+						}
+				}
+			}
+
+			if(!uChange || !pEntry->uShowPos)
+				return 1;		// Neuzeichnen des Eintrages
 
 			UpdateRect(pData,uItem,uSub);
 
 			return 1;
 			}
 
-		uBits &= ~TVIF_CHILDREN;
+			uBits &= ~TVIF_CHILDREN;
 		}
 
 
-//******************** Einen Basis Eintrag ändern *****************************
+		//******************** Einen Basis Eintrag ändern *****************************
 
 
-	if(uBits&TVIF_PARAM)
-		{
-		pEntry->lParam	= pItem->lParam;
+		if(uBits & TVIF_PARAM){
+			pEntry->lParam	= pItem->lParam;
 		}
 
-	if((uBits&TVIF_IMAGE) && pEntry->iImage!=pItem->iImage)
-		{
-		     pEntry->iImage = pItem->iImage;
-		if(!(pEntry->uState&TVIS_SELECTED) && pData->hImages)uChange=1;
-		if(  pEntry->iImage==I_IMAGECALLBACK)
+		if((uBits & TVIF_IMAGE) && pEntry->iImage!=pItem->iImage){
+			pEntry->iImage = pItem->iImage;
+			if(!(pEntry->uState&TVIS_SELECTED) && pData->hImages)
+				uChange=1;
+			if(  pEntry->iImage==I_IMAGECALLBACK)
 				pEntry->bCallback |= TVIF_IMAGE;
-		else	pEntry->bCallback &= TVIF_IMAGE;
+			else
+				pEntry->bCallback &= TVIF_IMAGE;
 		}
 
-	if((uBits&TVIF_SELECTEDIMAGE) && pEntry->iSelectedImage!=pItem->iSelectedImage)
-		{
+		if((uBits & TVIF_SELECTEDIMAGE) && pEntry->iSelectedImage!=pItem->iSelectedImage){
 			pEntry->iSelectedImage = pItem->iSelectedImage;
-		if((pEntry->uState&TVIS_SELECTED) && pData->hImages)uChange=1;
-		if( pEntry->iSelectedImage==I_IMAGECALLBACK)
+			if((pEntry->uState&TVIS_SELECTED) && pData->hImages)
+				uChange=1;
+			if( pEntry->iSelectedImage==I_IMAGECALLBACK)
 				pEntry->bCallback |= TVIF_SELECTEDIMAGE;
-		else	pEntry->bCallback &= TVIF_SELECTEDIMAGE;
+			else
+				pEntry->bCallback &= TVIF_SELECTEDIMAGE;
 		}
 
-	if(uBits&TVIF_CHILDREN)
-		{
-		bCall  = pEntry->bCallback;
-		bFlags = pEntry->bFlags;
+		if(uBits & TVIF_CHILDREN){
+			bCall  = pEntry->bCallback;
+			bFlags = pEntry->bFlags;
 
-		switch(pItem->cChildren)
-			{
-		case  0:		pEntry->bCallback &= ~TVIF_CHILDREN;
-						pEntry->bFlags    &= ~TVIX_HASBUTTON;
-						pEntry->bFlags    |=  TVIX_VARBUTTON;
-						break;
+			switch(pItem->cChildren){
+				case  0:		pEntry->bCallback &= ~TVIF_CHILDREN;
+					pEntry->bFlags    &= ~TVIX_HASBUTTON;
+					pEntry->bFlags    |=  TVIX_VARBUTTON;
+					break;
 
-		case  1:		pEntry->bCallback &= ~TVIF_CHILDREN;
-						pEntry->bFlags    &=  TVIX_VARBUTTON;
-						pEntry->bFlags    |=  TVIX_HASBUTTON;
-						break;
+				case  1:		pEntry->bCallback &= ~TVIF_CHILDREN;
+								pEntry->bFlags    &=  TVIX_VARBUTTON;
+								pEntry->bFlags    |=  TVIX_HASBUTTON;
+								break;
 
-		case  I_CCB:	pEntry->bCallback |=  TVIF_CHILDREN;
-						pEntry->bFlags    &= ~TVIX_VARBUTTON;
-						break;
+				case  I_CCB:	pEntry->bCallback |=  TVIF_CHILDREN;
+								pEntry->bFlags    &= ~TVIX_VARBUTTON;
+								break;
 
-		default:		pEntry->bCallback &= ~TVIF_CHILDREN;
-						pEntry->bFlags    |=  TVIX_VARBUTTON;
+				default:		pEntry->bCallback &= ~TVIF_CHILDREN;
+								pEntry->bFlags    |=  TVIX_VARBUTTON;
 
-						if(pEntry->uFirstChild)
-								pEntry->bFlags |= TVIX_HASBUTTON;
-						else	pEntry->bFlags &=~TVIX_HASBUTTON;
+								if(pEntry->uFirstChild)
+									pEntry->bFlags |= TVIX_HASBUTTON;
+								else	
+									pEntry->bFlags &=~TVIX_HASBUTTON;
 			}
 
-		if(bCall!=pEntry->bCallback || bFlags!=pEntry->bFlags)
-			{
-			uChange=1;
+			if(bCall!=pEntry->bCallback || bFlags!=pEntry->bFlags){
+				uChange=1;
 			}
 		}
 
-	if(uBits&TVIF_TEXT)										// Einen neuen Text einstellen
-		{
-		if(pItem->pszText==LPSTR_TEXTCALLBACK)
-			{
-			if(pEntry->pText)delete pEntry->pText;
-			pEntry->bCallback|= TVIF_TEXT;
-			pEntry->uTextSize = 0;
-			pEntry->pText	  = 0;
-			uChange			  = 1;
+		if(uBits & TVIF_TEXT){										// Einen neuen Text einstellen
+			if(pItem->pszText==LPSTR_TEXTCALLBACK){
+				if(pEntry->pText)
+					delete pEntry->pText;
+				pEntry->bCallback|= TVIF_TEXT;
+				pEntry->uTextSize = 0;
+				pEntry->pText	  = 0;
+				uChange			  = 1;
 			}
-		else{
-			uLen = str_len(pItem->pszText);
+			else{
+				uLen = str_len(pItem->pszText);
 
-			if(uLen>pEntry->uTextSize)
-				{
-				if(pEntry->pText)delete pEntry->pText;
-				pEntry->pText=new TCHAR[uLen+1];
+				if(uLen>pEntry->uTextSize){
+					if(pEntry->pText)
+						delete pEntry->pText;
+					pEntry->pText=new TCHAR[uLen+1];
 				}
 
-			memcpy(pEntry->pText,pItem->pszText,(uLen+1)*sizeof(TCHAR));
-			pEntry->bCallback  &=~TVIF_TEXT;
-			pEntry->uTextSize   = (WORD)uLen;
-			pEntry->iTextPixels = 0;
-			uChange=1;
+				memcpy(pEntry->pText,pItem->pszText,(uLen+1)*sizeof(TCHAR));
+				pEntry->bCallback  &=~TVIF_TEXT;
+				pEntry->uTextSize   = (WORD)uLen;
+				pEntry->iTextPixels = 0;
+				uChange=1;
 			}
 		}
 
-	if(uBits&TVIF_STATE)
-		{
-		uMask = pItem->stateMask;
+		if(uBits & TVIF_STATE){
+			uMask = pItem->stateMask;
 
-		if(pData->uStyle&TVS_SINGLEEXPAND)					// Nicht aufklappen bei Einzelmodus
-			{
-			uMask &= ~TVIS_EXPANDED;
+			if(pData->uStyle&TVS_SINGLEEXPAND){					// Nicht aufklappen bei Einzelmodus
+				uMask &= ~TVIS_EXPANDED;
 			}
 
-		uBits			=  uMask&(pEntry->uState^pItem->state);
-		pEntry->uState &= ~uMask;
-		pEntry->uState |=  uMask&pItem->state;
+			uBits			=  uMask&(pEntry->uState^pItem->state);
+			pEntry->uState &= ~uMask;
+			pEntry->uState |=  uMask&pItem->state;
 
 
-		if((uBits&(TVIS_OVERLAYMASK|TVIS_CUT)) && pData->hImages)
-			{
-			uChange=1;
+			if((uBits&(TVIS_OVERLAYMASK|TVIS_CUT)) && pData->hImages){
+				uChange=1;
 			}
 
-		if(uBits&TVIS_STATEIMAGEMASK)						// Haben sich die State-Bits verändert
-			{
-			if(pData->hStates)
-				{
+			if(uBits & TVIS_STATEIMAGEMASK){						// Haben sich die State-Bits verändert
+				if(pData->hStates){
+					uChange = 1;
+				}
+
+				if(pData->uStyleEx&TVS_EX_BITCHECKBOX){
+					if(pEntry->uState&0x1000){
+						pData->uSingleSel = uItem;
+					}
+					else 
+						if(pData->uSingleSel==uItem){
+							pData->uSingleSel = 0;
+						}
+				}
+				else{
+					if((pEntry->uState&TVIS_STATEIMAGEMASK)==0x2000){
+						pData->uSingleSel = uItem;
+					}
+					else 
+						if(pData->uSingleSel==uItem){
+							pData->uSingleSel = 0;
+						}
+				}
+			}
+
+			if(uBits & (TVIS_BOLD|TVIS_DROPHILITED)){
+				pEntry->iTextPixels = 0;
 				uChange = 1;
-				}
-
-			if(pData->uStyleEx&TVS_EX_BITCHECKBOX)
-				{
-				if(pEntry->uState&0x1000)
-					{
-					pData->uSingleSel = uItem;
-					}
-				else if(pData->uSingleSel==uItem)
-					{
-					pData->uSingleSel = 0;
-					}
-				}
-			else{
-				if((pEntry->uState&TVIS_STATEIMAGEMASK)==0x2000)
-					{
-					pData->uSingleSel = uItem;
-					}
-				else if(pData->uSingleSel==uItem)
-					{
-					pData->uSingleSel = 0;
-					}
-				}
 			}
 
-		if(uBits&(TVIS_BOLD|TVIS_DROPHILITED))
-			{
-			pEntry->iTextPixels = 0;
-			uChange = 1;
-			}
+			if(uBits & TVIS_SELECTED){								// Hat sich die Auswahl geändert
+				pEntry->uState ^= TVIS_SELECTED;
 
-		if(uBits&TVIS_SELECTED)								// Hat sich die Auswahl geändert
-			{
-			pEntry->uState ^= TVIS_SELECTED;
-
-			if(pItem->state&TVIS_SELECTED)
-				{
-				iRet = TreeListSelectItem(pData,uItem,0,TVC_UNKNOWN);
+				if(pItem->state&TVIS_SELECTED){
+					iRet = TreeListSelectItem(pData,uItem,0,TVC_UNKNOWN);
 				}
-			else if(pData->uStyleEx&TVS_EX_MULTISELECT)
-				{
-					   TreeListSelectItem   (pData,0  ,0,TVC_UNKNOWN);
-				iRet = TreeListXorSelectItem(pData,uItem,TVC_UNKNOWN);
-				}
-			else{
-				iRet = TreeListSelectItem(pData,0,0,TVC_UNKNOWN);
-				}
+				else
+					if(pData->uStyleEx&TVS_EX_MULTISELECT){
+						TreeListSelectItem   (pData,0  ,0,TVC_UNKNOWN);
+						iRet = TreeListXorSelectItem(pData,uItem,TVC_UNKNOWN);
+					}
+					else{
+						iRet = TreeListSelectItem(pData,0,0,TVC_UNKNOWN);
+					}
 
 				pEntry = pData->pTreeItems[uItem];
-			if(!pEntry)return 0;
+				if(!pEntry)
+					return 0;
 
-			if(iRet==1)
-				{
-				uChange=1;
+				if(iRet==1){
+					uChange=1;
 				}
 			}
 
-		if((uBits&TVIS_EXPANDED) && pEntry->uFirstChild)	// Sollen Teile auf/zugeklappt werden
-			{
-			uMask		   &= TVIS_EXPANDPARTIAL|TVIS_EXPANDPARTIAL;
-			pEntry->uState ^= TVIS_EXPANDED;
-			pEntry->uState ^= uBits&uMask;
-			iVal			= uMask&pItem->state;
+			if((uBits & TVIS_EXPANDED) && pEntry->uFirstChild){	// Sollen Teile auf/zugeklappt werden
+				uMask		   &= TVIS_EXPANDPARTIAL|TVIS_EXPANDPARTIAL;
+				pEntry->uState ^= TVIS_EXPANDED;
+				pEntry->uState ^= uBits&uMask;
+				iVal			= uMask&pItem->state;
 
-			   iRet=TreeListToggleItem(pData,uItem,iVal);
-			if(iRet)										// Abbruch oder Fehler beim Auf/Zuklappen
-				{
-				if(uChange && pEntry->uShowPos)				// Neuzeichnen des Eintrages
-					{
-					UpdateRect(pData,uItem,0);
+				iRet=TreeListToggleItem(pData,uItem,iVal);
+				if(iRet){										// Abbruch oder Fehler beim Auf/Zuklappen
+					if(uChange && pEntry->uShowPos){				// Neuzeichnen des Eintrages
+						UpdateRect(pData,uItem,0);
 					}
 
-				return 0;
+					return 0;
 				}
 
-			pEntry->uState &= ~uMask;
-			pEntry->uState |=  iVal;
+				pEntry->uState &= ~uMask;
+				pEntry->uState |=  iVal;
 			}
 		}
 
-	if(uChange && pEntry->uShowPos)							// Neuzeichnen des Eintrages
-		{
-		UpdateRect(pData,uItem,0);
+		if(uChange && pEntry->uShowPos){							// Neuzeichnen des Eintrages
+			UpdateRect(pData,uItem,0);
 		}
-
-
-
-return 1;
+		return 1;
 }
 
 
@@ -5320,183 +4841,157 @@ return 1;
 //	pData		: Zeiger auf die Fensterdaten
 //	pItem		: Zeiger auf die den Datenspeicher
 //	Ergibt 1 wenn ok oder 0 bei einem Fehler
-static unsigned TreeListGetItem(TreeListData *pData,TV_ITEM *pItem)
-{
-ExtraItem	  **pList;
-ExtraItem	   *pExtra;
-BaseItem	   *pEntry;
-unsigned		uBits;
-unsigned		uItem;
-unsigned		uSub;
-unsigned		uLen;
+static unsigned TreeListGetItem(TreeListData *pData,TV_ITEM *pItem){
 
+	ExtraItem	  **pList;
+	ExtraItem	   *pExtra;
+	BaseItem	   *pEntry;
+	unsigned		uBits;
+	unsigned		uItem;
+	unsigned		uSub;
+	unsigned		uLen;
 
+	uItem = U(pItem->hItem);
+	if(uItem>pData->uTreeItemsMax)
+		return 0;
 
-
-	   uItem = U(pItem->hItem);
-	if(uItem>pData->uTreeItemsMax)return 0;
-
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return 0;
-
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return 0;
 
 	uBits = pItem->mask;
 
-	if(uBits&TVIF_SUBITEM)									// Einen Extraeintrag abfragen
-		{
-		   uSub = pItem->cChildren;
-		if(uSub>0)
-			{
-			if(uSub>= pData->uColumnCount)return 0;
+	if(uBits & TVIF_SUBITEM){									// Einen Extraeintrag abfragen
+		uSub = pItem->cChildren;
+		if(uSub>0){
+			if(uSub>= pData->uColumnCount)
+				return 0;
 			pList	= pData->pExtraItems[uSub-1];
 			pExtra	= pList[uItem];
 
-			if(!pExtra)										// Einen neuen Eintrag erzeugen
-				{
+			if(!pExtra){										// Einen neuen Eintrag erzeugen
 				pExtra  = new ExtraItem;
 				memset(pExtra,0,sizeof(ExtraItem));
 				pExtra->iImage = TV_NOIMAGE;
 				pExtra->uState = pEntry->uState&(TVIS_BOLD|TVIS_UNTERLINE);
 				pList[uItem]   = pExtra;
-				}
+			}
 
-			if(uBits&TVIF_PARAM)
-				{
+			if(uBits & TVIF_PARAM){
 				pItem->lParam = pEntry->lParam;
-				}
+			}
 
-			if(uBits&TVIF_IMAGE)
-				{
+			if(uBits & TVIF_IMAGE){
 				pItem->iImage = pExtra->iImage;
-				}
+			}
 
-			if(uBits&TVIF_TEXT)								// Einen neuen Text einstellen
-				{
-				if(pExtra->pText==LPSTR_TEXTCALLBACK)
-					{
+			if(uBits & TVIF_TEXT){								// Einen neuen Text einstellen
+				if(pExtra->pText==LPSTR_TEXTCALLBACK){
 					pItem->pszText = LPSTR_TEXTCALLBACK;
-					}
-				else if(uBits&TVIF_TEXTPTR)
-					{
-					if(!pExtra->pText)
-						{
+				}
+				else if(uBits&TVIF_TEXTPTR){
+					if(!pExtra->pText){
 						pItem->pszText    = _T("");
 						pItem->cchTextMax = 0;
-						}
+					}
 					else{
 						pItem->pszText    = pExtra->pText;
 						pItem->cchTextMax = pExtra->uTextSize+1;
-						}
 					}
+				}
 				else{
-					if(pExtra->pText)
-						{
-						   uLen = pExtra->uTextSize+1;
-						if(pItem->cchTextMax<(int)uLen)
-							{
-							if(pItem->cchTextMax<=0)
-								{
+					if(pExtra->pText){
+						uLen = pExtra->uTextSize+1;
+						if(pItem->cchTextMax<(int)uLen){
+							if(pItem->cchTextMax<=0){
 								uLen=0;
-								}
+							}
 							else{
 								uLen=pItem->cchTextMax-1;
 								pItem->pszText[uLen]=0;
-								}
 							}
+						}
 
 						memcpy(pItem->pszText,pExtra->pText,uLen*sizeof(TCHAR));
-						}
+					}
 					else{
 						if(pItem->cchTextMax>0)
-							{
+						{
 							pItem->pszText[0]=0;
-							}
 						}
 					}
 				}
+			}
 
-			if(uBits&TVIF_STATE)
-				{
+			if(uBits & TVIF_STATE){
 				pItem->state  = pExtra->uState&~TVIS_BASEFLAGS;
 				pItem->state &= pItem->stateMask;
-				}
+			}
 
 			return 1;
-			}
+		}
 
-		if(pEntry->bCallback&TVIF_CHILDREN)
-				pItem->cChildren = I_CHILDRENCALLBACK;
-		else	pItem->cChildren = (pEntry->uFirstChild)? 1:0;
-
+		if(pEntry->bCallback & TVIF_CHILDREN)
+			pItem->cChildren = I_CHILDRENCALLBACK;
+		else	
+			pItem->cChildren = (pEntry->uFirstChild)? 1:0;
 
 		uBits &= ~TVIF_CHILDREN;
-		}
+	}
 
 
-//******************** Einen Basis Eintrag ändern *****************************
-
-
-	if(uBits&TVIF_PARAM)
-		{
+	//******************** Einen Basis Eintrag ändern *****************************
+	if(uBits & TVIF_PARAM){
 		pItem->lParam = pEntry->lParam;
-		}
+	}
 
-	if(uBits&TVIF_IMAGE)
-		{
+	if(uBits & TVIF_IMAGE){
 		pItem->iImage = pEntry->iImage;
-		}
+	}
 
-	if(uBits&TVIF_SELECTEDIMAGE)
-		{
+	if(uBits & TVIF_SELECTEDIMAGE){
 		pItem->iSelectedImage = pEntry->iSelectedImage;
-		}
+	}
 
-	if(uBits&TVIF_CHILDREN)
-		{
-		if(pEntry->bCallback&TVIF_CHILDREN)
+	if(uBits & TVIF_CHILDREN){
+		if(pEntry->bCallback & TVIF_CHILDREN)
 				pItem->cChildren = I_CHILDRENCALLBACK;
-		else	pItem->cChildren = (pEntry->uFirstChild)? 1:0;
-		}
+		else	
+			pItem->cChildren = (pEntry->uFirstChild)? 1:0;
+	}
 
-	if(uBits&TVIF_TEXT)										// Einen neuen Text einstellen
-		{
-		if(pEntry->pText==LPSTR_TEXTCALLBACK)
-			{
+	if(uBits & TVIF_TEXT){										// Einen neuen Text einstellen
+		if(pEntry->pText==LPSTR_TEXTCALLBACK){
 			pItem->pszText = LPSTR_TEXTCALLBACK;
+		}
+		else 
+			if(uBits&TVIF_TEXTPTR){
+				pItem->pszText    = pEntry->pText;
+				pItem->cchTextMax = pEntry->uTextSize+1;
 			}
-		else if(uBits&TVIF_TEXTPTR)
-			{
-			pItem->pszText    = pEntry->pText;
-			pItem->cchTextMax = pEntry->uTextSize+1;
-			}
-		else{
-			   uLen = pEntry->uTextSize+1;
-			if(pItem->cchTextMax<(int)uLen)
-				{
-				if(pItem->cchTextMax<=0)
-					{
-					uLen=0;
+			else{
+				uLen = pEntry->uTextSize+1;
+				if(pItem->cchTextMax<(int)uLen){
+					if(pItem->cchTextMax<=0){
+						uLen=0;
 					}
-				else{
-					uLen=pItem->cchTextMax-1;
-					pItem->pszText[uLen]=0;
+					else{
+						uLen=pItem->cchTextMax-1;
+						pItem->pszText[uLen]=0;
 					}
 				}
 
-			memcpy(pItem->pszText,pEntry->pText,uLen*sizeof(TCHAR));
+				memcpy(pItem->pszText,pEntry->pText,uLen*sizeof(TCHAR));
 			}
-		}
+	}
 
-	if(uBits&TVIF_STATE)
-		{
+	if(uBits & TVIF_STATE){
 		pItem->state  = pEntry->uState;
 		pItem->state &= pItem->stateMask;
-		}
+	}
 
-
-return 1;
+	return 1;
 }
-
 
 //*****************************************************************************
 //*
@@ -5507,57 +5002,50 @@ return 1;
 //	pData		: Zeiger auf die Fensterdaten
 //	uCol		: Ist die Nummer der Spalte die gelöscht werden soll
 //	Ergibt 1 wenn die Spalte gelöscht wurde
-static int TreeListDeleteColumn(TreeListData *pData,unsigned uCol)
-{
-ExtraItem **pList;
-ExtraItem  *pExtra;
-RECT		sRect;
-BYTE		bItem;
-BYTE		bByte;
-unsigned	uPos;
-unsigned	uSub;
-unsigned	uItem;
-unsigned	uIndex;
-int			iDelta;
-int			iXoff;
-int			iNum;
-int			iCnt;
-int			iVar;
-int			iSub;
-int			iAll;
-int			iFix;
+static int TreeListDeleteColumn(TreeListData *pData,unsigned uCol){
+	
+	ExtraItem **pList;
+	ExtraItem  *pExtra;
+	RECT		sRect;
+	BYTE		bItem;
+	BYTE		bByte;
+	unsigned	uPos;
+	unsigned	uSub;
+	unsigned	uItem;
+	unsigned	uIndex;
+	int			iDelta;
+	int			iXoff;
+	int			iNum;
+	int			iCnt;
+	int			iVar;
+	int			iSub;
+	int			iAll;
+	int			iFix;
 
+	if(uCol>=pData->uColumnCount)
+		return 0;
 
-	if(uCol>=pData->uColumnCount)return 0;
-
-	if(uCol && uCol==pData->uSelectedSub)					// Ist die Auswahl in der Spalte
-		{
+	if(uCol && uCol==pData->uSelectedSub){					// Ist die Auswahl in der Spalte
 		TreeListSelectItem(pData,pData->uSelectedItem,0,TVC_UNKNOWN);
-		}
+	}
 
-	if(uCol && uCol==pData->uEditSub)
-		{
+	if(uCol && uCol==pData->uEditSub){
 		pData->uEditSub  = 0;
 		pData->uEditItem = 0;
 		TreeListEndLabelEdit(pData,0);
-		}
+	}
 
-	if(uCol && uCol==pData->uFocusSub)
-		{
+	if(uCol && uCol==pData->uFocusSub){
 		pData->uFocusSub  = 0;
 		pData->uFocusItem = 0;
-		}
+	}
 
-	if(uCol==pData->uTrackedSub)
-		{
+	if(uCol==pData->uTrackedSub){
 		pData->uTrackedSub  = 0;
 		pData->uTrackedItem = 0;
-		}
-
-
+	}
 
 	GetClientRect(pData->hWnd,&sRect);
-
 
 	iDelta	= pData->aColumn[uCol].sSize;
 	iSub	= pData->aColumn[uCol].bWeight;
@@ -5566,169 +5054,143 @@ int			iFix;
 	iFix	= 0;
 	iAll	= 0;
 
-	for(uPos=0;uPos<pData->uColumnCount;uPos++)				// Zählern der variablen Spalten
-		{
-		if(uPos==uCol)continue;
-		if(pData->aColumn[uPos].bWeight==0)
-			{
+	for(uPos=0;uPos<pData->uColumnCount;uPos++){				// Zählern der variablen Spalten
+		if(uPos==uCol)
+			continue;
+		if(pData->aColumn[uPos].bWeight==0){
 			iFix +=	pData->aColumn[uPos].sSize;
 			continue;
-			}
+		}
 
 		iVar +=	pData->aColumn[uPos].sSize;
 		iAll += pData->aColumn[uPos].bWeight;
 		iCnt += 1;
-		}
-
+	}
 
 	Header_DeleteItem(pData->hHeader,uCol);
 	pData->uColumnCount--;
 
-	if(pData->uColumnCount>0)								// Liste mit Extraeinträgen löschen
-		{
-		   iNum=uCol-1;
-		if(iNum<0)iNum=0;
+	if(pData->uColumnCount>0){								// Liste mit Extraeinträgen löschen
+		iNum=uCol-1;
+		if(iNum<0)
+			iNum=0;
 
-		   pList = pData->pExtraItems[iNum];
-		if(pList)
-            {
-			for(uItem=0;uItem<=pData->uTreeItemsMax;uItem++)// Alle Einträge aus der Liste löschen
-				{
-					pExtra = pList[uItem];
-				if(!pExtra)continue;
+		pList = pData->pExtraItems[iNum];
+		if(pList){
+			for(uItem=0;uItem<=pData->uTreeItemsMax;uItem++){// Alle Einträge aus der Liste löschen
+				pExtra = pList[uItem];
+				if(!pExtra)
+					continue;
 
-				if(pExtra->pText)
-					{
+				if(pExtra->pText){
 					pExtra->uTextSize=0;
 					delete pExtra->pText;
-					}
+				}
 
 				delete pExtra;
-				}
+			}
 
 			memmove(pData->pExtraItems+iNum,pData->pExtraItems+iNum+1,sizeof(pList)*(MAX_COLUMNS-1-iNum));
 			pData->pExtraItems[pData->uColumnCount]=NULL;
 			delete pList;
-			}
 		}
+	}
 	else{
 		iNum=MAX_COLUMNS;
-		}
+	}
 
-	if(pData->aColumn[uCol].bWeight)
-		{
+	if(pData->aColumn[uCol].bWeight){
 		pData->uColumnCountVar--;
-		}
+	}
 
-	if(pData->aColumn[uCol].bMark)
-		{
+	if(pData->aColumn[uCol].bMark){
 		pData->uMarkedCols--;
-		}
+	}
 
 	uSub = pData->aColumnPos[uCol];
 
 	memmove(pData->aColumn+uCol,pData->aColumn+uCol+1,(MAX_COLUMNS-1-uCol)*sizeof(ColumnData));
 
-	for(uIndex=0;uIndex<uSub;uIndex++)						// Zuordnungs-Array anpassen
-		{
-		   bItem = pData->aColumnPos[uIndex-1];
-		if(bItem<uCol)continue;
+	for(uIndex=0;uIndex<uSub;uIndex++){						// Zuordnungs-Array anpassen
+		bItem = pData->aColumnPos[uIndex-1];
+		if(bItem<uCol)
+			continue;
 
 		bItem++;
 		pData->aColumnPos[uIndex] = bItem;
-		}
+	}
 
-	for(;uIndex<=pData->uColumnCount;uIndex++)				// Spaltenpositionen verschieben
-		{
+	for(;uIndex<=pData->uColumnCount;uIndex++){				// Spaltenpositionen verschieben
 		bItem = pData->aColumnPos[uIndex+1];
 
-		if(bItem>=uCol)
-			{
+		if(bItem>=uCol){
 			uCol--;
-			}
-
-		pData->aColumnPos[uIndex] = bItem;
 		}
 
-	for(uIndex=pData->uColumnCount;uIndex>0;)
-		{
+		pData->aColumnPos[uIndex] = bItem;
+	}
+
+	for(uIndex=pData->uColumnCount;uIndex>0;){
 		uIndex--;
 		bByte = pData->aColumn[uIndex].bIndex;
 
-		if(bByte>=uSub)
-			{
+		if(bByte>=uSub){
 			bByte--;
 			pData->aColumn[uIndex].bIndex = bByte;
-			}
-
-		pData->aColumn[uIndex].bNext = pData->aColumnPos[bByte+1];
 		}
 
+		pData->aColumn[uIndex].bNext = pData->aColumnPos[bByte+1];
+	}
 
 	pData->iFixSize   = iFix;
 	pData->iAllWeight = iAll;
 	pData->aColumn[pData->uColumnCount].bWeight=0;
 
-
-	if(iCnt && iDelta)										// Variable Breiten anpassen
-		{
+	if(iCnt && iDelta){										// Variable Breiten anpassen
 		ChangeColSize(pData,iDelta);
-		}
+	}
 	else{
-		if(iSub && !iCnt)
-			{
+		if(iSub && !iCnt){
 			pData->iVarSize = 0;
-			}
 		}
+	}
 
-	if(pData->uSelectedSub>uCol)							// Ist die Auswahl vor der Spalte
-		{
+	if(pData->uSelectedSub>uCol){							// Ist die Auswahl vor der Spalte
 		pData->uSelectedSub--;
-		}
+	}
 
-	if(pData->uEditSub>uCol)
-		{
+	if(pData->uEditSub>uCol){
 		pData->uEditSub--;
-		}
+	}
 
-	if(pData->uFocusSub>uCol)
-		{
+	if(pData->uFocusSub>uCol){
 		pData->uFocusSub--;
-		}
+	}
 
-	if(pData->uTrackedSub>uCol)
-		{
+	if(pData->uTrackedSub>uCol){
 		pData->uTrackedSub--;
-		}
+	}
 
-
-	if(!pData->uColumnCount)								// Den Header löschen
-		{
+	if(!pData->uColumnCount){								// Den Header löschen
 		DestroyWindow(pData->hHeader);
 		pData->hHeader	   = NULL;
 		pData->uStartPixel = 0;
 		pData->iRowHeight  = 1;
 		UpdateHeight  (pData);
 		InvalidateRect(pData->hWnd,&sRect,FALSE);
-		}
+	}
 
-
-	   iXoff=UpdateColumns(pData);							// Hat sich die Spaltenbreiten verändert
-	if(iXoff<0x10000)
-		{
+	iXoff=UpdateColumns(pData);							// Hat sich die Spaltenbreiten verändert
+	if(iXoff<0x10000){
 		sRect.left  = iXoff;
 		sRect.left -= pData->uScrollX;
 		sRect.top   = pData->uStartPixel;
 		InvalidateRect(pData->hWnd,&sRect,FALSE);
-		}
-
+	}
 
 	UpdateScrollX(pData);
 
-
-
-
-return 1;
+	return 1;
 }
 
 
@@ -5742,49 +5204,45 @@ return 1;
 //	uCol		: Ist die Nummer der Spalte die eingefügt wird
 //	pInsert		: Zeiger auf die ein zu fügenden Daten
 //	Ergibt die Einfügeposition der neuen Spalte bzw. -1 bei eimem Fehler
-static int TreeListInsertColumn(TreeListData *pData,unsigned uCol,TV_COLUMN *pColumn)
-{
-ExtraItem **pList;
-TV_COLSIZE	sNotify;
-HDITEM	 	sItem;
-RECT		sRect;
-short 		sFixed;
-UINT		uIndex;
-BYTE		bByte;
-BYTE		bItem;
-BYTE		bMark;
-BYTE		bMinEx;
-BYTE		bAlign;
-int			iWeight;
-int			iDelta;
-int			iStart;
-int			iSize;
-int			iXoff;
-int			iYoff;
-int			iNum;
-int			iVar;
-int			iAll;
-int			iAdd;
-int			iMin;
-int			iFix;
+static int TreeListInsertColumn(TreeListData *pData,unsigned uCol,TV_COLUMN *pColumn){
 
-
+	ExtraItem **pList;
+	TV_COLSIZE	sNotify;
+	HDITEM	 	sItem;
+	RECT		sRect;
+	short 		sFixed;
+	UINT		uIndex;
+	BYTE		bByte;
+	BYTE		bItem;
+	BYTE		bMark;
+	BYTE		bMinEx;
+	BYTE		bAlign;
+	int			iWeight;
+	int			iDelta;
+	int			iStart;
+	int			iSize;
+	int			iXoff;
+	int			iYoff;
+	int			iNum;
+	int			iVar;
+	int			iAll;
+	int			iAdd;
+	int			iMin;
+	int			iFix;
 
 	GetClientRect(pData->hWnd,&sRect);
 
-
-	if(!pData->hHeader)										// Einen neuen Header erzeugen
-		{
+	if(!pData->hHeader){										// Einen neuen Header erzeugen
 		iStart = GetSystemMetrics(SM_CYHSCROLL);
 		iYoff  = sRect.top+iStart;
 
-		if(pData->uStyleEx&TVS_EX_HIDEHEADERS)
-			{
+		if(pData->uStyleEx&TVS_EX_HIDEHEADERS){
 			iYoff=0;
-			}
+		}
 
-			pData->hHeader=CreateWindow(WC_HEADER,NULL,WS_VISIBLE|WS_CHILD|HDS_HORZ|HDS_BUTTONS|HDS_DRAGDROP,sRect.left,sRect.top,sRect.right,iYoff,pData->hWnd,(HMENU)1,NULL,NULL);
-		if(!pData->hHeader)return -1;
+		pData->hHeader=CreateWindow(WC_HEADER,NULL,WS_VISIBLE|WS_CHILD|HDS_HORZ|HDS_BUTTONS|HDS_DRAGDROP,sRect.left,sRect.top,sRect.right,iYoff,pData->hWnd,(HMENU)1,NULL,NULL);
+		if(!pData->hHeader)
+			return -1;
 
 		pData->uStartPixel = (pData->uStyleEx&TVS_EX_HIDEHEADERS)? 0:iStart;
 		pData->iRowHeight  = 1;
@@ -5796,184 +5254,166 @@ int			iFix;
 		SendMessage   (pData->hHeader,WM_SETFONT,(WPARAM)hDefaultFontN,0);
 
 		if(pData->uSizeX<=pData->uStartPixel)
-				pData->uSizeYsub = 0;
-		else	pData->uSizeYsub = pData->uSizeX-pData->uStartPixel;
-		}
+			pData->uSizeYsub = 0;
+		else	
+			pData->uSizeYsub = pData->uSizeX-pData->uStartPixel;
+	}
 
-
-	if(pData->uColumnCount>=MAX_COLUMNS)					// Prüfe die Anzahl der Spalten
-		{
+	if(pData->uColumnCount>=MAX_COLUMNS){					// Prüfe die Anzahl der Spalten
 		return -1;
-		}
-
+	}
 
 	memset(&sItem,0,sizeof(sItem));							// Die Spaltendaten zusammenstellen
 
-	if(uCol>=pData->uColumnCount)
-		{
+	if(uCol>=pData->uColumnCount){
 		uCol = pData->uColumnCount;
-		}
+	}
 
-	if(pColumn->mask&TVCF_FMT)								// Welche Textausrichtung
-		{
+	if(pColumn->mask & TVCF_FMT){								// Welche Textausrichtung
 		sItem.mask    |= HDI_FORMAT;
 		sItem.fmt      = pColumn->fmt;
 
-		switch(sItem.fmt&HDF_JUSTIFYMASK)
-			{
-		case HDF_CENTER: bAlign = DT_CENTER;	break;
-		case HDF_RIGHT:	 bAlign = DT_RIGHT;		break;
-		default: 		 bAlign = DT_LEFT;		break;
-			}
+		switch(sItem.fmt&HDF_JUSTIFYMASK){
+			case HDF_CENTER: bAlign = DT_CENTER;	break;
+			case HDF_RIGHT:	 bAlign = DT_RIGHT;		break;
+			default: 		 bAlign = DT_LEFT;		break;
 		}
+	}
 	else{
 		bAlign = DT_LEFT;
-		}
+	}
 
-	if(pColumn->mask&TVCF_IMAGE)							// Hat die Spalte auch ein Icon
-		{
+	if(pColumn->mask & TVCF_IMAGE){							// Hat die Spalte auch ein Icon
 		sItem.mask    |=  HDI_IMAGE;
 		sItem.iImage   =  pColumn->iImage;
-		}
+	}
 
-	if(pColumn->mask&TVCF_TEXT)								// Auch einen Text übergeben
-		{
+	if(pColumn->mask & TVCF_TEXT){								// Auch einen Text übergeben
 		sItem.mask    |=  HDI_TEXT;
 		sItem.pszText  =  pColumn->pszText;
-		}
+	}
 
-	if(pColumn->mask&TVCF_MIN)								// Auch einen Min-Wert übergeben
-		{
+	if(pColumn->mask & TVCF_MIN){								// Auch einen Min-Wert übergeben
 		iMin		   =  pColumn->iOrder;
 		bMinEx		   =  1;
 
-		if(iMin<0)
-			{
+		if(iMin<0){
 			iMin	   = -iMin;
 			bMinEx	   =  0;
-			}
 		}
+	}
 	else{
 		iMin		   =  16;
 		bMinEx		   =  0;
-		}
+	}
 
-	if(pColumn->mask&TVCF_WIDTH)							// Fixe Breite für die Spalte
-		{
+	if(pColumn->mask & TVCF_WIDTH){							// Fixe Breite für die Spalte
 		iWeight		   =  0;
 		sItem.mask    |=  HDI_WIDTH;
 		sItem.cxy	   =  pColumn->cx;
 		iSize		   =  pColumn->cx;
 		iDelta		   = -pColumn->cx;
 		iAdd		   =  0;
-		}
+	}
 	else{													// Variable vordefinierte Breite
-		if(pColumn->mask&TVCF_VWIDTH)
-			   iWeight =  pColumn->cx;
-		else   iWeight =  1;
+		if(pColumn->mask & TVCF_VWIDTH)
+			iWeight =  pColumn->cx;
+		else   
+			iWeight =  1;
 
 		iVar  = pData->iVarSize;
 		iFix  = pData->iFixSize;
 		iAll  = pData->iAllWeight;
 		iSize = pData->uSizeX-iVar-iFix;
 
-		if(iWeight<= 0)iWeight=1;
-		if(iWeight>255)iWeight=255;
+		if(iWeight<= 0)
+			iWeight=1;
+		if(iWeight>255)
+			iWeight=255;
 
-
-		if(pData->uColumnCountVar)							// Gibt es schon variable Spalten
-			{
+		if(pData->uColumnCountVar){							// Gibt es schon variable Spalten
 			iSize  = (iVar*iWeight)/(iAll+iWeight);
 			iDelta = -iSize;
-			}
+		}
 		else{
 			iDelta = 0;
-			}
+		}
 
 		sItem.mask    |= HDI_WIDTH;
 		sItem.cxy      = iSize;
 		iAdd		   = 1;
 
-		if(sItem.cxy<iMin)sItem.cxy=iMin;
-		}
+		if(sItem.cxy<iMin)
+			sItem.cxy=iMin;
+	}
 
+	uCol = Header_InsertItem(pData->hHeader,uCol,&sItem);
+	if(uCol&0x80000000)
+		return -1;
 
-
-	   uCol = Header_InsertItem(pData->hHeader,uCol,&sItem);
-	if(uCol&0x80000000)return -1;
-
-
-
-	if(pData->uColumnCount>0)								// Liste mit Extraeinträgen erzeugen
-		{
+	if(pData->uColumnCount>0){								// Liste mit Extraeinträgen erzeugen
 			pList = new ExtraItem*[pData->uTreeItemsMax+1];
-		if(!pList)
-			{
+		if(!pList){
 			Header_DeleteItem(pData->hHeader,uCol);
 			return -1;
-			}
+		}
 
 		memset(pList,0,sizeof(ExtraItem*)*(pData->uTreeItemsMax+1));
 
-		   iNum = uCol-1;
+		iNum = uCol-1;
 		if(iNum<0)iNum=0;
 
 		memmove(pData->pExtraItems+iNum+1,pData->pExtraItems+iNum,sizeof(pList)*(MAX_COLUMNS-2-iNum));
 		pData->pExtraItems[iNum]=pList;
-		}
-
+	}
 
 	memmove(pData->aColumn+uCol+1,pData->aColumn+uCol,(MAX_COLUMNS-1-uCol)*sizeof(ColumnData));
 
-	for(uIndex=pData->uColumnCount+2;uIndex>uCol;uIndex--)	// Zuordnungs-Array anpassen
-		{
-		   bItem = pData->aColumnPos[uIndex-1];
-		if(bItem>=uCol)bItem++;
+	for(uIndex=pData->uColumnCount+2;uIndex>uCol;uIndex--){	// Zuordnungs-Array anpassen
+		bItem = pData->aColumnPos[uIndex-1];
+		if(bItem>=uCol)
+			bItem++;
 
 		pData->aColumnPos[uIndex] = bItem;
-		}
+	}
 
 	pData->aColumnPos[uCol] = (BYTE)uCol;
 
-	while(uIndex>0)
-		{
+	while(uIndex>0){
 		uIndex--;
 
-		   bItem=pData->aColumnPos[uIndex];
-		if(bItem<uCol)continue;
+		bItem=pData->aColumnPos[uIndex];
+		if(bItem<uCol)
+			continue;
 
 		bItem++;
 		pData->aColumnPos[uIndex] = bItem;
-		}
+	}
 
-	for(uIndex=pData->uColumnCount;;)						// Folgende Spalten verschieben
-		{
+	for(uIndex=pData->uColumnCount;;){						// Folgende Spalten verschieben
 		bByte = pData->aColumn[uIndex].bIndex;
 
-		if(bByte>=uCol)
-			{
+		if(bByte>=uCol){
 			bByte++;
 			pData->aColumn[uIndex].bIndex = bByte;
-			}
-
-		if(uIndex==0)break;
-		uIndex--;
 		}
 
+		if(uIndex==0)
+			break;
+		uIndex--;
+	}
 
 	bMark  = 0;
 	sFixed = 0;
 
-	if(pColumn->mask&TVCF_MARK  )							// Ist die Spalte markiert
-	if(pColumn->fmt &TVCFMT_MARK)
-		{
-		bMark = 1;
+	if(pColumn->mask & TVCF_MARK  )							// Ist die Spalte markiert
+		if(pColumn->fmt & TVCFMT_MARK){
+			bMark = 1;
 		}
 
-	if(pColumn->mask&TVCF_FIXED  )							// Ist die Spalte fixiert
-	if(pColumn->fmt &TVCFMT_FIXED)
-		{
-		sFixed = (short)((sItem.cxy>0)? sItem.cxy:100);
+	if(pColumn->mask & TVCF_FIXED  )							// Ist die Spalte fixiert
+		if(pColumn->fmt & TVCFMT_FIXED){
+			sFixed = (short)((sItem.cxy>0)? sItem.cxy:100);
 		}
 
 
@@ -5989,75 +5429,61 @@ int			iFix;
 	pData->uMarkedCols			+= 	bMark;
 
 
-	for(uIndex=pData->uColumnCount;;)						// Nächste sichtbare Spalten aktualisieren
-		{
+	for(uIndex=pData->uColumnCount;;){						// Nächste sichtbare Spalten aktualisieren
 		bByte						 = pData->aColumn[uIndex].bIndex;
 		pData->aColumn[uIndex].bNext = pData->aColumnPos[bByte+1];
-		if(uIndex==0)break;
+		if(uIndex==0)
+			break;
 		uIndex--;
-		}
+	}
 
-
-	if(pData->uColumnCountVar)								// Variable Breiten anpassen
-		{
-		if(iDelta)
-			{
+	if(pData->uColumnCountVar){								// Variable Breiten anpassen
+		if(iDelta){
 			ChangeColSize(pData,iDelta);
 			pData->iVarSize  -= iDelta;
-			}
-		else if(!iAdd)
-			{
+		}
+		else if(!iAdd){
 			pData->iFixSize  += iSize;
-			}
 		}
+	}
 	else{
-		if(iAdd)pData->iVarSize  = iSize;
-		else    pData->iFixSize += iSize;
-		}
-
+		if(iAdd)
+			pData->iVarSize  = iSize;
+		else
+			pData->iFixSize += iSize;
+	}
 
 	pData->iAllWeight			+=  iWeight;
 	pData->uColumnCountVar      +=  iAdd;
 	pData->uColumnCount	        +=  1;
 
-
-	if(pData->uSelectedSub>0 && pData->uSelectedSub>=uCol)
-		{
+	if(pData->uSelectedSub>0 && pData->uSelectedSub>=uCol){
 		pData->uSelectedSub++;
-		}
+	}
 
-	if(pData->uTrackedSub>0 && pData->uTrackedSub>=uCol)
-		{
+	if(pData->uTrackedSub>0 && pData->uTrackedSub>=uCol){
 		pData->uTrackedSub++;
-		}
+	}
 
-	if(pData->uFocusSub>0 && pData->uFocusSub>=uCol)
-		{
+	if(pData->uFocusSub>0 && pData->uFocusSub>=uCol){
 		pData->uFocusSub++;
-		}
+	}
 
-	if(pData->uEditSub>0 && pData->uEditSub>=uCol)
-		{
+	if(pData->uEditSub>0 && pData->uEditSub>=uCol){
 		pData->uEditSub++;
-		}
+	}
 
-
-
-	   iXoff=UpdateColumns(pData);							// Hat sich die Spaltenbreiten verändert
-	if(iXoff<0x10000)
-		{
+	iXoff=UpdateColumns(pData);							// Hat sich die Spaltenbreiten verändert
+	if(iXoff<0x10000){
 		sRect.left  = iXoff;
 		sRect.left -= pData->uScrollX;
 		sRect.top   = pData->uStartPixel;
 		InvalidateRect(pData->hWnd,&sRect,FALSE);
-		}
-
+	}
 
 	UpdateScrollX(pData);
 
-
-	if(pData->uInsertMark)									// Fehlende Infomarken einfügen
-		{
+	if(pData->uInsertMark){									// Fehlende Infomarken einfügen
 		TV_ITEM		sSet;
 		ExtraItem  *pExtra;
 
@@ -6067,17 +5493,15 @@ int			iFix;
 
 		TreeListSetItem(pData,&sSet);
 
-		   pExtra = pData->pExtraItems[uCol-1][pData->uInsertMark];
-		if(pExtra)
-			{
+		pExtra = pData->pExtraItems[uCol-1][pData->uInsertMark];
+		if(pExtra){
 			pExtra->uColorBk  = pData->uColors[TVC_INSERT];
 			pExtra->bFlags	 |= TVIX_BKCOLOR;
-			}
 		}
+	}
 
 
-	if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY)				// Geänderte Spalten melden
-		{
+	if(pData->uStyleEx&TVS_EX_HEADERCHGNOTIFY){				// Geänderte Spalten melden
  		sNotify.hdr.code			= TVN_COLUMNCHANGED;
 		sNotify.uColumn				= uCol;
 		sNotify.uIndex				= pData->aColumn[uCol].bIndex;
@@ -6087,10 +5511,9 @@ int			iFix;
 		UNLOCK(pData);
 		SendNotify(pData,&sNotify.hdr);
 		LOCK(pData);
-		}
+	}
 
-
-return uCol;
+	return uCol;
 }
 
 //*****************************************************************************
@@ -6102,84 +5525,77 @@ return uCol;
 //	pData		: Zeiger auf die Fensterdaten
 //	uSub		: Ist die Spalte
 //	Ergibt sie gescannte Breite
-static int TreeListScanColumn(TreeListData *pData,unsigned uSub)
-{
-BaseItem  **pList;
-BaseItem   *pEntry;
-ExtraItem  *pExtra;
-ExtraItem **pItems;
-unsigned   *pPList;
-unsigned	uPos;
-int			iMax;
-int			iPos;
+static int TreeListScanColumn(TreeListData *pData,unsigned uSub){
 
+	BaseItem  **pList;
+	BaseItem   *pEntry;
+	ExtraItem  *pExtra;
+	ExtraItem **pItems;
+	unsigned   *pPList;
+	unsigned	uPos;
+	int			iMax;
+	int			iPos;
 
+	if(uSub>=pData->uColumnCount)
+		return 0;
 
-	if(uSub>=pData->uColumnCount)return 0;
-
-	if(uSub>0)												// Extraspalte
-		{
+	if(uSub>0){												// Extraspalte
 		pItems = pData->pExtraItems[uSub-1];
 		pPList = pData->pItemPos;
 		iMax   = 0;
 
-		for(uPos=0;uPos<pData->uItemPosCount;uPos++)
-			{
-				pExtra = pItems[pPList[uPos]];
-			if(!pExtra)
-				{
-				if(iMax<8)iMax=8;
+		for(uPos=0;uPos<pData->uItemPosCount;uPos++){
+			pExtra = pItems[pPList[uPos]];
+			if(!pExtra){
+				if(iMax<8)
+					iMax=8;
 				continue;
-				}
-
-			if(pData->hSubImg && (pExtra->bFlags&TVIX_HASIMAGE))
-					iPos = pData->iSubImgXsize;
-			else	iPos = 0;
-
-			   iPos += pExtra->iTextPixels+8;
-			if(iPos>iMax)iMax=iPos;
 			}
 
-		return iMax;
+			if(pData->hSubImg && (pExtra->bFlags&TVIX_HASIMAGE))
+				iPos = pData->iSubImgXsize;
+			else	
+				iPos = 0;
+
+			iPos += pExtra->iTextPixels+8;
+			if(iPos>iMax)
+				iMax=iPos;
 		}
 
+		return iMax;
+	}
 
 	pList  = pData->pTreeItems;
 	pPList = pData->pItemPos;
 	iMax   = 0;
 
-
-	for(uPos=0;uPos<pData->uItemPosCount;uPos++)			// Erste Spalte
-		{
+	for(uPos=0;uPos<pData->uItemPosCount;uPos++){			// Erste Spalte
 		pEntry = pList[pPList[uPos]];
 
 		if(pEntry->bFlags&TVIX_HASIMAGE)
-				iPos = pData->iImagesXsize;
-		else	iPos = 0;
+			iPos = pData->iImagesXsize;
+		else	
+			iPos = 0;
 
-		   iPos += pEntry->uLevel*pData->iIndent;
-		   iPos += pEntry->iTextPixels+8;
-		if(iPos>iMax)iMax=iPos;
-		}
+		iPos += pEntry->uLevel*pData->iIndent;
+		iPos += pEntry->iTextPixels+8;
+		if(iPos>iMax)
+			iMax=iPos;
+	}
 
-	if(pData->uStyleEx&TVS_EX_ITEMLINES)
-		{
+	if(pData->uStyleEx & TVS_EX_ITEMLINES){
 		iMax += 1;
-		}
+	}
 
-	if(pData->cHasRootRow)
-		{
+	if(pData->cHasRootRow){
 		iMax += pData->iIndent;
-		}
+	}
 
-	if(pData->hStates)
-		{
+	if(pData->hStates){
 		iMax += pData->iStatesXsize;
-		}
+	}
 
-
-
-return iMax;
+	return iMax;
 }
 
 
@@ -6192,221 +5608,193 @@ return iMax;
 //	pData		: Zeiger auf die Fensterdaten
 //	pInfo		: Zeiger auf die ein zu fügenden Daten
 //	Ergibt das Item auf dem die Koordinate zeigt
-static unsigned TreeListHitTest(TreeListData *pData,TV_HITTESTINFO *pInfo)
-{
-BaseItem   *pEntry;
-ExtraItem  *pExtra;
-unsigned	uItem;
-unsigned	uNext;
-unsigned	uSub;
-unsigned	uCol;
-int			iXpos;
-int			iYpos;
-int			iZpos;
-int			iWidth;
-int			iIcon;
+static unsigned TreeListHitTest(TreeListData *pData,TV_HITTESTINFO *pInfo){
 
-
+	BaseItem   *pEntry;
+	ExtraItem  *pExtra;
+	unsigned	uItem;
+	unsigned	uNext;
+	unsigned	uSub;
+	unsigned	uCol;
+	int			iXpos;
+	int			iYpos;
+	int			iZpos;
+	int			iWidth;
+	int			iIcon;
 
 	iXpos = pInfo->pt.x;
 	iYpos = pInfo->pt.y;
 
-	if((unsigned)iXpos>=pData->uSizeX)
-		{
+	if((unsigned)iXpos>=pData->uSizeX){
 		pInfo->hItem = NULL;
-		pInfo->flags = (iXpos<0)? TVHT_TOLEFT:TVHT_TORIGHT;
+		pInfo->flags = (iXpos<0) ? TVHT_TOLEFT : TVHT_TORIGHT;
 		return 0;
-		}
+	}
 
 	iYpos-=pData->uStartPixel;
 
-	if((unsigned)iYpos>=pData->uSizeY)
-		{
+	if((unsigned)iYpos>=pData->uSizeY){
 		pInfo->hItem = NULL;
-		pInfo->flags = (iYpos<0)? TVHT_ABOVE:TVHT_BELOW;
+		pInfo->flags = (iYpos<0) ? TVHT_ABOVE : TVHT_BELOW;
 		return 0;
-		}
+	}
 
 
 	iZpos  = iYpos/pData->iRowHeight;
 	iZpos +=       pData->uScrollY;
 
-	if((unsigned)iZpos>=pData->uItemPosCount)
-		{
+	if((unsigned)iZpos>=pData->uItemPosCount){
 		pInfo->hItem = NULL;
 		pInfo->flags = TVHT_NOWHERE;
 		return 0;
-		}
+	}
 
 	iXpos		+= pData->uScrollX;
 	uItem		 = pData->pItemPos  [iZpos];
 	pEntry		 = pData->pTreeItems[uItem];
 	pInfo->hItem = (HTREEITEM)uItem;
 
-
 	if(!pEntry)return 0;
 
 	uSub = pData->aColumnPos[1];
 
-	if(iXpos>=pData->aColumnXpos[uSub])						// Auf Extraeintrag
-		{
-		for(uCol=1;uCol<pData->uColumnCount;uCol++)
-			{
+	if(iXpos>=pData->aColumnXpos[uSub]){						// Auf Extraeintrag
+		for(uCol=1;uCol<pData->uColumnCount;uCol++){
 			uSub  = pData->aColumnPos[uCol  ];
 			uNext = pData->aColumnPos[uCol+1];
 
-			if(iXpos>=pData->aColumnXpos[uNext])continue;
-			   iXpos-=pData->aColumnXpos[uSub ];
+			if(iXpos>=pData->aColumnXpos[uNext])
+				continue;
+			iXpos -= pData->aColumnXpos[uSub ];
 
 			pExtra = pData->pExtraItems[uSub-1][uItem];
 
 
-			if(pData->aColumn[uSub].bEdit>=TVAX_CHECK)		// Hat der Extraeintrag ein Icon
-				{
+			if(pData->aColumn[uSub].bEdit>=TVAX_CHECK){		// Hat der Extraeintrag ein Icon
 				iIcon = pData->iChecksXsize;
+			}
+			else 
+				if(pExtra && (pExtra->bFlags&TVIX_HASIMAGE)){
+					iIcon = pData->iImagesXsize;
 				}
-			else if(pExtra && (pExtra->bFlags&TVIX_HASIMAGE))
-				{
-				iIcon = pData->iImagesXsize;
-				}
-			else{
-				iIcon = 0;
+				else{
+					iIcon = 0;
 				}
 
 			pInfo->flags = uSub<<24;
 
-			if(iXpos<iIcon)									// Auf Icon
-				{
+			if(iXpos<iIcon){									// Auf Icon
 				pInfo->flags |= TVHT_ONSUBICON;
 				return uItem;
-				}
+			}
 
-			if(!pExtra || !pExtra->uTextSize)				// Auf Text wenn leerer Eintrag
-				{
+			if(!pExtra || !pExtra->uTextSize){				// Auf Text wenn leerer Eintrag
 				pInfo->flags |= TVHT_ONSUBLABEL;
 				return uItem;
-				}
+			}
 
-			switch(pData->aColumn[uSub].bAlign)				// Textausrichtung
-				{
-			default:		if(iXpos-iIcon<pExtra->iTextPixels+5)
-								{
-								pInfo->flags |= TVHT_ONSUBLABEL;
-								return uItem;
-								}
-							break;
+			switch(pData->aColumn[uSub].bAlign){				// Textausrichtung
+				default:
+					if(iXpos-iIcon<pExtra->iTextPixels+5){
+						pInfo->flags |= TVHT_ONSUBLABEL;
+						return uItem;
+					}
+					break;
 
-			case DT_RIGHT:	iWidth  = pData->aColumnXpos[uNext];
-							iWidth -= pData->aColumnXpos[uSub ];
+				case DT_RIGHT:
+					iWidth  = pData->aColumnXpos[uNext];
+					iWidth -= pData->aColumnXpos[uSub ];
 
-							if(iXpos>=iWidth-pExtra->iTextPixels-5)
-								{
-								pInfo->flags |= TVHT_ONSUBLABEL;
-								return uItem;
-								}
-							break;
+					if(iXpos>=iWidth-pExtra->iTextPixels-5){
+						pInfo->flags |= TVHT_ONSUBLABEL;
+						return uItem;
+					}
+					break;
 
-			case DT_CENTER:	iWidth  = pData->aColumnXpos[uNext];
-							iWidth -= pData->aColumnXpos[uSub ];
-							iWidth += iIcon;
-							iWidth /= 2;
+				case DT_CENTER:	
+					iWidth  = pData->aColumnXpos[uNext];
+					iWidth -= pData->aColumnXpos[uSub ];
+					iWidth += iIcon;
+					iWidth /= 2;
 
-							if(iXpos>=iWidth-pExtra->iTextPixels/2-3)
-							if(iXpos<=iWidth+pExtra->iTextPixels/2+3)
-								{
-								pInfo->flags |= TVHT_ONSUBLABEL;
-								return uItem;
-								}
-							break;
-				}
+					if(iXpos>=iWidth-pExtra->iTextPixels/2-3)
+						if(iXpos<=iWidth+pExtra->iTextPixels/2+3){
+							pInfo->flags |= TVHT_ONSUBLABEL;
+							return uItem;
+						}
+						break;
+			}
 
 			pInfo->flags |= TVHT_ONSUBRIGHT;
 
 			return uItem;
-			}
-
+		}
 
 		pInfo->flags = TVHT_ONRIGHTSPACE;
 
 		return uItem;
-		}
+	}
 
-
-	if(!pData->cHasRootRow)									// Root-Linien ausgleichen
-		{
+	if(!pData->cHasRootRow){									// Root-Linien ausgleichen
 		iXpos += pData->iIndent;
 		}
 
-
 	iXpos -= pData->iIndent*pEntry->uLevel;
 
-	if(iXpos<pData->iIndent)								// Auf eingerücktem Bereich
-		{
-		if(pData->uStyle &TVS_HASBUTTONS)
-		if(pEntry->bFlags&TVIX_HASBUTTON)
-			{
-			if(iXpos>=pData->iShift-6)
-			if(iXpos<=pData->iShift+7)
-				{
-				iYpos %= pData->iRowHeight;
-				iYpos -= pData->iRowHeight/2;
+	if(iXpos<pData->iIndent){								// Auf eingerücktem Bereich
+		if(pData->uStyle & TVS_HASBUTTONS)
+			if(pEntry->bFlags & TVIX_HASBUTTON){
+				if(iXpos >= pData->iShift-6)
+					if(iXpos <= pData->iShift+7){
+						iYpos %= pData->iRowHeight;
+						iYpos -= pData->iRowHeight/2;
 
-				if(iYpos>=-6 && iYpos<=7)
-					{
-					pInfo->flags = TVHT_ONITEMBUTTON;
-					return uItem;
-					}
-				}
+						if(iYpos>=-6 && iYpos<=7){
+							pInfo->flags = TVHT_ONITEMBUTTON;
+							return uItem;
+						}
+					}	
 			}
 
-		pInfo->flags = TVHT_ONITEMINDENT;
-		return uItem;
-		}
-
+			pInfo->flags = TVHT_ONITEMINDENT;
+			return uItem;
+	}
 
 	iXpos -= pData->iIndent;
 
-	if(pData->uStyleEx&TVS_EX_ITEMLINES)
-		{
+	if(pData->uStyleEx&TVS_EX_ITEMLINES){
 		iXpos--;
-		}
+	}
 
-	if(pData->hStates)										// Auf der Auswahl-Box
-		{
+	if(pData->hStates){										// Auf der Auswahl-Box
 		iXpos -= pData->iStatesXsize;
 
-		if(iXpos<0)
-			{
+		if(iXpos<0){
 			pInfo->flags = TVHT_ONITEMSTATEICON;
 			return uItem;
-			}
 		}
+	}
 
-
-	if(pEntry->bFlags&TVIX_HASIMAGE)						// Auf dem Icon
-		{
+	if(pEntry->bFlags & TVIX_HASIMAGE){						// Auf dem Icon
 		iXpos -= pData->iImagesXsize;
 
-		if(pData->uStyleEx&TVS_EX_ITEMLINES)iXpos--;
+		if(pData->uStyleEx&TVS_EX_ITEMLINES)
+			iXpos--;
 
-		if(iXpos<0)
-			{
+		if(iXpos<0){
 			pInfo->flags = TVHT_ONITEMICON;
 			return uItem;
-			}
 		}
+	}
 															// Auf Text
-	if(iXpos<pEntry->iTextPixels+5 || !pEntry->pText || !pEntry->pText[0])
-		{
+	if(iXpos<pEntry->iTextPixels+5 || !pEntry->pText || !pEntry->pText[0]){
 		pInfo->flags = TVHT_ONITEMLABEL;
-		}
+	}
 	else{
 		pInfo->flags = TVHT_ONITEMRIGHT;
-		}
+	}
 
-
-
-return uItem;
+	return uItem;
 }
 
 //*****************************************************************************
@@ -6419,37 +5807,36 @@ return uItem;
 //	uItem	: Ist die Nummer des Eintrages bei dem eingefügt werden soll
 //	iMode	: 0=davor einfügen  1=nachher einfügen
 //	Ergibt 1 wenn der Eintrag eingefügt wurde
-static unsigned TreeListSetInsertMark(TreeListData *pData,unsigned uItem,int iMode)
-{
-TV_INSERTSTRUCT	sInsert;
-ExtraItem	   *pExtra;
-BaseItem	   *pEntry;
-unsigned		uSub;
-int				iRet;
+static unsigned TreeListSetInsertMark(TreeListData *pData,unsigned uItem,int iMode){
 
+	TV_INSERTSTRUCT	sInsert;
+	ExtraItem	   *pExtra;
+	BaseItem	   *pEntry;
+	unsigned		uSub;
+	int				iRet;
 
-
-	if(pData->uInsertMark)
-		{
+	if(pData->uInsertMark){
 		iRet=TreeListDeleteItem(pData,pData->uInsertMark,1);
 		pData->uInsertMark=0;
-		}
+	}
 	else{
 		iRet=0;
-		}
+	}
 
-	if(uItem==0)return iRet;
-	if(uItem>pData->uTreeItemsMax)return 0;
+	if(uItem==0)
+		return iRet;
+	if(uItem>pData->uTreeItemsMax)
+		return 0;
 
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return 0;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return 0;
 
-
-	if(iMode)
-		{
-			uItem=pEntry->uPrevItem;
-		if(!uItem)uItem=U(TVI_FIRST);
-		}
+	if(iMode){
+		uItem=pEntry->uPrevItem;
+		if(!uItem)
+			uItem=U(TVI_FIRST);
+	}
 
 	sInsert.hParent		 		= (HTREEITEM)pEntry->uParent;
 	sInsert.hInsertAfter 		= (HTREEITEM)uItem;
@@ -6457,9 +5844,9 @@ int				iRet;
 	sInsert.item.iImage			= TV_NOIMAGE;
 	sInsert.item.iSelectedImage	= TV_NOIMAGE;
 
-		uItem = TreeListInsertItem(pData,&sInsert);
-	if(!uItem)return 0;
-
+	uItem = TreeListInsertItem(pData,&sInsert);
+	if(!uItem)
+		return 0;
 
 	pEntry				= pData->pTreeItems[uItem];
 	pEntry->uColorBk	= pData->uColors[TVC_INSERT];
@@ -6467,8 +5854,7 @@ int				iRet;
 	sInsert.item.mask  |= TVIF_SUBITEM;
 	sInsert.item.hItem	= (HTREEITEM)uItem;
 
-	for(uSub=1;uSub<pData->uColumnCount;uSub++)
-		{
+	for(uSub=1;uSub<pData->uColumnCount;uSub++){
 		sInsert.item.cChildren	= uSub;
 
 		TreeListSetItem(pData,&sInsert.item);
@@ -6476,14 +5862,11 @@ int				iRet;
 		pExtra = pData->pExtraItems[uSub-1][uItem];
 		pExtra->uColorBk	= pData->uColors[TVC_INSERT];
 		pExtra->bFlags	   |= TVIX_BKCOLOR;
-		}
-
+	}
 
 	pData->uInsertMark = uItem;
 
-
-
-return uItem;
+	return uItem;
 }
 
 //*****************************************************************************
@@ -6497,40 +5880,40 @@ return uItem;
 //	uSub	: Ist die Spalte
 //	iMode	: 0=Hintergrundfarbe 1=Textfarbe abfragen
 //	Ergibt die alte Farbe oder TV_NOCOLOR wenn keine Farbe eingestellt war
-static LRESULT TreeListGetItemColor(TreeListData *pData,unsigned uItem,unsigned uSub,int iMode)
-{
-COLORREF	uColor;
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
+static LRESULT TreeListGetItemColor(TreeListData *pData,unsigned uItem,unsigned uSub,int iMode){
 
+	COLORREF	uColor;
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
 
+	if(uItem>pData->uTreeItemsMax)
+		return TV_NOCOLOR;
 
-	if(uItem>pData->uTreeItemsMax)return TV_NOCOLOR;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return TV_NOCOLOR;
 
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return TV_NOCOLOR;
+	if(uSub){												// Extra-Eintrag abfragen
+		if(uSub>=pData->uColumnCount)
+			return TV_NOCOLOR;
 
-
-	if(uSub)												// Extra-Eintrag abfragen
-		{
-		if(uSub>=pData->uColumnCount)return TV_NOCOLOR;
-
-			pExtra = pData->pExtraItems[uSub-1][uItem];
-		if(!pExtra)return TV_NOCOLOR;
+		pExtra = pData->pExtraItems[uSub-1][uItem];
+		if(!pExtra)
+			return TV_NOCOLOR;
 
 		if(iMode)
-				uColor = (pExtra->bFlags&TVIX_TEXTCOLOR)? pExtra->uColorText:TV_NOCOLOR;
-		else	uColor = (pExtra->bFlags&TVIX_BKCOLOR  )? pExtra->uColorBk  :TV_NOCOLOR;
+			uColor = (pExtra->bFlags & TVIX_TEXTCOLOR) ? pExtra->uColorText : TV_NOCOLOR;
+		else	
+			uColor = (pExtra->bFlags & TVIX_BKCOLOR  ) ? pExtra->uColorBk  : TV_NOCOLOR;
 		}
 	else{
 		if(iMode)
-				uColor = (pEntry->bFlags&TVIX_TEXTCOLOR)? pEntry->uColorText:TV_NOCOLOR;
-		else	uColor = (pEntry->bFlags&TVIX_BKCOLOR  )? pEntry->uColorBk  :TV_NOCOLOR;
+			uColor = (pEntry->bFlags & TVIX_TEXTCOLOR) ? pEntry->uColorText : TV_NOCOLOR;
+		else	
+			uColor = (pEntry->bFlags & TVIX_BKCOLOR  ) ? pEntry->uColorBk  : TV_NOCOLOR;
 		}
 
-
-
-return (LRESULT)uColor;
+	return (LRESULT)uColor;
 }
 
 //*****************************************************************************
@@ -6545,114 +5928,99 @@ return (LRESULT)uColor;
 //	uColor	: Ist die neue Farbe
 //	iMode	: 0=Hintergrundfarbe 1=Textfarbe einstellen
 //	Ergibt die alte Farbe oder TV_NOCOLOR wenn keine Farbe eingestellt war
-static COLORREF TreeListSetItemColor(TreeListData *pData,unsigned uItem,unsigned uSub,COLORREF uColor,int iMode)
-{
-TV_ITEM		sSet;
-COLORREF	uOld;
-ExtraItem  *pExtra;
-BaseItem   *pEntry;
+static COLORREF TreeListSetItemColor(TreeListData *pData,unsigned uItem,unsigned uSub,COLORREF uColor,int iMode){
 
+	TV_ITEM		sSet;
+	COLORREF	uOld;
+	ExtraItem  *pExtra;
+	BaseItem   *pEntry;
 
+	if(uItem>pData->uTreeItemsMax)
+		return TV_NOCOLOR;
 
-	if(uItem>pData->uTreeItemsMax)return TV_NOCOLOR;
+	pEntry = pData->pTreeItems[uItem];
+	if(!pEntry)
+		return TV_NOCOLOR;
 
-		pEntry = pData->pTreeItems[uItem];
-	if(!pEntry)return TV_NOCOLOR;
-
-
-	if(uSub>=255)											// Die Ganze Zeile ändern
-		{
-		if(pData->uColumnCount)
-			{
-			for(uSub=pData->uColumnCount;uSub>0;uSub--)
-				{
+	if(uSub>=255){											// Die Ganze Zeile ändern
+		if(pData->uColumnCount){
+			for(uSub=pData->uColumnCount;uSub>0;uSub--){
 				TreeListSetItemColor(pData,uItem,uSub,uColor,iMode);
-				}
 			}
-
-		uSub = 0;
 		}
 
+		uSub = 0;
+	}
 
-	if(uSub)												// Extra-Eintrag verändern
-		{
-		if(uSub>=pData->uColumnCount)return TV_NOCOLOR;
+	if(uSub){												// Extra-Eintrag verändern
+		if(uSub>=pData->uColumnCount)
+			return TV_NOCOLOR;
 
-			pExtra = pData->pExtraItems[uSub-1][uItem];
-		if(!pExtra)											// Extra-Eintrag erzeugen
-			{
+		pExtra = pData->pExtraItems[uSub-1][uItem];
+		if(!pExtra){											// Extra-Eintrag erzeugen
 			sSet.mask		= TVIF_SUBITEM;
 			sSet.hItem		= (HTREEITEM)uItem;
 			sSet.cChildren	= uSub;
 
-			if(!TreeListSetItem(pData,&sSet))return TV_NOCOLOR;
+			if(!TreeListSetItem(pData,&sSet))
+				return TV_NOCOLOR;
 
 			pExtra = pData->pExtraItems[uSub-1][uItem];
-			}
+		}
 
-		if(iMode)											// Textfarbe
-			{
-			uOld = (pExtra->bFlags&TVIX_TEXTCOLOR)? pExtra->uColorText:TV_NOCOLOR;
+		if(iMode){											// Textfarbe
+			uOld = (pExtra->bFlags & TVIX_TEXTCOLOR) ? pExtra->uColorText : TV_NOCOLOR;
 
-			if(uColor==TV_NOCOLOR)
-				{
+			if(uColor==TV_NOCOLOR){
 				pExtra->bFlags	   &= ~TVIX_TEXTCOLOR;
-				}
+			}
 			else{
 				pExtra->bFlags	   |=  TVIX_TEXTCOLOR;
 				pExtra->uColorText  =  uColor;
-				}
 			}
+		}
 		else{												// Hintergrund
-			uOld = (pExtra->bFlags&TVIX_BKCOLOR)? pExtra->uColorBk:TV_NOCOLOR;
+			uOld = (pExtra->bFlags & TVIX_BKCOLOR) ? pExtra->uColorBk : TV_NOCOLOR;
 
-			if(uColor==TV_NOCOLOR)
-				{
+			if(uColor==TV_NOCOLOR){
 				pExtra->bFlags	   &= ~TVIX_BKCOLOR;
-				}
+			}
 			else{
 				pExtra->bFlags	   |=  TVIX_BKCOLOR;
 				pExtra->uColorBk    =  uColor;
-				}
 			}
 		}
+	}
 	else{
-		if(iMode)											// Textfarbe
-			{
-			uOld = (pEntry->bFlags&TVIX_TEXTCOLOR)? pEntry->uColorText:TV_NOCOLOR;
+		if(iMode){											// Textfarbe
+			uOld = (pEntry->bFlags & TVIX_TEXTCOLOR) ? pEntry->uColorText : TV_NOCOLOR;
 
-			if(uColor==TV_NOCOLOR)
-				{
+			if(uColor==TV_NOCOLOR){
 				pEntry->bFlags	   &= ~TVIX_TEXTCOLOR;
-				}
+			}
 			else{
 				pEntry->bFlags	   |=  TVIX_TEXTCOLOR;
 				pEntry->uColorText  =  uColor;
-				}
 			}
+		}
 		else{												// Hintergrund
-			uOld = (pEntry->bFlags&TVIX_BKCOLOR)? pEntry->uColorBk:TV_NOCOLOR;
+			uOld = (pEntry->bFlags & TVIX_BKCOLOR) ? pEntry->uColorBk : TV_NOCOLOR;
 
-			if(uColor==TV_NOCOLOR)
-				{
+			if(uColor==TV_NOCOLOR){
 				pEntry->bFlags	   &= ~TVIX_BKCOLOR;
-				}
+			}
 			else{
 				pEntry->bFlags	   |=  TVIX_BKCOLOR;
 				pEntry->uColorBk    =  uColor;
-				}
 			}
 		}
+	}
 
-
-	if(uColor!=uOld)										// Neu zeichnen
-		{
+	if(uColor!=uOld){										// Neu zeichnen
 		UpdateRect(pData,uItem,uSub);
-		}
+	}
 
-
-
-return uOld;
+	return uOld;
 }
 
 //*****************************************************************************
@@ -6665,99 +6033,85 @@ return uOld;
 //	uItem	: Ist die Nummer des Eintrages
 //	uSub	: Ist die Spalte
 //	Ergibt 1 wenn der Eintrag unterstrichen wurde
-static int TreeListSetTrackItem(TreeListData *pData,unsigned uItem,unsigned uSub)
-{
-ExtraItem	   *pExtra;
-BaseItem	   *pEntry;
-int				iRet=1;
+static int TreeListSetTrackItem(TreeListData *pData,unsigned uItem,unsigned uSub){
 
+	ExtraItem	   *pExtra;
+	BaseItem	   *pEntry;
+	int				iRet=1;
 
-	if(!(pData->uStyleEx&TVS_EX_SUBSELECT))
-		{
+	if(!(pData->uStyleEx & TVS_EX_SUBSELECT)){
 		uSub=0;
-		}
+	}
 	else{
-		if(uSub>=pData->uColumnCount)
-			{
+		if(uSub >= pData->uColumnCount){
 			uItem = 0;
 			uSub  = 0;
 			iRet  = 0;
-			}
 		}
+	}
 
-	if(uItem>pData->uTreeItemsMax)
-		{
+	if(uItem > pData->uTreeItemsMax){
 		uItem = 0;
 		uSub  = 0;
 		iRet  = 0;
-		}
+	}
 	else{
-		if(uItem==pData->uTrackedItem)
-		if(uSub ==pData->uTrackedSub )
-			{
-			return iRet;
+		if(uItem == pData->uTrackedItem)
+			if(uSub == pData->uTrackedSub ){
+				return iRet;
 			}
-		}
+	}
 
-	if(pData->uTrackedItem)									// Den alten Eintrag zurücksetzen
-		{
-		if(pData->uTrackedSub)
-			{
+	if(pData->uTrackedItem){									// Den alten Eintrag zurücksetzen
+		if(pData->uTrackedSub){
 			   pExtra = pData->pExtraItems[pData->uTrackedSub-1][pData->uTrackedItem];
-			if(pExtra)
-				{
+			if(pExtra){
 				pExtra->bFlags &= ~TVIX_TRACKED;
 				UpdateRect(pData,pData->uTrackedItem,pData->uTrackedSub);
-				}
-			}
-		else{
-			   pEntry = pData->pTreeItems[pData->uTrackedItem];
-			if(pEntry)
-				{
-				pEntry->bFlags &= ~TVIX_TRACKED;
-				UpdateRect(pData,pData->uTrackedItem,0);
-				}
 			}
 		}
+		else{
+			pEntry = pData->pTreeItems[pData->uTrackedItem];
+			if(pEntry){
+				pEntry->bFlags &= ~TVIX_TRACKED;
+				UpdateRect(pData,pData->uTrackedItem,0);
+			}
+		}
+	}
 
 
-	if(uItem)												// Den neuen Eintrag setzen
-		{
-		if(uSub)
-			{
-			   pExtra = pData->pExtraItems[uSub-1][uItem];
-			if(pExtra)
-				{
+	if(uItem){												// Den neuen Eintrag setzen
+		if(uSub){
+			pExtra = pData->pExtraItems[uSub-1][uItem];
+			if(pExtra){
 				pData->uTrackedSub  = uSub;
 				pData->uTrackedItem = uItem;
 				pExtra->bFlags     |= TVIX_TRACKED;
 				UpdateRect(pData,uItem,uSub);
-				}
+			}
 			else{
 				iRet=0;
-				}
 			}
+		}
 		else{
-			   pEntry = pData->pTreeItems[uItem];
-			if(pEntry)
-				{
+			pEntry = pData->pTreeItems[uItem];
+			if(pEntry){
 				pData->uTrackedSub  = 0;
 				pData->uTrackedItem = uItem;
 				pEntry->bFlags     |= TVIX_TRACKED;
 				UpdateRect(pData,uItem,0);
-				}
+			}
 			else{
 				iRet=0;
-				}
 			}
 		}
+	}
 	else{													// Keine Untersteichung
 		pData->uTrackedSub  = 0;
 		pData->uTrackedItem = 0;
-		}
+	}
 
-
-return iRet;
+	return iRet;
 }
 
 //*****************************************************************************
