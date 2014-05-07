@@ -1,0 +1,24 @@
+//
+// TREELIST.RC2 - Ressourcen, die Microsoft Visual C++ nicht direkt bearbeitet
+//
+
+#ifdef APSTUDIO_INVOKED
+	#error this file is not editable by Microsoft Visual C++
+#endif //APSTUDIO_INVOKED
+
+
+#ifndef RT_MANIFEST
+#define RT_MANIFEST 24
+#endif
+
+#ifndef CREATEPROCESS_MANIFEST_RESOURCE_ID
+#define CREATEPROCESS_MANIFEST_RESOURCE_ID 1
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Fügen Sie hier manuell bearbeitete Ressourcen hinzu...
+
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "res\\TreeList.exe.manifest"
+
+/////////////////////////////////////////////////////////////////////////////
