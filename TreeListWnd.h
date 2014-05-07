@@ -17,33 +17,29 @@
 typedef int (CALLBACK *PFNTVCOMPAREEX)(HWND hWnd,HTREEITEM hItem1,HTREEITEM hItem2,LPARAM lParam1,LPARAM lParam2,LPARAM lParam);
 typedef int (CALLBACK *PFNTVSORTEX   )(HWND hWnd,HTREEITEM hItem ,LPCTSTR pTextItem,LPCTSTR pTextInsert,LPARAM lParamItem,LPARAM lParamInsert);
 
-typedef struct
-	{
+typedef struct {
     HTREEITEM       hParent;
     PFNTVCOMPAREEX  lpfnCompare;
     LPARAM          lParam;
-	}TVSORTEX;
+} TVSORTEX;
 
-typedef struct
-	{
+typedef struct {
 	UINT			uFlags;
 	UINT			uColumn;
 	UINT			uState;
 	UINT			uStateMask;
 	LPARAM			lParam;
 	LPCTSTR			pText;
-	}TVFIND;
+} TVFIND;
 
-typedef struct
-	{
+typedef struct {
     NMHDR			hdr;
     WORD			wVKey;
 	WORD			wScan;
     UINT			flags;
-	}TV_KEYDOWN_EX;
+} TV_KEYDOWN_EX;
 
-typedef struct
-	{
+typedef struct {
     NMHDR			hdr;
     TVITEM			item;
 	UINT			uAction;
@@ -52,16 +48,15 @@ typedef struct
 	LPCTSTR			pTextEntries;
 	LPCTSTR		   *pTextList;
 	POINT			ptAction;
-	}TV_STARTEDIT;
+} TV_STARTEDIT;
 
-typedef struct
-	{
+typedef struct {
     NMHDR			hdr;
     UINT			uColumn;
 	UINT			uIndex;
 	UINT			uPosX;
 	INT				iSize;
-	}TV_COLSIZE;
+} TV_COLSIZE;
 
 typedef		TVSORTEX			   *LPTVSORTEX;
 typedef		TVSORTEX			   *LPTV_SORTEX;
@@ -428,13 +423,6 @@ typedef		TVSORTEX				TV_SORTEX;
 #define		TreeList_GetSelectionColumn(h)				((int)TreeView_GetNextItem(h, NULL,  TVGN_CARETSUB))
 #define		TreeList_GetDropHilightColumn(h)			((int)TreeView_GetNextItem(h, NULL,  TVGN_DROPHILITESUB))
 
-
-
-
-
 int			TreeListRegister(HINSTANCE hInstance=0);
-
-
-
 
 #endif

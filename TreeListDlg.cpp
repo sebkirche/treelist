@@ -254,7 +254,7 @@ int			i,j;
 	m_hSelect	= NULL;
 	m_iSelCol	= 0;
 	
-	m_cImages  .Create  (IDB_FALGS ,16,8,RGB(0,255,255));
+	m_cImages  .Create  (IDB_FLAGS ,16,8,RGB(0,255,255));
 	m_cChecks  .Create  (IDB_CHECKS,16,8,RGB(0,255,255));
 	m_cTreeList.CreateEx(WS_EX_CLIENTEDGE,uStyle|WS_CHILD|WS_VISIBLE|WS_TABSTOP,sRect,this,IDC_TREELIST);
 

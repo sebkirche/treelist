@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by TreeList.rc
 //
 #define IDM_ABOUTBOX                    0x0010
@@ -8,7 +8,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_TREELIST_DIALOG             102
 #define IDR_MAINFRAME                   128
-#define IDB_FALGS                       129
+#define IDB_FLAGS                       129
 #define IDB_CHECKS                      130
 #define IDC_FRAME                       1000
 #define IDC_CHECK1                      1001
