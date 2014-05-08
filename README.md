@@ -2,3 +2,5 @@ TreeList
 ========
 
 A combined win32 ListView/TreeView forked from [Anton Zechner's TreeList](http://members.inode.at/anton.zechner/az/TreeList.htm)
+
+I am working to wrap it into a visual control for PowerBuilder.
