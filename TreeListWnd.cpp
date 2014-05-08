@@ -373,11 +373,14 @@ int TreeListRegister(HINSTANCE hInstance) {
 	static int		iIsRegistered = FALSE;
 	WNDCLASSEX		sClass;
 
+	OutputDebugString(TEXT("TreeListRegister() - before checking"));
+
 	if(iIsRegistered)
 		return TRUE;
 
-	memset(&sClass, 0, sizeof(sClass));
+	OutputDebugString(TEXT("TreeListRegister() - before registration"));
 
+	memset(&sClass, 0, sizeof(sClass));
 	sClass.cbSize           = sizeof(sClass);
 	sClass.style            = CS_DBLCLKS | CS_GLOBALCLASS;
 	sClass.lpfnWndProc      = TreeListProc;
@@ -394,8 +397,8 @@ int TreeListRegister(HINSTANCE hInstance) {
 	if(!RegisterClassEx(&sClass))
 		return 0;
 
+	OutputDebugString(TEXT("TreeListRegister() - registration done"));
 	iIsRegistered = TRUE;
-
 
 	return TRUE;
 }
