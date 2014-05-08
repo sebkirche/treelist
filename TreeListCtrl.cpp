@@ -46,13 +46,12 @@ IMPLEMENT_DYNAMIC(CTreeListCtrl, CWnd)
 //	pParentWnd	: Pointer to parent window
 //	nId			: Is the ID of the window
 //	Returns TRUE if the window was created or FALSE if an error occurs
-BOOL CTreeListCtrl::Create(DWORD dwStyle,const RECT &sRect,CWnd *pParentWnd,UINT nId)
-{
+BOOL CTreeListCtrl::Create(DWORD dwStyle, const RECT &sRect, CWnd *pParentWnd, UINT nId) {
 
 	TreeListRegister(AfxGetInstanceHandle());
 
 
-return CWnd::Create(_T("TreeList"),NULL,dwStyle,sRect,pParentWnd,nId);
+	return CWnd::Create(_T("TreeList"), NULL, dwStyle, sRect, pParentWnd, nId);
 }
 
 //*****************************************************************************
@@ -82,9 +81,8 @@ return CWnd::Create(_T("TreeList"),NULL,dwStyle,sRect,pParentWnd,nId);
 //	pDlg		: Pointer to parent dialog
 //	nId			: Is the ID of the window
 //	Returns TRUE if the window was created or FALSE if an error occurs
-BOOL CTreeListCtrl::Create(DWORD dwStyle,UINT uItem,CDialog *pDlg,UINT nId)
-{
-return CreateEx(0,dwStyle,uItem,pDlg,nId);
+BOOL CTreeListCtrl::Create(DWORD dwStyle, UINT uItem, CDialog *pDlg, UINT nId) {
+	return CreateEx(0, dwStyle, uItem, pDlg, nId);
 }
 
 //*****************************************************************************
@@ -114,12 +112,11 @@ return CreateEx(0,dwStyle,uItem,pDlg,nId);
 //	pParentWnd  : Pointer to parent window
 //	nId         : Is the ID of the window
 //	Returns TRUE if the window was created or FALSE if an error occurs
-BOOL CTreeListCtrl::CreateEx(DWORD dwExStyle,DWORD dwStyle,const RECT &sRect,CWnd *pParentWnd,UINT nId)
-{
+BOOL CTreeListCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle, const RECT &sRect, CWnd *pParentWnd, UINT nId) {
 
-    TreeListRegister(AfxGetInstanceHandle());
+	TreeListRegister(AfxGetInstanceHandle());
 
-return CWnd::CreateEx(dwExStyle,_T("TreeList"),NULL,dwStyle,sRect,pParentWnd,nId);
+	return CWnd::CreateEx(dwExStyle, _T("TreeList"), NULL, dwStyle, sRect, pParentWnd, nId);
 }
 
 
@@ -150,18 +147,17 @@ return CWnd::CreateEx(dwExStyle,_T("TreeList"),NULL,dwStyle,sRect,pParentWnd,nId
 //	pDlg		: Pointer to parent dialog
 //	nId			: Is the ID of the window
 //	Returns TRUE if the window was created or FALSE if an error occurs
-BOOL CTreeListCtrl::CreateEx(DWORD dwExStyle,DWORD dwStyle,UINT uItem,CDialog *pDlg,UINT nId)
-{
-CPoint	sPoint(0,0);
-CRect	sRect;
-CWnd   *pWnd;
+BOOL CTreeListCtrl::CreateEx(DWORD dwExStyle, DWORD dwStyle, UINT uItem, CDialog *pDlg, UINT nId) {
+	CPoint	sPoint(0, 0);
+	CRect	sRect;
+	CWnd   *pWnd;
 
 
-	pWnd=pDlg->GetDlgItem(uItem);
-	ASSERT(pWnd!=0);
+	pWnd = pDlg->GetDlgItem(uItem);
+	ASSERT(pWnd != 0);
 
 
-	pWnd->GetWindowRect (&sRect);
+	pWnd->GetWindowRect(&sRect);
 	pDlg->ClientToScreen(&sPoint);
 
 	sRect.left	  -= sPoint.x;
@@ -170,7 +166,7 @@ CWnd   *pWnd;
 	sRect.bottom  -= sPoint.y;
 
 
-return CTreeListCtrl::CreateEx(dwExStyle,dwStyle|WS_CHILD|WS_VISIBLE,sRect,pDlg,nId);
+	return CTreeListCtrl::CreateEx(dwExStyle, dwStyle | WS_CHILD | WS_VISIBLE, sRect, pDlg, nId);
 }
 
 
@@ -196,47 +192,41 @@ return CTreeListCtrl::CreateEx(dwExStyle,dwStyle|WS_CHILD|WS_VISIBLE,sRect,pDlg,
 //				  is only for dynamic size changing.
 //				  Use 0x8000 for no minimal size
 //	Returns the position of the column or -1 if an error occurs
-int CTreeListCtrl::InsertColumn(int nCol,LPCTSTR pColumnText,int nFormat,int nWidth,int nMin)
-{
-TV_COLUMN	sItem;
+int CTreeListCtrl::InsertColumn(int nCol, LPCTSTR pColumnText, int nFormat, int nWidth, int nMin) {
+	TV_COLUMN	sItem;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
 	sItem.mask = 0;
 
-	if(pColumnText)
-		{
+	if(pColumnText) {
 		sItem.mask		|=  TVCF_TEXT;
-		sItem.pszText	 =  (LPTSTR)pColumnText;
+		sItem.pszText	 = (LPTSTR)pColumnText;
 		sItem.cchTextMax =  256;
-		}
+	}
 
-	if(nFormat>=0)
-		{
-		sItem.mask		|=  TVCF_FMT|TVCF_MARK;
+	if(nFormat >= 0) {
+		sItem.mask		|=  TVCF_FMT | TVCF_MARK;
 		sItem.fmt		 =  nFormat;
-		}
+	}
 
-	if(nMin!=0x8000)
-		{
+	if(nMin != 0x8000) {
 		sItem.mask		|=  TVCF_MIN;
 		sItem.iOrder	 =  nMin;
-		}
+	}
 
-	if(nWidth>=0)
-		{
+	if(nWidth >= 0) {
 		sItem.mask		|=  TVCF_WIDTH;
 		sItem.cx		 =  nWidth;
-		}
-	else{
+	} else {
 		sItem.mask		|=  TVCF_VWIDTH;
 		sItem.cx		 = -nWidth;
-		}
+	}
 
 
 
-return InsertColumn(nCol,&sItem);
+	return InsertColumn(nCol, &sItem);
 }
 
 //*****************************************************************************
@@ -255,26 +245,25 @@ return InsertColumn(nCol,&sItem);
 //	nStateMask		: is a mask for the states
 //	lParam			: is the new LPARAM parameter for the item (add TVIF_PARAM to nMask)
 //	Returns TRUE if the text was changed or FALSE if an error occurs
-BOOL CTreeListCtrl::SetItem(HTREEITEM hItem,int nCol,UINT nMask,LPCTSTR pText,int nImage,int nSelectedImage,UINT nState, UINT nStateMask,LPARAM lParam)
-{
-TV_ITEM		sItem;
+BOOL CTreeListCtrl::SetItem(HTREEITEM hItem, int nCol, UINT nMask, LPCTSTR pText, int nImage, int nSelectedImage, UINT nState, UINT nStateMask, LPARAM lParam) {
+	TV_ITEM		sItem;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask				= nMask|TVIF_SUBITEM;
-    sItem.hItem				= hItem;
-    sItem.state				= nState;
-    sItem.stateMask			= nStateMask;
-    sItem.pszText			= (LPTSTR)pText;
-    sItem.cchTextMax		=(pText)? 256:0;
-    sItem.iImage			= nImage;
-    sItem.iSelectedImage	= nSelectedImage;
-    sItem.cChildren			= nCol;
+	sItem.mask				= nMask | TVIF_SUBITEM;
+	sItem.hItem				= hItem;
+	sItem.state				= nState;
+	sItem.stateMask			= nStateMask;
+	sItem.pszText			= (LPTSTR)pText;
+	sItem.cchTextMax		= (pText) ? 256 : 0;
+	sItem.iImage			= nImage;
+	sItem.iSelectedImage	= nSelectedImage;
+	sItem.cChildren			= nCol;
 	sItem.lParam			= lParam;
 
 
-return SetItem(&sItem);
+	return SetItem(&sItem);
 }
 
 
@@ -289,22 +278,21 @@ return SetItem(&sItem);
 //	pText		: Is the new text of the item
 //	nCol		: Is the column for the text (0=tree column)
 //	Returns TRUE if the text was changed or FALSE if an error occurs
-BOOL CTreeListCtrl::SetItemText(HTREEITEM hItem,LPCTSTR pText,int nCol)
-{
-TV_ITEM		sItem;
+BOOL CTreeListCtrl::SetItemText(HTREEITEM hItem, LPCTSTR pText, int nCol) {
+	TV_ITEM		sItem;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask				= TVIF_SUBITEM|TVIF_TEXT;
-    sItem.hItem				= hItem;
-    sItem.stateMask			= 0;
-    sItem.pszText			= (LPTSTR)pText;
-    sItem.cchTextMax		= (pText)? 256:0;
-    sItem.cChildren			= nCol;
+	sItem.mask				= TVIF_SUBITEM | TVIF_TEXT;
+	sItem.hItem				= hItem;
+	sItem.stateMask			= 0;
+	sItem.pszText			= (LPTSTR)pText;
+	sItem.cchTextMax		= (pText) ? 256 : 0;
+	sItem.cChildren			= nCol;
 
 
-return SetItem(&sItem);
+	return SetItem(&sItem);
 }
 
 //*****************************************************************************
@@ -315,13 +303,12 @@ return SetItem(&sItem);
 //	Deletes an item in a Tree-List-Control which is used as List-Control
 //	iRow	: Is the row of the item
 //	Returns TRUE if the item was deleted or FALSE if an error occurs
-BOOL CTreeListCtrl::ListDeleteItem(int iRow)
-{
+BOOL CTreeListCtrl::ListDeleteItem(int iRow) {
 
 	ASSERT(::IsWindow(m_hWnd));
 
 
-return DeleteItem(GetItemOfRow(iRow));
+	return DeleteItem(GetItemOfRow(iRow));
 }
 
 
@@ -347,53 +334,47 @@ return DeleteItem(GetItemOfRow(iRow));
 //				TVIS_OVERLAYMASK	= overlay bits for image
 //				TVIS_STATEIMAGEMASK = image for state icons
 //	Returns the insert position of the item or -1 if an error occurs
-int CTreeListCtrl::ListInsertItem(int iRow,LPCTSTR pText,int nImage,int nState,int iMask)
-{
-HTREEITEM		hItem;
-TVINSERTSTRUCT	sData;
+int CTreeListCtrl::ListInsertItem(int iRow, LPCTSTR pText, int nImage, int nState, int iMask) {
+	HTREEITEM		hItem;
+	TVINSERTSTRUCT	sData;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
 	sData.item.mask	= 0;
 
-	if(pText)
-		{
+	if(pText) {
 		sData.item.mask		 |= TVIF_TEXT;
 		sData.item.pszText	  = (LPTSTR)pText;
 		sData.item.cchTextMax = 256;
-		}
+	}
 
-	if(nImage>=0)
-		{
-		sData.item.mask		     |= TVIF_SELECTEDIMAGE|TVIF_IMAGE ;
+	if(nImage >= 0) {
+		sData.item.mask		     |= TVIF_SELECTEDIMAGE | TVIF_IMAGE ;
 		sData.item.iImage		  = nImage;
 		sData.item.iSelectedImage = nImage;
-		}
+	}
 
-	if(nState>=0)
-		{
+	if(nState >= 0) {
 		sData.item.mask	    |= TVIF_STATE;
 		sData.item.state	 = nState;
-		sData.item.stateMask = iMask&(TVIS_BOLD|TVIS_UNTERLINE|TVIS_SELECTED|TVIS_OVERLAYMASK|TVIS_STATEIMAGEMASK);
-		}
+		sData.item.stateMask = iMask & (TVIS_BOLD | TVIS_UNTERLINE | TVIS_SELECTED | TVIS_OVERLAYMASK | TVIS_STATEIMAGEMASK);
+	}
 
 
-		hItem = GetItemOfRow(iRow);
-	if(!hItem)
-		{
+	hItem = GetItemOfRow(iRow);
+	if(!hItem) {
 		sData.hInsertAfter	= TVI_LAST;
 		sData.hParent       = TVI_ROOT;
-		}
-	else{
+	} else {
 		sData.hParent		= hItem;
 		sData.hInsertAfter	= TVI_BEFORE;
-		}
+	}
 
 	hItem = InsertItem(&sData);
 
 
-return GetRowOfItem(hItem);
+	return GetRowOfItem(hItem);
 }
 
 //*****************************************************************************
@@ -419,43 +400,40 @@ return GetRowOfItem(hItem);
 //				TVIS_OVERLAYMASK	= overlay bits for image
 //				TVIS_STATEIMAGEMASK = image for state icons (only for column 0)
 //	Returns TRUE if ok or FALSE if an error occurs
-BOOL CTreeListCtrl::ListSetItem(int iRow,int nCol,LPCTSTR pText,int nImage,int nState,int iMask)
-{
-TV_ITEM		sData;
+BOOL CTreeListCtrl::ListSetItem(int iRow, int nCol, LPCTSTR pText, int nImage, int nState, int iMask) {
+	TV_ITEM		sData;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sData.mask		= TVIF_HANDLE|TVIF_SUBITEM;
+	sData.mask		= TVIF_HANDLE | TVIF_SUBITEM;
 	sData.hItem		= GetItemOfRow(iRow);
 	sData.cChildren	= nCol;
 
-	if(!sData.hItem)return FALSE;
+	if(!sData.hItem)
+		return FALSE;
 
-	if(pText)
-		{
+	if(pText) {
 		sData.mask		 |= TVIF_TEXT;
 		sData.pszText	  = (LPTSTR)pText;
 		sData.cchTextMax  = 256;
-		}
+	}
 
-	if(nImage>=0)
-		{
-		sData.mask		     |= TVIF_SELECTEDIMAGE|TVIF_IMAGE ;
+	if(nImage >= 0) {
+		sData.mask		     |= TVIF_SELECTEDIMAGE | TVIF_IMAGE ;
 		sData.iImage		  = nImage;
 		sData.iSelectedImage  = nImage;
-		}
+	}
 
-	if(nState>=0)
-		{
+	if(nState >= 0) {
 		sData.mask	    |= TVIF_STATE;
 		sData.state	     = nState;
-		sData.stateMask  = iMask&(TVIS_BOLD|TVIS_UNTERLINE|TVIS_SELECTED);
-		}
+		sData.stateMask  = iMask & (TVIS_BOLD | TVIS_UNTERLINE | TVIS_SELECTED);
+	}
 
 
 
-return SetItem(&sData);
+	return SetItem(&sData);
 }
 
 
@@ -470,24 +448,24 @@ return SetItem(&sData);
 //	uBkColor	: Is the new background color (use TV_NOCOLOR for the default color)
 //	uTextColor	: Is the new text       color (use TV_NOCOLOR for the default color)
 //	Returns TRUE if ok or FALSE if an error occurs
-BOOL CTreeListCtrl::ListSetColor(int iRow,int nCol,COLORREF uBkColor,COLORREF uTextColor)
-{
-HTREEITEM	hItem;
+BOOL CTreeListCtrl::ListSetColor(int iRow, int nCol, COLORREF uBkColor, COLORREF uTextColor) {
+	HTREEITEM	hItem;
 
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
 
-		hItem = GetItemOfRow(iRow);
-	if(!hItem)return FALSE;
+	hItem = GetItemOfRow(iRow);
+	if(!hItem)
+		return FALSE;
 
 
-	SetItemBkColor  (hItem,nCol,uBkColor);
-	SetItemTextColor(hItem,nCol,uTextColor);
+	SetItemBkColor(hItem, nCol, uBkColor);
+	SetItemTextColor(hItem, nCol, uTextColor);
 
 
-return TRUE;
+	return TRUE;
 }
 
 //*****************************************************************************
@@ -501,25 +479,23 @@ return TRUE;
 //	uBkColor	: Is the new background color (TV_NOCOLOR for the default color)
 //	uTextColor	: Is the new background color (TV_NOCOLOR for the default color)
 //	Returns TRUE if ok or FALSE if an error occurs
-BOOL CTreeListCtrl::ListGetColor(int iRow,int nCol,COLORREF &uBkColor,COLORREF &uTextColor)
-{
-HTREEITEM	hItem;
+BOOL CTreeListCtrl::ListGetColor(int iRow, int nCol, COLORREF &uBkColor, COLORREF &uTextColor) {
+	HTREEITEM	hItem;
 
 
-		hItem = GetItemOfRow(iRow);
-	if(!hItem)
-		{
+	hItem = GetItemOfRow(iRow);
+	if(!hItem) {
 		uBkColor   = TV_NOCOLOR;
 		uTextColor = TV_NOCOLOR;
 		return FALSE;
-		}
+	}
 
 
-	uBkColor   = GetItemBkColor  (hItem,nCol);
-	uTextColor = GetItemTextColor(hItem,nCol);
+	uBkColor   = GetItemBkColor(hItem, nCol);
+	uTextColor = GetItemTextColor(hItem, nCol);
 
 
-return TRUE;
+	return TRUE;
 }
 
 
@@ -534,22 +510,22 @@ return TRUE;
 //	nStateMask	: Is the state mask of the requested states
 //	nCol		: Is the column of the item
 //	Returns the state bits of the item
-UINT CTreeListCtrl::GetItemState(HTREEITEM hItem,UINT uMask,int nCol)
-{
-TV_ITEM		sItem;
+UINT CTreeListCtrl::GetItemState(HTREEITEM hItem, UINT uMask, int nCol) {
+	TV_ITEM		sItem;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask		 = TVIF_STATE|TVIF_HANDLE|TVIF_SUBITEM;
+	sItem.mask		 = TVIF_STATE | TVIF_HANDLE | TVIF_SUBITEM;
 	sItem.stateMask	 = uMask;
 	sItem.hItem		 = hItem;
 	sItem.cChildren	 = nCol;
 
-	if(!GetItem(&sItem))return 0;
+	if(!GetItem(&sItem))
+		return 0;
 
 
-return sItem.state;
+	return sItem.state;
 }
 
 
@@ -564,20 +540,19 @@ return sItem.state;
 //	nState		: New state bits
 //	nStateMask	: Mask of the bits which should be changed
 //	Returns the state bits of the item
-BOOL CTreeListCtrl::SetItemState(HTREEITEM hItem,int nCol,UINT nState,UINT nStateMask)
-{
-TV_ITEM		sItem;
+BOOL CTreeListCtrl::SetItemState(HTREEITEM hItem, int nCol, UINT nState, UINT nStateMask) {
+	TV_ITEM		sItem;
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask		 = TVIF_STATE|TVIF_HANDLE|TVIF_SUBITEM;
+	sItem.mask		 = TVIF_STATE | TVIF_HANDLE | TVIF_SUBITEM;
 	sItem.hItem		 = hItem;
 	sItem.cChildren	 = nCol;
 	sItem.stateMask	 = nStateMask;
 	sItem.state		 = nState;
 
 
-return SetItem(&sItem);
+	return SetItem(&sItem);
 }
 
 //*****************************************************************************
@@ -589,21 +564,21 @@ return SetItem(&sItem);
 //	hItem		: Is the handle of the item
 //	nCol		: Is the column of the item
 //	Returns a pointer to the text or NULL if an error occurs
-LPCTSTR CTreeListCtrl::GetItemText(HTREEITEM hItem,int nCol)
-{
-TV_ITEM		sItem;
+LPCTSTR CTreeListCtrl::GetItemText(HTREEITEM hItem, int nCol) {
+	TV_ITEM		sItem;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask		 = TVIF_TEXT|TVIF_SUBITEM|TVIF_TEXTPTR;
+	sItem.mask		 = TVIF_TEXT | TVIF_SUBITEM | TVIF_TEXTPTR;
 	sItem.hItem		 = hItem;
 	sItem.cChildren	 = nCol;
 
-	if(!GetItem(&sItem))return 0;
+	if(!GetItem(&sItem))
+		return 0;
 
 
-return sItem.pszText;
+	return sItem.pszText;
 }
 
 //*****************************************************************************
@@ -617,25 +592,25 @@ return sItem.pszText;
 //	iMax		: Is the size of the text buffer in chars
 //	nCol		: Is the column of the item
 //	Returns a pointer to the text or NULL if an error occurs
-BOOL CTreeListCtrl::GetItemText(HTREEITEM hItem,LPTSTR pBuffer,int iMax,int nCol)
-{
-TV_ITEM		sItem;
+BOOL CTreeListCtrl::GetItemText(HTREEITEM hItem, LPTSTR pBuffer, int iMax, int nCol) {
+	TV_ITEM		sItem;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
 
-	if(iMax<=0)return FALSE;
+	if(iMax <= 0)
+		return FALSE;
 
 	pBuffer[0]		 = 0;
-	sItem.mask		 = TVIF_TEXT|TVIF_SUBITEM;
+	sItem.mask		 = TVIF_TEXT | TVIF_SUBITEM;
 	sItem.hItem		 = hItem;
 	sItem.pszText	 = pBuffer;
 	sItem.cchTextMax = iMax;
 	sItem.cChildren	 = nCol;
 
 
-return GetItem(&sItem);
+	return GetItem(&sItem);
 }
 
 //*****************************************************************************
@@ -647,22 +622,22 @@ return GetItem(&sItem);
 //	hItem		: Is the handle of the item
 //	nCol		: Is the column of the item
 //	Returns the image number or -1 if an error occurs
-int CTreeListCtrl::GetItemImageEx(HTREEITEM hItem,int nCol)
-{
-TVITEM	sItem;
+int CTreeListCtrl::GetItemImageEx(HTREEITEM hItem, int nCol) {
+	TVITEM	sItem;
 
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask		= TVIF_IMAGE|TVIF_SUBITEM;
+	sItem.mask		= TVIF_IMAGE | TVIF_SUBITEM;
 	sItem.hItem		= hItem;
 	sItem.cChildren	= nCol;
 
-	if(!GetItem(&sItem))return -1;
+	if(!GetItem(&sItem))
+		return -1;
 
 
-return sItem.iImage;
+	return sItem.iImage;
 }
 
 //*****************************************************************************
@@ -675,24 +650,24 @@ return sItem.iImage;
 //	nImage		: Here the image number will be stored
 //	nCol		: Is the column of the item
 //	Returns TRUE if the image number was detected or FALSE if an error occurs
-BOOL CTreeListCtrl::GetItemImageEx(HTREEITEM hItem,int *pImage,int nCol)
-{
-TVITEM	sItem;
+BOOL CTreeListCtrl::GetItemImageEx(HTREEITEM hItem, int *pImage, int nCol) {
+	TVITEM	sItem;
 
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask		= TVIF_IMAGE|TVIF_SUBITEM;
+	sItem.mask		= TVIF_IMAGE | TVIF_SUBITEM;
 	sItem.hItem		= hItem;
 	sItem.cChildren	= nCol;
 
-	if(!GetItem(&sItem))return FALSE;
+	if(!GetItem(&sItem))
+		return FALSE;
 
 	pImage[0]		= sItem.iImage;
 
 
-return TRUE;
+	return TRUE;
 }
 
 //*****************************************************************************
@@ -705,15 +680,14 @@ return TRUE;
 //	nImage		: Is the new the image number
 //	nCol		: Is the column of the item
 //	Returns TRUE if the image number was detected or FALSE if an error occurs
-BOOL CTreeListCtrl::SetItemImageEx(HTREEITEM hItem,int nImage, int nCol)
-{
-TVITEM	sItem;
+BOOL CTreeListCtrl::SetItemImageEx(HTREEITEM hItem, int nImage, int nCol) {
+	TVITEM	sItem;
 
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-	sItem.mask		= TVIF_IMAGE|TVIF_SUBITEM;
+	sItem.mask		= TVIF_IMAGE | TVIF_SUBITEM;
 	sItem.hItem		= hItem;
 	sItem.iImage	= nImage;
 	sItem.cChildren	= nCol;
@@ -721,7 +695,7 @@ TVITEM	sItem;
 
 
 
-return SetItem(&sItem);
+	return SetItem(&sItem);
 }
 
 //*****************************************************************************
@@ -735,27 +709,27 @@ return SetItem(&sItem);
 //	iMax		: Is the size of the text buffer in chars
 //	nCol		: Is the column of the item
 //	Returns a pointer to the text or NULL if an error occurs
-BOOL CTreeListCtrl::ListGetItemText(int iRow,LPTSTR pBuffer,int iMax,int nCol)
-{
-TV_ITEM		sItem;
-HTREEITEM	hItem;
+BOOL CTreeListCtrl::ListGetItemText(int iRow, LPTSTR pBuffer, int iMax, int nCol) {
+	TV_ITEM		sItem;
+	HTREEITEM	hItem;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
 	hItem = GetItemOfRow(iRow);
 
-	if(!hItem || iMax<=0)return FALSE;
+	if(!hItem || iMax <= 0)
+		return FALSE;
 
 	pBuffer[0]		 = 0;
-	sItem.mask		 = TVIF_TEXT|TVIF_SUBITEM;
+	sItem.mask		 = TVIF_TEXT | TVIF_SUBITEM;
 	sItem.hItem		 = hItem;
 	sItem.pszText	 = pBuffer;
 	sItem.cchTextMax = iMax;
 	sItem.cChildren	 = nCol;
 
 
-return GetItem(&sItem);
+	return GetItem(&sItem);
 }
 
 
@@ -779,9 +753,8 @@ return GetItem(&sItem);
 //	uState		: Are the state bits for the seach
 //	uStateMask	: Only bits which are set in this mask will be comared
 //	Retuns the handle of the item which was found, or NULL if no item was found
-HTREEITEM CTreeListCtrl::FindItem(HTREEITEM hItem,int iFlags,int nCol,LPCTSTR pText,LPARAM lParam,UINT uState,UINT uStateMask)
-{
-TV_FIND		sFind;
+HTREEITEM CTreeListCtrl::FindItem(HTREEITEM hItem, int iFlags, int nCol, LPCTSTR pText, LPARAM lParam, UINT uState, UINT uStateMask) {
+	TV_FIND		sFind;
 
 
 	sFind.uFlags		= iFlags;
@@ -792,7 +765,7 @@ TV_FIND		sFind;
 	sFind.uStateMask	= uStateMask;
 
 
-return FindItem(hItem,&sFind);
+	return FindItem(hItem, &sFind);
 }
 
 
@@ -812,9 +785,8 @@ return FindItem(hItem,&sFind);
 //	hParent			: Handle of the inserted item’s parent.
 //	hInsertAfter	: Handle of the item after which the new item is to be inserted.
 //	Returns the handle of the new item if successful, otherwise NULL.
-HTREEITEM CTreeListCtrl::InsertItem(UINT nMask, LPCTSTR pText,int nImage,int nSelImage,UINT nState,UINT nStateMask,LPARAM lParam,HTREEITEM hParent,HTREEITEM hInsertAfter)
-{
-TVINSERTSTRUCT	sInsert;
+HTREEITEM CTreeListCtrl::InsertItem(UINT nMask, LPCTSTR pText, int nImage, int nSelImage, UINT nState, UINT nStateMask, LPARAM lParam, HTREEITEM hParent, HTREEITEM hInsertAfter) {
+	TVINSERTSTRUCT	sInsert;
 
 
 	ASSERT(::IsWindow(m_hWnd));
@@ -830,7 +802,7 @@ TVINSERTSTRUCT	sInsert;
 	sInsert.item.lParam			= lParam;
 
 
-return (HTREEITEM)::SendMessage(m_hWnd,TVM_INSERTITEM,0,(LPARAM)&sInsert);
+	return (HTREEITEM)::SendMessage(m_hWnd, TVM_INSERTITEM, 0, (LPARAM)&sInsert);
 }
 
 //*****************************************************************************
@@ -849,9 +821,8 @@ return (HTREEITEM)::SendMessage(m_hWnd,TVM_INSERTITEM,0,(LPARAM)&sInsert);
 //	pCmpProc		: Is the sort function which is used to find the insert position
 //	hParent			: Handle of the inserted item’s parent.
 //	Returns the handle of the new item if successful, otherwise NULL.
-HTREEITEM CTreeListCtrl::InsertItem(UINT nMask, LPCTSTR pText,int nImage,int nSelImage,UINT nState,UINT nStateMask,LPARAM lParam,PFNTVSORTEX pCmpProc,HTREEITEM hParent)
-{
-TVINSERTSTRUCT	sInsert;
+HTREEITEM CTreeListCtrl::InsertItem(UINT nMask, LPCTSTR pText, int nImage, int nSelImage, UINT nState, UINT nStateMask, LPARAM lParam, PFNTVSORTEX pCmpProc, HTREEITEM hParent) {
+	TVINSERTSTRUCT	sInsert;
 
 
 	ASSERT(::IsWindow(m_hWnd));
@@ -868,7 +839,7 @@ TVINSERTSTRUCT	sInsert;
 	sInsert.item.lParam			= lParam;
 
 
-return (HTREEITEM)::SendMessage(m_hWnd,TVM_INSERTITEM,0,(LPARAM)&sInsert);
+	return (HTREEITEM)::SendMessage(m_hWnd, TVM_INSERTITEM, 0, (LPARAM)&sInsert);
 }
 
 //*****************************************************************************
@@ -880,9 +851,8 @@ return (HTREEITEM)::SendMessage(m_hWnd,TVM_INSERTITEM,0,(LPARAM)&sInsert);
 //	nCol	: is the number of the column
 //	pText	: is the new text
 //	Retuns TRUE if succesfull
-BOOL CTreeListCtrl::SetColumnText(int nCol,LPCTSTR pText)
-{
-TV_COLUMN	sData;
+BOOL CTreeListCtrl::SetColumnText(int nCol, LPCTSTR pText) {
+	TV_COLUMN	sData;
 
 
 	sData.pszText		= (LPTSTR)pText;
@@ -890,7 +860,7 @@ TV_COLUMN	sData;
 	sData.mask			= TVCF_TEXT;
 
 
-return	SetColumn(nCol,&sData);
+	return	SetColumn(nCol, &sData);
 }
 
 //*****************************************************************************
@@ -902,16 +872,15 @@ return	SetColumn(nCol,&sData);
 //	nCol	: is the number of the column
 //	iImage	: is the new image number
 //	Retuns TRUE if succesfull
-BOOL CTreeListCtrl::SetColumnImage(int nCol,int iImage)
-{
-TV_COLUMN	sData;
+BOOL CTreeListCtrl::SetColumnImage(int nCol, int iImage) {
+	TV_COLUMN	sData;
 
 
 	sData.iImage		= iImage;
 	sData.mask			= TVCF_IMAGE;
 
 
-return	SetColumn(nCol,&sData);
+	return	SetColumn(nCol, &sData);
 }
 
 //*****************************************************************************
@@ -923,16 +892,15 @@ return	SetColumn(nCol,&sData);
 //	nCol	: is the number of the column
 //	bOn		: is the mark state
 //	Returns TRUE if succesfull
-BOOL CTreeListCtrl::SetColumnMark(int nCol,BOOL bOn)
-{
-TV_COLUMN	sData;
+BOOL CTreeListCtrl::SetColumnMark(int nCol, BOOL bOn) {
+	TV_COLUMN	sData;
 
 
-	sData.fmt	= (bOn)? TVCFMT_MARK:0;
+	sData.fmt	= (bOn) ? TVCFMT_MARK : 0;
 	sData.mask	= TVCF_MARK;
 
 
-return	SetColumn(nCol,&sData);
+	return	SetColumn(nCol, &sData);
 }
 
 //*****************************************************************************
@@ -946,22 +914,20 @@ return	SetColumn(nCol,&sData);
 //	iWidth	: is the new width for the column (-1 means don't change width)
 //			  TVCF_LASTSIZE restore size befor fixing
 //	Returns TRUE if succesfull
-BOOL CTreeListCtrl::FixColumnSize(int nCol,BOOL bOn,int iWidth)
-{
-LV_COLUMN	sData;
+BOOL CTreeListCtrl::FixColumnSize(int nCol, BOOL bOn, int iWidth) {
+	LV_COLUMN	sData;
 
 
-	sData.fmt	= (bOn)? TVCFMT_FIXED:0;
+	sData.fmt	= (bOn) ? TVCFMT_FIXED : 0;
 	sData.mask	= TVCF_FIXED;
 
-	if(iWidth>=0)										// set also the column width
-		{
+	if(iWidth >= 0) {									// set also the column width
 		sData.mask |= TVCF_WIDTH;
 		sData.cx    = iWidth;
-		}
+	}
 
 
-return	SetColumn(nCol,&sData);
+	return	SetColumn(nCol, &sData);
 }
 
 //*****************************************************************************
@@ -969,24 +935,22 @@ return	SetColumn(nCol,&sData);
 //*		CreateDragImage
 //*
 //*****************************************************************************
-CImageList *CTreeListCtrl::CreateDragImage(HTREEITEM hItem,int nCol)
-{
-CImageList *pImageList;
-HIMAGELIST	hImageList;
+CImageList *CTreeListCtrl::CreateDragImage(HTREEITEM hItem, int nCol) {
+	CImageList *pImageList;
+	HIMAGELIST	hImageList;
 
 
 	ASSERT(::IsWindow(m_hWnd));
 
-		hImageList = TreeList_CreateDragImageEx(m_hWnd,hItem,nCol);
-	if(!hImageList)
-		{
+	hImageList = TreeList_CreateDragImageEx(m_hWnd, hItem, nCol);
+	if(!hImageList) {
 		return NULL;
-		}
+	}
 
 	pImageList = new CImageList;
 	VERIFY(pImageList->Attach(hImageList));
 
-return pImageList;
+	return pImageList;
 }
 
 
