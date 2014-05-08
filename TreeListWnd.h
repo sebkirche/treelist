@@ -111,6 +111,8 @@ typedef		TVSORTEX				TV_SORTEX;
 #define		TV_UINICODE				0
 #endif		
 
+#define TVC_CLASSNAME "TreeList"
+
 // Color Constants (TVM_SETBKCOLOR)
 #define 	TVC_BK					0					// Hintergrundfarbe
 #define 	TVC_ODD					1					// Abwechselnte Farbe        (siehe TVS_EX_ALTERNATECOLOR)

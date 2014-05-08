@@ -1,6 +1,8 @@
 // Microsoft Visual C++ generated resource script.
 //
+
 #include "resource.h"
+#include "TreeListwnd.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -158,7 +160,7 @@ BEGIN
             VALUE "CompanyName", "AZ Software"
             VALUE "FileDescription", "MFC-Anwendung TreeList"
             VALUE "FileVersion", "2, 4, 0, 0"
-            VALUE "InternalName", "TreeList"
+            VALUE "InternalName", TVC_CLASSNAME
             VALUE "LegalCopyright", "Copyright (C) 2007,2014"
             VALUE "OriginalFilename", "TreeList.exe"
             VALUE "ProductName", "Anwendung TreeList"

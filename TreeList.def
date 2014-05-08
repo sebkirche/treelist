@@ -1,0 +1,5 @@
+LIBRARY TreeList
+DESCRIPTION "TreeList control"
+EXPORTS
+	DllMain
+	TreeListRegister

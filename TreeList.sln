@@ -7,6 +7,7 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Unicode|Win32 = Debug Unicode|Win32
 		Debug|Win32 = Debug|Win32
+		Dll Debug Unicode|Win32 = Dll Debug Unicode|Win32
 		Release Unicode|Win32 = Release Unicode|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
@@ -15,6 +16,8 @@ Global
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Debug Unicode|Win32.Build.0 = Debug Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Debug|Win32.ActiveCfg = Debug|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Debug|Win32.Build.0 = Debug|Win32
+		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Debug Unicode|Win32.ActiveCfg = Dll Debug Unicode|Win32
+		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Debug Unicode|Win32.Build.0 = Dll Debug Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Release Unicode|Win32.ActiveCfg = Release Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Release Unicode|Win32.Build.0 = Release Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Release|Win32.ActiveCfg = Release|Win32

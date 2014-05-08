@@ -379,7 +379,7 @@ int TreeListRegister(HINSTANCE hInstance) {
 	memset(&sClass, 0, sizeof(sClass));
 
 	sClass.cbSize           = sizeof(sClass);
-	sClass.style            = CS_DBLCLKS;
+	sClass.style            = CS_DBLCLKS | CS_GLOBALCLASS;
 	sClass.lpfnWndProc      = TreeListProc;
 	sClass.cbClsExtra       = 0;
 	sClass.cbWndExtra       = sizeof(TreeListData *);
@@ -389,7 +389,7 @@ int TreeListRegister(HINSTANCE hInstance) {
 	sClass.hbrBackground	= NULL;
 	sClass.lpszMenuName     = NULL;
 	sClass.hIconSm          = NULL;
-	sClass.lpszClassName	= _T("TreeList");
+	sClass.lpszClassName	= _T(TVC_CLASSNAME);
 
 	if(!RegisterClassEx(&sClass))
 		return 0;
