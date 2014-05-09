@@ -426,5 +426,6 @@ typedef		TVSORTEX				TV_SORTEX;
 #define		TreeList_GetDropHilightColumn(h)			((int)TreeView_GetNextItem(h, NULL,  TVGN_DROPHILITESUB))
 
 int			TreeListRegister(HINSTANCE hInstance=0);
+BOOL		TreeListUnregister(HINSTANCE hInstance=0);
 
 #endif

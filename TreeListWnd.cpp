@@ -403,6 +403,10 @@ int TreeListRegister(HINSTANCE hInstance) {
 	return TRUE;
 }
 
+BOOL TreeListUnregister(HINSTANCE hInstance){
+	return UnregisterClass(_T(TVC_CLASSNAME),hInstance);
+}
+
 //*****************************************************************************
 //*
 //*		GlobalInit

@@ -17,6 +17,7 @@ __declspec(dllexport) BOOL __stdcall DllMain(HANDLE hModule, DWORD  ul_reason_fo
 		break;
 	case DLL_PROCESS_DETACH:
 		OutputDebugString(TEXT("DLL_THREAD_DETACH"));
+		TreeListUnregister((HINSTANCE)hModule);
 		break;
 	}
 	return TRUE;
