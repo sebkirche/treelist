@@ -7,7 +7,6 @@
 //*****************************************************************************
 #ifndef 	__TREELISTWND_H__
 #define 	__TREELISTWND_H__
-
 #if _MSC_VER > 1000
 #pragma once
 #endif

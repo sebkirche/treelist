@@ -14,6 +14,14 @@ int main(int argc, char *argv[]){
 	HINSTANCE hInst;
 	hInst = GetModuleHandle(NULL);
 	
+	printf("SIZEOF(NMHDR)=%d\n", sizeof(NMHDR));
+	printf("SIZEOF(TVITEM)=%d\n", sizeof(TVITEM));
+	printf("SIZEOF(POINT)=%d\n", sizeof(POINT));
+	printf("SIZEOF(NMTREEVIEW)=%d\n", sizeof(NMTREEVIEW));
+	printf("SIZEOF(TVFIND)=%d\n", sizeof(TVFIND));
+	printf("SIZEOF(TVCOLUMN)=%d\n", sizeof(TVCOLUMN));
+	printf("SIZEOF(TVINSERTSTRUCT)=%d\n", sizeof(TVINSERTSTRUCT));
+	
 	WNDCLASSEX wcex = {
 		sizeof(WNDCLASSEX), 0, WndProc, 0, 0, hInst, LoadIcon(NULL, IDI_APPLICATION),
 		LoadCursor(NULL, IDC_ARROW), (HBRUSH)(COLOR_WINDOW + 1), NULL, TEXT("TreeListDemo"), NULL,

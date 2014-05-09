@@ -4236,6 +4236,8 @@ static unsigned TreeListInsertItem(TreeListData *pData, TV_INSERTSTRUCT *pInsert
 			pData->cLockChanges = 1;
 
 			pCompare = (PFNTVSORTEX)(pInsert->item.hItem);
+			if(!pCompare)
+				break;
 			uNext	 = uItem;
 			iCount	 = 0;
 			uBefore  = 0;
@@ -4636,7 +4638,7 @@ static int TreeListSetItem(TreeListData *pData, const TV_ITEM *pItem) {
 				uBits		   |= (pItem->stateMask & TVIS_BASEFLAGS) & (pEntry->uState ^ pItem->state);
 				pExtra->uState &= ~uMask;
 				pExtra->uState |=  uMask & pItem->state;
-
+//FIXME: Typo ?     uBits &(TVIS_OVERLAYMASK | TVIS_CUT)
 				if((uBits & TVIS_OVERLAYMASK | TVIS_CUT) && (pData->hImages || pData->aColumn[uSub].bEdit >= TVAX_CHECK)) {
 					uChange = 1;								// Ein Icon hats sich verändert
 				}
