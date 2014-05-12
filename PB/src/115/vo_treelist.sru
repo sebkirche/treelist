@@ -84,7 +84,7 @@ long backcolor = 67108864
 string classname = "TreeList"
 string libraryname = "treelist.dll"
 string text = "none"
-long style = 7
+long style = 4103
 event wm_notify pbm_notify
 event type long oncbstatechanged ( unsignedlong action,  unsignedlong itemhandle,  unsignedlong olditemstate,  unsignedlong newitemstate,  long ptdrag_x,  long ptdrag_y )
 end type
@@ -318,12 +318,49 @@ constant long TVN_SETDISPINFOW = -453
 constant long TVN_SINGLEEXPAND = -415
 constant long TVN_STARTEDIT = -435
 constant long TVN_STEPSTATECHANGED = -434
+constant ulong TVS_CHECKBOXES = 256
+constant ulong TVS_DISABLEDRAGDROP = 16
+constant ulong TVS_EDITLABELS = 8
+constant ulong TVS_EX_ALTERNATECOLOR = 131072
+constant ulong TVS_EX_AUTOEXPANDICON = 2097152
+constant ulong TVS_EX_AUTOHSCROLL = 32
+constant ulong TVS_EX_BITCHECKBOX = 32768
+constant ulong TVS_EX_EDITCLICK = 1073741824
+constant ulong TVS_EX_FIXEDCOLSIZE = 134217728
+constant ulong TVS_EX_FULLROWITEMS = 67108864
+constant ulong TVS_EX_FULLROWMARK = 524288
+constant ulong TVS_EX_GRAYEDDISABLE = 33554432
+constant ulong TVS_EX_HEADERCHGNOTIFY = 2048
+constant ulong TVS_EX_HEADERDRAGDROP = 4096
+constant ulong TVS_EX_HIDEHEADERS = 16777216
+constant ulong TVS_EX_HOMEENDSELECT = 268435456
+constant ulong TVS_EX_ITEMLINES = 65536
+constant ulong TVS_EX_MULTISELECT = 2
+constant ulong TVS_EX_NOCHARSELCET = 4194304
+constant ulong TVS_EX_NOCOLUMNRESIZE = 8388608
+constant ulong TVS_EX_NOCURSORSET = 2147483648
+constant ulong TVS_EX_SHAREIMAGELISTS = 536870912
+constant ulong TVS_EX_SINGLECHECKBOX = 8192
+constant ulong TVS_EX_STEPOUT = 16384
+constant ulong TVS_EX_SUBSELECT = 262144
+constant ulong TVS_EX_TOOLTIPNOTIFY = 1048576
+constant ulong TVS_FULLROWSELECT = 4096
+constant ulong TVS_HASBUTTONS = 1
+constant ulong TVS_HASLINES = 2
+constant ulong TVS_INFOTIP = 2048
+constant ulong TVS_LINESATROOT = 4
+constant ulong TVS_NOHSCROLL = 32768
+constant ulong TVS_NONEVENHEIGHT = 16384
+constant ulong TVS_NOSCROLL = 8192
+constant ulong TVS_NOTOOLTIPS = 128
+constant ulong TVS_RTLREADING = 64
+constant ulong TVS_SHOWSELALWAYS = 32
+constant ulong TVS_SINGLEEXPAND = 1024
+constant ulong TVS_TRACKSELECT = 512
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
 
-
 end variables
-
 forward prototypes
 public function long addcolumn (string as_text)
 public function long insertcolumn (long al_index, string as_text)
