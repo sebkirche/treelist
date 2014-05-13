@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="TreeList"
 	ProjectGUID="{2BB726AC-03CD-41AA-885C-043AFA8BAE92}"
 	RootNamespace="TreeList"
@@ -149,7 +149,7 @@
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="1"
 				PrecompiledHeaderThrough="stdafx.h"
 				PrecompiledHeaderFile=".\Release_Unicode/TreeList.pch"
 				AssemblerListingLocation=".\Release_Unicode/"
@@ -342,7 +342,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="1"
 				PrecompiledHeaderThrough="stdafx.h"
 				PrecompiledHeaderFile=".\Debug_Unicode/TreeList.pch"
 				AssemblerListingLocation=".\Debug_Unicode/"

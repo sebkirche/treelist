@@ -154,7 +154,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			inserted = (HTREEITEM)SendMessage(hWndTL, TVM_INSERTITEM, 0, (LPARAM)&item4);
 			printf("inserted = %08lx\n", inserted);
 			
-			
+			SetWindowLong(hWndTL, GWL_EXSTYLE, GetWindowLong(hWndTL, GWL_EXSTYLE) | TVS_EX_ITEMLINES);
+      
 			return 0;
 		}
 		break;
