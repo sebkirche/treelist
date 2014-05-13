@@ -2,6 +2,8 @@ HA$PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
+type cb_5 from commandbutton within w_test
+end type
 type cb_4 from commandbutton within w_test
 end type
 type cb_3 from commandbutton within w_test
@@ -27,6 +29,7 @@ long backcolor = 67108864
 string icon = "AppIcon!"
 boolean center = true
 event onnotify pbm_notify
+cb_5 cb_5
 cb_4 cb_4
 cb_3 cb_3
 cb_2 cb_2
@@ -47,12 +50,14 @@ end if
 end event
 
 on w_test.create
+this.cb_5=create cb_5
 this.cb_4=create cb_4
 this.cb_3=create cb_3
 this.cb_2=create cb_2
 this.cb_1=create cb_1
 this.uo_tree=create uo_tree
-this.Control[]={this.cb_4,&
+this.Control[]={this.cb_5,&
+this.cb_4,&
 this.cb_3,&
 this.cb_2,&
 this.cb_1,&
@@ -60,6 +65,7 @@ this.uo_tree}
 end on
 
 on w_test.destroy
+destroy(this.cb_5)
 destroy(this.cb_4)
 destroy(this.cb_3)
 destroy(this.cb_2)
@@ -74,18 +80,18 @@ uo_tree.insertcolumn(1,"col 2")
 uo_tree.addcolumn("col 3")
 
 ulong r, i1, i2, i3, i4, i5
-i1 = uo_tree.insertitem(0,"foo")
+i1 = uo_tree.insertitemlast(0,"foo")
 r = uo_tree.setitemtext(i1, 1, string(i1))
 r = uo_tree.setitemtext(i1, 2, "data3")
-i2 = uo_tree.insertitem(1,"bar")
+i2 = uo_tree.insertitemlast(1,"bar")
 r = uo_tree.setitemtext(i2, 1, string(i2))
-i3 = uo_tree.insertitem(2,"baz")
+i3 = uo_tree.insertitemlast(2,"baz")
 r = uo_tree.setitemtext(i3, 1, string(i3))
-i4 = uo_tree.insertitem(1,"asdf")
+i4 = uo_tree.insertitemlast(1,"asdf")
 r = uo_tree.setitemtext(i4, 1, string(i4))
-i5 = uo_tree.insertitem(0,"row2-crash")	//make ite crash!
+i5 = uo_tree.insertitemlast(0,"row2-crash")	//make ite crash!
 r = uo_tree.setitemtext(i5, 1, string(i5))
-i5 = uo_tree.insertitem(-1,"row2")
+i5 = uo_tree.insertitemlast(-1,"row2")
 r = uo_tree.setitemtext(i5, 1, string(i5))
 
 //uo_tree.expand( i1 )
@@ -94,12 +100,32 @@ r = uo_tree.setitemtext(i5, 1, string(i5))
 //uo_tree.expand( i4 )
 //uo_tree.expand( 0 )
 uo_tree.expandall(i1)
+
 end event
 
 event resize;
 uo_tree.width = newwidth - uo_tree.x * 2
 uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50,YPixelsToUnits!))
 
+end event
+
+type cb_5 from commandbutton within w_test
+integer x = 1079
+integer y = 1496
+integer width = 402
+integer height = 112
+integer taborder = 20
+integer textsize = -10
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "none"
+end type
+
+event clicked;
+uo_tree.style *= 2
 end event
 
 type cb_4 from commandbutton within w_test
@@ -188,7 +214,8 @@ integer y = 32
 integer width = 2848
 integer height = 1436
 integer taborder = 10
-long style = 263
+boolean ibs_ex_hideheaders = true
+boolean ibs_ex_itemlines = true
 end type
 
 event oncbstatechanged;call super::oncbstatechanged;messagebox(classname(), "TVN_CBSTATECHANGED:"+&

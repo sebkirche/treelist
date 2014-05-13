@@ -84,9 +84,9 @@ long backcolor = 67108864
 string classname = "TreeList"
 string libraryname = "treelist.dll"
 string text = "none"
-long style = 4103
 event wm_notify pbm_notify
 event type long oncbstatechanged ( unsignedlong action,  unsignedlong itemhandle,  unsignedlong olditemstate,  unsignedlong newitemstate,  long ptdrag_x,  long ptdrag_y )
+event post_constructor ( )
 end type
 global vo_treelist vo_treelist
 
@@ -99,14 +99,64 @@ Function uLong SendMessageFind( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_FIN
 subroutine CopyMemory(ulong Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemoryNMHDR(ref nmhdr Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemorynmtreeview(ref nmtreeview Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
+
+Function ULONG GetWindowLong(Ulong hWn, long nIndex) library "user32.dll" alias for "GetWindowLongW"
+Function ULONG SetWindowLong(Ulong hWn, long nIndex, ULONG dwNewLong) library "user32.dll" alias for "SetWindowLongW"
+
 end prototypes
 
 type variables
-protected ulong hwnd
-private:
-	long il_curcol = 0
+public:
+//styles
+boolean IBS_HASBUTTONS = true	//adds a button to the left of each parent item
+boolean IBS_HASLINES = true		//lines linking child items to their corresponding parent items
+boolean IBS_LINESATROOT = true	//lines linking child items to the root of the hierarchy
+boolean IBS_SHOWSELALWAYS		//a selected item remains selected when the tree-view control loses focus
+boolean IBS_NOTOOLTIPS			//uses no tooltips
+//TODO boolean IBS_INFOTIP
+boolean IBS_CHECKBOXES			//checkboxes before the icons
+boolean IBS_TRACKSELECT			//hot tracking
+boolean IBS_SINGLEEXPAND			//expande selected item, collapse unselected item
+boolean IBS_FULLROWSELECT		//full-row selection in the tree view. The entire row of the selected item is highlighted, and clicking anywhere on an item's row will cause it to be selected.
+										//This style cannot be used in conjunction with the TVS_HASLINES style
+boolean IBS_NOSCROLL
+boolean IBS_NOHSCROLL
+boolean IBS_NONEVENHEIGHT		//The height of the items can be set to an odd height with the TVM_SETITEMHEIGHT message. 
+										//By default, the height of items must be an even value
+boolean IBS_EDITLABELS			//allows the user to edit the labels of tree view items
+boolean IBS_DISABLEDRAGDROP		//do not send TVN_BEGINDRAG notification messages
+boolean IBS_RTLREADING
 
-protected:
+//extended styles
+boolean IBS_EX_ALTERNATECOLOR
+boolean IBS_EX_AUTOEXPANDICON
+boolean IBS_EX_AUTOHSCROLL
+boolean IBS_EX_BITCHECKBOX
+boolean IBS_EX_EDITCLICK
+boolean IBS_EX_FIXEDCOLSIZE
+boolean IBS_EX_FULLROWITEMS
+boolean IBS_EX_FULLROWMARK
+boolean IBS_EX_GRAYEDDISABLE
+boolean IBS_EX_HEADERCHGNOTIFY
+boolean IBS_EX_HEADERDRAGDROP
+boolean IBS_EX_HIDEHEADERS
+boolean IBS_EX_HOMEENDSELECT
+boolean IBS_EX_ITEMLINES
+boolean IBS_EX_MULTISELECT
+boolean IBS_EX_NOCHARSELCET
+boolean IBS_EX_NOCOLUMNRESIZE
+boolean IBS_EX_NOCURSORSET
+boolean IBS_EX_SHAREIMAGELISTS
+boolean IBS_EX_SINGLECHECKBOX
+boolean IBS_EX_STEPOUT
+boolean IBS_EX_SUBSELECT
+boolean IBS_EX_TOOLTIPNOTIFY
+
+constant long GWL_STYLE = -16
+constant long GWL_EXSTYLE = -20
+constant unsignedlong WS_CHILD = 1073741824
+constant unsignedlong WS_VISIBLE = 268435456
+constant long CS_ENABLE = 1
 
 //Constants computed:
 constant long SIZEOF_NMHDR=12
@@ -360,12 +410,18 @@ constant ulong TVS_TRACKSELECT = 512
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
 
+
+protected:
+ulong hwnd
+
+private:
+long il_curcol = 0
+
 end variables
+
 forward prototypes
 public function long addcolumn (string as_text)
 public function long insertcolumn (long al_index, string as_text)
-public function long insertitem (unsignedlong aul_parent, unsignedlong aul_flags, string as_text)
-public function long insertitem (unsignedlong aul_parent, string as_text)
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
 public function long expandall (unsignedlong aul_parent)
@@ -373,10 +429,19 @@ public function unsignedlong finditem (treenavigation navigationcode, unsignedlo
 public function unsignedlong finditem (treenavigation navigationcode, unsignedlong itemhandle, long al_column, string as_text, boolean ab_ignore_case)
 public function boolean getitemcheckbox (unsignedlong handle)
 public subroutine setitemcheckbox (unsignedlong handle, boolean ab_state)
-protected function long getitem (unsignedlong handle, ref tv_item item)
 protected function long setitem (unsignedlong handle, ref tv_item item)
 public function long deleteitem (unsignedlong handle)
 public function integer deleteitem (integer i)
+public function long insertitemlast (unsignedlong aul_parent, string as_text)
+public function long insertitem (unsignedlong aul_parent, unsignedlong aul_posflags, unsignedlong aul_flags, string as_text, long al_image, long al_selectedimage)
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image)
+protected function boolean getitem (unsignedlong handle, ref tv_item item)
+public function unsignedlong getnextitem (unsignedlong handle, unsignedlong which)
+public function unsignedlong getnextsiblingitem (unsignedlong handle)
+public function ulong getprevsiblingitem (unsignedlong handle)
+public function unsignedlong getchild (unsignedlong handle)
+protected function boolean getitem (ref tv_item item)
+public function string getlabel (unsignedlong handle)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -440,37 +505,6 @@ return l_ret
 
 end function
 
-public function long insertitem (unsignedlong aul_parent, unsignedlong aul_flags, string as_text);
-/*
-	Insert intem into tree
-	
-*/
-
-TV_INSERTSTRUCT item
-
-item.hParent			= aul_parent;
-item.hInsertAfter		= TVI_LAST;
-item.item.hItem		= 0;
-item.item.pszText		= as_text
-item.item.mask			= TVIF_TEXT;
-item.item.iImage		= TV_NOIMAGE;
-item.item.iSelectedImage = TV_NOIMAGE;
-item.item.state			= 0;
-item.item.stateMask		= 0;
-item.item.lParam			= 0;
-
-long l_ret
-l_ret = SendMessageInsertItem(hwnd, TVM_INSERTITEM, 0, ref item);
-
-return l_ret
-
-end function
-
-public function long insertitem (unsignedlong aul_parent, string as_text);
-return insertitem(aul_parent, TVIF_TEXT, as_text)
-
-end function
-
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);tv_item itemdata
 itemdata.mask = TVIF_SUBITEM + TVIF_TEXT
 itemdata.hitem = aul_parent
@@ -480,6 +514,7 @@ itemdata.cchTextMax = 256
 itemdata.cChildren = al_column
 
 return SendMessageItem( hwnd , TVM_SETITEM, 0, itemdata)
+
 end function
 
 public function long expand (unsignedlong aul_parent);return Send(hwnd, TVM_EXPAND, TVE_EXPAND, aul_parent)
@@ -536,10 +571,11 @@ return r>0 //= 0x2000
 end function
 
 public subroutine setitemcheckbox (unsignedlong handle, boolean ab_state);ulong r
+boolean lb
 tv_item item
 item.mask = TVIF_STATE
 item.statemask = -1
-r = getitem(handle, ref item)
+lb = getitem(handle, ref item)
 r = item.state
 n_cst_numerical ln_bitops
 r = ln_bitops.of_bitwiseand( r, ln_bitops.of_bitwisenot( 8192 + 4096 ) )
@@ -552,15 +588,8 @@ item.state = r
 item.mask = TVIF_STATE
 item.statemask = -1
 setitem( handle, ref item )
+
 end subroutine
-
-protected function long getitem (unsignedlong handle, ref tv_item item);long l_ret
-item.hitem = handle
-l_ret = SendMessageItem(hwnd, TVM_GETITEM, 0, ref item);
-
-return l_ret
-
-end function
 
 protected function long setitem (unsignedlong handle, ref tv_item item);long l_ret
 item.hitem = handle
@@ -587,12 +616,199 @@ public function integer deleteitem (integer i);//to be sure an user will not cal
 return deleteitem(long(i))
 end function
 
+public function long insertitemlast (unsignedlong aul_parent, string as_text);
+return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, TV_NOIMAGE, TV_NOIMAGE)
+
+end function
+
+public function long insertitem (unsignedlong aul_parent, unsignedlong aul_posflags, unsignedlong aul_flags, string as_text, long al_image, long al_selectedimage);
+/*
+	Insert intem into tree
+	
+*/
+
+TV_INSERTSTRUCT item
+
+item.hParent			= aul_parent;
+item.hInsertAfter		= aul_posflags;
+item.item.hItem		= 0;
+item.item.pszText		= as_text
+item.item.cchTextMax = 256 //!!!!!!!!!!!!!!!!!!!
+item.item.mask			= aul_flags;
+item.item.iImage		= al_image;
+item.item.iSelectedImage = al_selectedimage;
+item.item.state			= 0;
+item.item.stateMask		= 0;
+item.item.lParam			= 0;
+
+long l_ret
+l_ret = SendMessageInsertItem(hwnd, TVM_INSERTITEM, 0, ref item);
+
+return l_ret
+
+end function
+
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image);
+return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, al_image, al_image)
+
+end function
+
+protected function boolean getitem (unsignedlong handle, ref tv_item item);
+item.hitem = handle
+return getitem(item)
+
+
+end function
+
+public function unsignedlong getnextitem (unsignedlong handle, unsignedlong which);
+/* Return the next given item after the given handle or 0
+
+TVGN_CARET  Retrieves the currently selected item.  
+TVGN_CARETSUB  Retrieves the currently selected column.  
+TVGN_CHILD  Retrieves the first child item.  
+TVGN_DROPHILITE  Retrieves the item that is the target of a drag-and-drop operation.  
+TVGN_DROPHILITESUB  Retrieves the column that is the target of a drag-and-drop operation.  
+TVGN_FIRSTVISIBLE  Retrieves the first visible item.  
+TVGN_FOCUS  Retrieves the item which has the focus. If the window not have the focus, the first selected item is retrieved.  
+TVGN_FOCUSSUB  Retrieves the column which has the focus. If the window not have the focus, the selected column is retrieved.  
+TVGN_LASTCHILD  Retrieves the last child item.  
+TVGN_LASTVISIBLE  Retrieves the last expanded item in the tree. This does not retrieve the last item visible in the tree-view window.  
+TVGN_NEXT  Retrieves the next sibling item.  
+TVGN_NEXTITEM  Retrieves the next item. This is at first the child, then the sibling or at last the first sibling of the parent item.    
+TVGN_NEXTSELCHILD  Retrieves the next selected child item (see TVS_EX_MULTISELECT).  
+TVGN_NEXTSELECTED  Retrieves the next selected item (see TVS_EX_MULTISELECT).  
+TVGN_NEXTVISIBLE  Retrieves the next visible item that follows the specified item.  
+TVGN_PARENT  Retrieves the parent of the specified item.  
+TVGN_PREVIOUS  Retrieves the previous sibling item.  
+TVGN_PREVIOUSVISIBLE    Retrieves the first visible item that precedes the specified item.  
+TVGN_ROOT  Retrieves the first child item of the root item.
+
+*/
+
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, which, handle)
+
+return r
+
+end function
+
+public function unsignedlong getnextsiblingitem (unsignedlong handle);
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, TVGN_NEXT, handle)
+
+return r
+
+end function
+
+public function ulong getprevsiblingitem (unsignedlong handle);
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, TVGN_PREVIOUS, handle)
+
+return r
+
+end function
+
+public function unsignedlong getchild (unsignedlong handle);
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, TVGN_CHILD, handle)
+
+return r
+
+end function
+
+protected function boolean getitem (ref tv_item item);
+long l_ret
+l_ret = SendMessageItem(hwnd, TVM_GETITEM, 0, ref item);
+
+return l_ret = 1
+
+
+end function
+
+public function string getlabel (unsignedlong handle);
+tv_item item
+item.hitem = handle
+item.mask = TVIF_TEXT
+item.cchTextMax = 256 //FIXME => constante de l'objet !!!!!!!
+
+if getitem(ref item) then
+	return item.psztext
+else
+	return ""
+end if	
+
+end function
+
 on vo_treelist.create
 end on
 
 on vo_treelist.destroy
 end on
 
-event constructor;hwnd = handle(this)
+event constructor;
+
+hwnd = handle(this)
+
+
+unsignedlong lul_style
+//lul_style = style
+lul_style = GetWindowLong(hWnd, GWL_STYLE)
+if IBS_HASBUTTONS then lul_style += tvs_hasbuttons
+if IBS_HASLINES then lul_style += tvs_haslines
+if IBS_LINESATROOT then lul_style += tvs_linesatroot
+if IBS_SHOWSELALWAYS then lul_style += tvs_showselalways
+if IBS_NOTOOLTIPS then lul_style += tvs_notooltips
+if IBS_CHECKBOXES then lul_style += tvs_checkboxes
+if IBS_TRACKSELECT then lul_style += tvs_trackselect
+if IBS_SINGLEEXPAND then lul_style += tvs_singleexpand
+if IBS_FULLROWSELECT and not IBS_HASLINES then lul_style += tvs_fullrowselect
+if IBS_NOSCROLL then lul_style += tvs_noscroll
+if IBS_NOHSCROLL then lul_style += tvs_nohscroll
+if IBS_NONEVENHEIGHT then lul_style += tvs_nonevenheight
+if IBS_EDITLABELS then lul_style += tvs_editlabels
+if IBS_DISABLEDRAGDROP then lul_style += tvs_disabledragdrop
+if IBS_RTLREADING then lul_style += tvs_rtlreading
+//TODO? if IBS_INFOTIP
+
+//if visible then lul_style += 1//ws_visible
+//if enabled then lul_style += cs_enable
+//style = lul_style
+SetWindowLong(hWnd, GWL_STYLE, lul_style)
+
+long lul_exstyle
+//lul_exstyle = GetWindowLong(hWnd, GWL_EXSTYLE)
+if IBS_EX_ALTERNATECOLOR then lul_exstyle += TVS_EX_ALTERNATECOLOR
+if IBS_EX_AUTOEXPANDICON then lul_exstyle += TVS_EX_AUTOEXPANDICON
+if IBS_EX_AUTOHSCROLL then lul_exstyle += TVS_EX_AUTOHSCROLL
+if IBS_EX_BITCHECKBOX then lul_exstyle += TVS_EX_BITCHECKBOX
+if IBS_EX_EDITCLICK then lul_exstyle += TVS_EX_EDITCLICK
+if IBS_EX_FIXEDCOLSIZE then lul_exstyle += TVS_EX_FIXEDCOLSIZE
+if IBS_EX_FULLROWITEMS then lul_exstyle += TVS_EX_FULLROWITEMS
+if IBS_EX_FULLROWMARK then lul_exstyle += TVS_EX_FULLROWMARK
+if IBS_EX_GRAYEDDISABLE then lul_exstyle += TVS_EX_GRAYEDDISABLE
+if IBS_EX_HEADERCHGNOTIFY then lul_exstyle += TVS_EX_HEADERCHGNOTIFY
+if IBS_EX_HEADERDRAGDROP then lul_exstyle += TVS_EX_HEADERDRAGDROP
+if IBS_EX_HIDEHEADERS then lul_exstyle += TVS_EX_HIDEHEADERS
+if IBS_EX_HOMEENDSELECT then lul_exstyle += TVS_EX_HOMEENDSELECT
+if IBS_EX_ITEMLINES then lul_exstyle += TVS_EX_ITEMLINES
+if IBS_EX_MULTISELECT then lul_exstyle += TVS_EX_MULTISELECT
+if IBS_EX_NOCHARSELCET then lul_exstyle += TVS_EX_NOCHARSELCET
+if IBS_EX_NOCOLUMNRESIZE then lul_exstyle += TVS_EX_NOCOLUMNRESIZE
+if IBS_EX_NOCURSORSET then lul_exstyle += TVS_EX_NOCURSORSET
+if IBS_EX_SHAREIMAGELISTS then lul_exstyle += TVS_EX_SHAREIMAGELISTS
+if IBS_EX_SINGLECHECKBOX then lul_exstyle += TVS_EX_SINGLECHECKBOX
+if IBS_EX_STEPOUT then lul_exstyle += TVS_EX_STEPOUT
+if IBS_EX_SUBSELECT then lul_exstyle += TVS_EX_SUBSELECT
+if IBS_EX_TOOLTIPNOTIFY then lul_exstyle += TVS_EX_TOOLTIPNOTIFY
+SetWindowLong(hWnd, GWL_EXSTYLE, lul_exstyle)
+
+
+post event post_constructor( )
+
+
 end event
 
