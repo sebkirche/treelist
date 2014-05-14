@@ -59,7 +59,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			
 			//~ hWndTL = CreateWindow( TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hLib, NULL );
 			hWndTL = CreateWindow( TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
+            //hWndTL = CreateWindowEx( TVS_EX_ITEMLINES, TEXT(TVC_CLASSNAME), TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
 			printf("created windows is %08lx\n", hWndTL);
+            
+            SendMessage(hWndTL, TVM_SETEXTENDEDSTYLE, 0, TVS_EX_ITEMLINES|TVS_EX_ALTERNATECOLOR|TVS_EX_FULLROWMARK);
 
 			int colIdx = 0;
 			int lret;
