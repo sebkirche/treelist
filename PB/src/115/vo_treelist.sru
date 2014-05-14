@@ -442,6 +442,7 @@ public function ulong getprevsiblingitem (unsignedlong handle)
 public function unsignedlong getchild (unsignedlong handle)
 protected function boolean getitem (ref tv_item item)
 public function string getlabel (unsignedlong handle)
+public function integer reset ()
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -751,6 +752,10 @@ else
 	return ""
 end if	
 
+end function
+
+public function integer reset ();DeleteItem( TVI_ROOT )
+return 0
 end function
 
 on vo_treelist.create
