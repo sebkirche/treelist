@@ -2,8 +2,6 @@ HA$PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
-type cb_5 from commandbutton within w_test
-end type
 type cb_4 from commandbutton within w_test
 end type
 type cb_3 from commandbutton within w_test
@@ -29,7 +27,6 @@ long backcolor = 67108864
 string icon = "AppIcon!"
 boolean center = true
 event onnotify pbm_notify
-cb_5 cb_5
 cb_4 cb_4
 cb_3 cb_3
 cb_2 cb_2
@@ -50,14 +47,12 @@ end if
 end event
 
 on w_test.create
-this.cb_5=create cb_5
 this.cb_4=create cb_4
 this.cb_3=create cb_3
 this.cb_2=create cb_2
 this.cb_1=create cb_1
 this.uo_tree=create uo_tree
-this.Control[]={this.cb_5,&
-this.cb_4,&
+this.Control[]={this.cb_4,&
 this.cb_3,&
 this.cb_2,&
 this.cb_1,&
@@ -65,7 +60,6 @@ this.uo_tree}
 end on
 
 on w_test.destroy
-destroy(this.cb_5)
 destroy(this.cb_4)
 destroy(this.cb_3)
 destroy(this.cb_2)
@@ -100,32 +94,12 @@ r = uo_tree.setitemtext(i5, 1, string(i5))
 //uo_tree.expand( i4 )
 //uo_tree.expand( 0 )
 uo_tree.expandall(i1)
-
 end event
 
 event resize;
 uo_tree.width = newwidth - uo_tree.x * 2
 uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50,YPixelsToUnits!))
 
-end event
-
-type cb_5 from commandbutton within w_test
-integer x = 1079
-integer y = 1496
-integer width = 402
-integer height = 112
-integer taborder = 20
-integer textsize = -10
-integer weight = 400
-fontcharset fontcharset = ansi!
-fontpitch fontpitch = variable!
-fontfamily fontfamily = swiss!
-string facename = "Tahoma"
-string text = "none"
-end type
-
-event clicked;
-uo_tree.style *= 2
 end event
 
 type cb_4 from commandbutton within w_test
@@ -214,8 +188,17 @@ integer y = 32
 integer width = 2848
 integer height = 1436
 integer taborder = 10
-boolean ibs_ex_hideheaders = true
+boolean ibs_haslines = false
+boolean ibs_showselalways = true
+boolean ibs_checkboxes = true
+boolean ibs_trackselect = true
+boolean ibs_fullrowselect = true
+boolean ibs_ex_alternatecolor = true
+boolean ibs_ex_fullrowitems = true
+boolean ibs_ex_fullrowmark = true
+boolean ibs_ex_headerdragdrop = true
 boolean ibs_ex_itemlines = true
+boolean ibs_ex_multiselect = true
 end type
 
 event oncbstatechanged;call super::oncbstatechanged;messagebox(classname(), "TVN_CBSTATECHANGED:"+&
