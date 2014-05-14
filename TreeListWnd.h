@@ -102,7 +102,7 @@ typedef		TVSORTEX				TV_SORTEX;
 #define 	VK_ICONCLK				0x10001				// Edit with click on icon
 #endif
 #ifndef		VK_EDITCLK
-#define 	VK_EDITCLK				0x10002				// Edit mit Klick auf augewähltes Element
+#define 	VK_EDITCLK				0x10002				// Edit with click on augewähltes Element //visble element ?
 #endif
 #ifdef		UNICODE
 #define		TV_UINICODE				1
@@ -113,51 +113,51 @@ typedef		TVSORTEX				TV_SORTEX;
 #define TVC_CLASSNAME "TreeList"
 
 // Color Constants (TVM_SETBKCOLOR)
-#define 	TVC_BK					0					// Hintergrundfarbe
-#define 	TVC_ODD					1					// Abwechselnte Farbe        (siehe TVS_EX_ALTERNATECOLOR)
-#define 	TVC_EVEN				2					// Abwechselnte Farbe gerade (siehe TVS_EX_ALTERNATECOLOR)
-#define 	TVC_FRAME				3					// Farbe für Trennlinien (siehe TVS_EX_ITEMLINES)
-#define 	TVC_TEXT				4					// Textfarbe
-#define 	TVC_LINE				5					// Innere Farbe der Schaltflächen
-#define 	TVC_BOX					6					// Äußere Farbe der Schaltflächen
-#define 	TVC_TRACK				7					// Farbe für getrakte Texte
-#define 	TVC_MARK				8					// Markierte Zeile
-#define 	TVC_MARKODD				8					// Markierte Zeile (ungerade)
-#define 	TVC_MARKEVEN			9					// Markierte Zeile (gerade)
-#define 	TVC_INSERT				10					// Farbe der Einfügemarke
-#define 	TVC_BOXBG				11					// Hindergrundfarbe der Schaltflächen
-#define 	TVC_COLBK				12					// Hintergrundfarbe wenn Spalte markiert
-#define 	TVC_COLODD				13					// Abwechselnte Farbe wenn Spalte markiert
-#define 	TVC_COLEVEN				14					// Abwechselnte Farbe gerade wenn Spalte markiert
-#define 	TVC_GRAYED				15					// Hindergrundfarbe wenn gesperrt
+#define 	TVC_BK					0					// Background
+#define 	TVC_ODD					1					// alternate colors / odd    (see TVS_EX_ALTERNATECOLOR)
+#define 	TVC_EVEN				2					// alternate colors / even	(see TVS_EX_ALTERNATECOLOR)
+#define 	TVC_FRAME				3					// separator lines	(see TVS_EX_ITEMLINES)
+#define 	TVC_TEXT				4					// text
+#define 	TVC_LINE				5					// interior of the buttons
+#define 	TVC_BOX					6					// exterior of the buttons
+#define 	TVC_TRACK				7					// tracked item text
+#define 	TVC_MARK				8					// selected line
+#define 	TVC_MARKODD				8					// selected line (odd)
+#define 	TVC_MARKEVEN			9					// selected line (even)
+#define 	TVC_INSERT				10					// insertion point
+#define 	TVC_BOXBG				11					// background of buttons 
+#define 	TVC_COLBK				12					// background of marked column
+#define 	TVC_COLODD				13					// alternate odd color of marked column
+#define 	TVC_COLEVEN				14					// alternate even color of marked column
+#define 	TVC_GRAYED				15					// background when disabled
 
 
-// Konstanten für GetNextItem (TVM_GETNEXTITEM)
-#define 	TVGN_DROPHILITESUB		0x000C				// Ausgewählte Spalte holen
+// constants for GetNextItem (TVM_GETNEXTITEM)
+#define 	TVGN_DROPHILITESUB		0x000C				// get selected column
 #define 	TVGN_CARETSUB			0x000D				// Drophighilite Spalte holen
 #ifndef		TVGN_NEXTSELECTED
-#define 	TVGN_NEXTSELECTED		0x000E				// Nächster ausgewählter Eintrag
+#define 	TVGN_NEXTSELECTED		0x000E				// next selected entry
 #endif
-#define 	TVGN_FOCUS				0x000F				// Eintrag der den Focus hat
-#define 	TVGN_FOCUSSUB			0x0010				// Spalte  die den Focus hat
-#define 	TVGN_NEXTSELCHILD		0x0011				// Nächster ausgewählter Kindeintrag
-#define 	TVGN_LASTCHILD			0x0012				// Letzter Kindeintrag
-#define 	TVGN_NEXTITEM			0x0013				// Für Enumerierung der Einträge
+#define 	TVGN_FOCUS				0x000F				// entry that has focus
+#define 	TVGN_FOCUSSUB			0x0010				// column that has focus
+#define 	TVGN_NEXTSELCHILD		0x0011				// next selected child entry
+#define 	TVGN_LASTCHILD			0x0012				// last child entry
+#define 	TVGN_NEXTITEM			0x0013				// to enumerate the entries
 
 
-// Konstanten für InsertColumn (mask)
-#define 	TVCF_FMT				LVCF_FMT			// Die Textausrichting einstellen
-#define 	TVCF_IMAGE				LVCF_IMAGE			// Ein Icon der Spalte zu ortenen
-#define 	TVCF_TEXT				LVCF_TEXT			// Den Text der Spalte setzen
-#define 	TVCF_WIDTH				LVCF_WIDTH			// Fixe Breite festlegen
-#define 	TVCF_VWIDTH				LVCF_SUBITEM		// Variable Breite festlegen
-#define 	TVCF_MIN				LVCF_ORDER			// Minimale Breite festlegen
-#define 	TVCF_MARK				0x80000000			// Soll die Spalte markiert werden
-#define 	TVCF_FIXED				0x40000000			// Darf die Spaltenbreite verändert werden
+// constants for InsertColumn (mask)
+#define 	TVCF_FMT				LVCF_FMT			// set the text alignment
+#define 	TVCF_IMAGE				LVCF_IMAGE			// set column image
+#define 	TVCF_TEXT				LVCF_TEXT			// set column text
+#define 	TVCF_WIDTH				LVCF_WIDTH			// set fixed width
+#define 	TVCF_VWIDTH				LVCF_SUBITEM		// set variable width
+#define 	TVCF_MIN				LVCF_ORDER			// set minimum width
+#define 	TVCF_MARK				0x80000000			// to mark a column
+#define 	TVCF_FIXED				0x40000000			// can the column width can be changed 
 #define 	TVCF_LASTSIZE			0x44332211			// Breite vor dem Fixieren wieder herstellen
 
 
-// Konstanten für InsertColumn (format mask)
+// constants for InsertColumn (format mask)
 #define 	TVCFMT_BITMAP_ON_RIGHT	LVCFMT_BITMAP_ON_RIGHT
 #define 	TVCFMT_COL_HAS_IMAGES	LVCFMT_COL_HAS_IMAGES
 #define 	TVCFMT_CENTER			LVCFMT_CENTER
@@ -168,33 +168,33 @@ typedef		TVSORTEX				TV_SORTEX;
 #define 	TVCFMT_MARK				0x10000000			// Maske für Spalten markieren
 
 
-// Konstanten für ColumnAutoEdit
-#define 	TVAE_NONE				(0<<TVAE_MODEPOS)	// Kein atomatisches Editieren
-#define 	TVAE_EDIT				(1<<TVAE_MODEPOS)	// Atomatisches Editieren mit Edit-Fenster
-#define 	TVAE_COMBO				(2<<TVAE_MODEPOS)	// Atomatisches Editieren mit ComboBox
-#define 	TVAE_CBLIST				(3<<TVAE_MODEPOS)	// Atomatisches Editieren mit ComboListBox
-#define 	TVAE_STEP				(4<<TVAE_MODEPOS)	// Einzelnes Weiterschalten mit Enter
-#define 	TVAE_STEPED				(5<<TVAE_MODEPOS)	// Einzelnes Weiterschalten mit Enter
-#define 	TVAE_CHECK				(6<<TVAE_MODEPOS)	// Atomatisches Editieren mit CheckBox
-#define 	TVAE_CHECKED			(7<<TVAE_MODEPOS)	// Atomatisches Editieren mit CheckBox mit Edit
-#define 	TVAE_NEXTLINE			0x0001				// Nach Enter in die nächste Zeile
-#define 	TVAE_DBLCLICK			0x0002				// Editieren mit Doppelklick
-#define 	TVAE_FULLWIDTH			0x0004				// Combobox über die volle Breite einblenden
-#define 	TVAE_PTRLIST			0x0008				// Die Datenliste wird als Zeigerliste übergeben
-#define 	TVAE_ONLYRETURN			0x0010				// Das Editeren kann nur mit Return begonnen werden
-#define 	TVAE_STATEENABLE		0x0020				// Das Editeren kann mit dem 0x8000 State-Bit gesperrt werden
-#define 	TVAE_ICONCLICK			0x0040				// Editieren mit einem Einfachlick auf das Icon
-#define 	TVAE_DROPDOWN			0x0080				// Die DropDownListe der ComboBox aufklappen
-#define 	TVAE_COL(c)				(((c)&0x3F)<<11)	// Ist die Spalte fürs automatische Editieren
-#define 	TVAE_CHAR(c)			(((c)&0xFF)<<17)	// Ist das Trennzeichen für die Datenliste
-#define 	TVAE_COUNT(c)			(((c)&0x7F)<<25)	// Bestimmt die Anzahl der Einträge in der Datenliste (0=auto)
-#define 	TVAE_MODEMASK			(7<<TVAE_MODEPOS)	// Maske für die Modusbits
-#define 	TVAE_MODEPOS			0x0008				// Maske für die Modusbits
-#define 	TVIS_DISABLEBIT			0x8000				// Ist das State-Bit für's sperren der Auto-Edit-Option
+// constants for Column AutoEdit
+#define 	TVAE_NONE				(0<<TVAE_MODEPOS)	// no automatic edit
+#define 	TVAE_EDIT				(1<<TVAE_MODEPOS)	// automatic edit with edit box
+#define 	TVAE_COMBO				(2<<TVAE_MODEPOS)	// automatic edit with ComboBox
+#define 	TVAE_CBLIST				(3<<TVAE_MODEPOS)	// automatic edit with ComboListBox
+#define 	TVAE_STEP				(4<<TVAE_MODEPOS)	// advance with enter
+#define 	TVAE_STEPED				(5<<TVAE_MODEPOS)	// advance with enter
+#define 	TVAE_CHECK				(6<<TVAE_MODEPOS)	// automatic edit with CheckBox
+#define 	TVAE_CHECKED			(7<<TVAE_MODEPOS)	// automatic edit with CheckBox and Edit
+#define 	TVAE_NEXTLINE			0x0001				// go to next line after edit
+#define 	TVAE_DBLCLICK			0x0002				// edit with doubleclick
+#define 	TVAE_FULLWIDTH			0x0004				// show combobox over the full width
+#define 	TVAE_PTRLIST			0x0008				// data list is passed as a pointer list
+#define 	TVAE_ONLYRETURN			0x0010				// edition can only be started with Return
+#define 	TVAE_STATEENABLE		0x0020				// edition can be (un)locked with the TVIS_DISABLEBIT flag
+#define 	TVAE_ICONCLICK			0x0040				// edition starts by clicking on the icon
+#define 	TVAE_DROPDOWN			0x0080				// open the DropDownList when edition starts
+#define 	TVAE_COL(c)				(((c)&0x3F)<<11)	// column for automatic edit
+#define 	TVAE_CHAR(c)			(((c)&0xFF)<<17)	// delimiter for the data list
+#define 	TVAE_COUNT(c)			(((c)&0x7F)<<25)	// number of entries in the data list (0=auto)
+#define 	TVAE_MODEMASK			(7<<TVAE_MODEPOS)	// Mask for mode bits
+#define 	TVAE_MODEPOS			0x0008				// Mask for mode bits
+#define 	TVIS_DISABLEBIT			0x8000				// flag for locking auto edit
 
 
-// Konstanten für HitTest (flags)
-#define 	TVHT_SUBTOCOL(u)		(((unsigned)u)>>24)	// Umwandeln von Spaltemasken zu Spaltenummern
+// constants for HitTest (flags)
+#define 	TVHT_SUBTOCOL(u)		(((unsigned)u)>>24)	// Convert column to column numbers mask
 #define 	TVHT_SUBMASK			0xFF000000			// Maske in der die Spalte gespeichert wird
 #define 	TVHT_ONRIGHTSPACE		0x00800000			// Auf rechtem Rand nach den Exträgen
 #define 	TVHT_ONSUBLABEL			0x00400000			// Koordinate ist auf dem Text eines Extraeintrages
@@ -203,77 +203,77 @@ typedef		TVSORTEX				TV_SORTEX;
 #define 	TVHT_ONSUBITEM			(TVHT_ONSUBICON|TVHT_ONSUBLABEL)
 
 
-// Konstanten für GetItemRect (TVM_GETITEMRECT)
-#define 	TVIR_COLTOSUB(u)		((u)<<24)			// Splate angeben
-#define 	TVIR_GETCOLUMN			0x00000080			// Nur Splate abfragen
-#define 	TVIR_TEXT				0x00000001			// Nur den Textbereich abfragen
+// constants for GetItemRect (TVM_GETITEMRECT)
+#define 	TVIR_COLTOSUB(u)		((u)<<24)			// specify column
+#define 	TVIR_GETCOLUMN			0x00000080			// get only column
+#define 	TVIR_TEXT				0x00000001			// get only text area
 
 
-// Konstanten für SelectChilds (TVM_SELECTCHILDS)
-#define 	TVIS_WITHCHILDS			0x00000001			// Auch Kinder auswählen
-#define 	TVIS_DESELECT			0x00000002			// Einträge abwählen
+// constants for SelectChilds (TVM_SELECTCHILDS)
+#define 	TVIS_WITHCHILDS			0x00000001			// get also childs
+#define 	TVIS_DESELECT			0x00000002			// deselect all items
 
-// Konstanten für Optionen (TVM_GETSETOPTION)
-#define 	TVOP_AUTOEXPANDOFF		0x00000001			// Icon Offset für TVS_EX_AUTOEXPANDICON
-#define 	TVOP_WRITEOPTION		0x80000000			// Die Option auch schreiben
+// constants for Options (TVM_GETSETOPTION)
+#define 	TVOP_AUTOEXPANDOFF		0x00000001			// Icon Offset for TVS_EX_AUTOEXPANDICON
+#define 	TVOP_WRITEOPTION		0x80000000			// write too
 
 
-// Konstanten für EditLabel (LVM_EDITLABEL)
-#define 	TVIR_EDITCOMBOCHAR(n)	(((n)&0xFF)<<8)		// Trennzeichen der Combobox-Einträge (nur für Notify-Nachricht)
-#define 	TVIR_EDITCOMBODEL		0x00000080			// Löscht den Puffer für die Einträge (nur für Notify-Nachricht)
-#define 	TVIR_EDITCOMBODOWN		0x10000000			// Die Combobox aufklappen (nur für Notify-Nachricht)
-#define 	TVIR_EDITCOMBOBOX		0x20000000			// Statt dem Edit-Fenster eine ComboBox einblenden
-#define 	TVIR_EDITCOMBOLIST		0x40000000			// Statt dem Edit-Fenster eine ComboBox nur mit Listenauswahl einblenden
-#define 	TVIR_EDITFULL			0x80000000			// Das Edit-Fenster über die volle Breite einblenden
-#define 	TVIR_EDITTEXT			0x00000001			// Das Edit-Fenster über den Text einblenden (nur für Notify-Nachricht)
-#define 	TVIR_EDITCOL(u)			((u)&0xFF)			// Splate angeben
-#define 	TVIR_SELALL				0x00000000			// Alles wählen
-#define 	TVIR_SELAREA(a,b)		((0x0C0000|(a&0x1FF)|((b&0x1FF)<<9))<<8)	// Textbereich wählen
+// constants for EditLabel (LVM_EDITLABEL)
+#define 	TVIR_EDITCOMBOCHAR(n)	(((n)&0xFF)<<8)		// Separator of the combobox entries (only for Notify message)
+#define 	TVIR_EDITCOMBODEL		0x00000080			// Clears the buffer for the entries (only for Notify message)
+#define 	TVIR_EDITCOMBODOWN		0x10000000			// open the combobox (only for Notify message)
+#define 	TVIR_EDITCOMBOBOX		0x20000000			// instead of an edit, display a combobox
+#define 	TVIR_EDITCOMBOLIST		0x40000000			// instead of an edit, display a combobox with list selection
+#define 	TVIR_EDITFULL			0x80000000			// the edit window takes the full width
+#define 	TVIR_EDITTEXT			0x00000001			// show the edit window over the text (only for Notify message)
+#define 	TVIR_EDITCOL(u)			((u)&0xFF)			// auto edit column
+#define 	TVIR_SELALL				0x00000000			// select all
+#define 	TVIR_SELAREA(a,b)		((0x0C0000|(a&0x1FF)|((b&0x1FF)<<9))<<8)	// select text area
 #define 	TVIR_SETCURSOR(a)		((0x080000|(a&0x3FFFF))<<8)					// Cursor auf Textstelle
 #define 	TVIR_SETAT(a)			((0x040000|(a&0x3FFFF))<<8)					// Cursor auf Pixel-Offset
 
 
-// Konstanten für uStyleEx
-#define 	TVS_EX_HEADERCHGNOTIFY	0x00000800			// Nachrichten versenden wenn eine Spaltenbreite verändert wurde
-#define 	TVS_EX_HEADERDRAGDROP	0x00001000			// Die Spalten ab 1 können mit Drag&Drop sortiert werden
-#define 	TVS_EX_SINGLECHECKBOX	0x00002000			// Nur einfache Auswahl bei Checkboxen
-#define 	TVS_EX_STEPOUT			0x00004000			// Mit Cursor Edit und Checkboxen verlassen
-#define 	TVS_EX_BITCHECKBOX		0x00008000			// Bei Checkboxen nur das unterste Bit ändern
-#define 	TVS_EX_ITEMLINES		0x00010000			// Um die Einträge Linien zeichnen
-#define 	TVS_EX_ALTERNATECOLOR	0x00020000			// Die Farbe abwechselnd darstellen
-#define 	TVS_EX_SUBSELECT		0x00040000			// Sub-Einträge seperat auswählen
-#define 	TVS_EX_FULLROWMARK		0x00080000			// Die ganze Zeile markieren wenn selektiert
-#define 	TVS_EX_TOOLTIPNOTIFY	0x00100000			// Spezielle Notify-Abfrage bei Tooltips
-#define 	TVS_EX_AUTOEXPANDICON	0x00200000			// Automatisch das nächste Icon benutzen bei Expandet
-#define 	TVS_EX_NOCHARSELCET		0x00400000			// Keine Auswahl über eine Texteingabe
-#define 	TVS_EX_NOCOLUMNRESIZE	0x00800000			// Der User darf die Spaltenbreite nicht ändern
-#define 	TVS_EX_HIDEHEADERS		0x01000000			// Ausblenden der Header-Leiste
-#define 	TVS_EX_GRAYEDDISABLE	0x02000000			// Das Control grau zeichnen wenn es gesperrt ist
-#define 	TVS_EX_FULLROWITEMS		0x04000000			// Einträge über die ganze Zeile zeichnen
-#define 	TVS_EX_FIXEDCOLSIZE		0x08000000			// Gesamtbreite aller Splaten gleich belassen
-#define 	TVS_EX_HOMEENDSELECT	0x10000000			// Mit Ctrl+Home/End das erste und letze Element wählen
-#define 	TVS_EX_SHAREIMAGELISTS	0x20000000			// Image-Listen nicht löschen bei Fensterzerstörung
-#define 	TVS_EX_EDITCLICK		0x40000000			// Mit einem Klick das gewählte Item berabreiten
-#define 	TVS_EX_NOCURSORSET		0x80000000			// Bei VK_EDITCLK immer den gesammten Text wählen
+// constants for uStyleEx
+#define 	TVS_EX_HEADERCHGNOTIFY	0x00000800			// notify when a colimn has been resized
+#define 	TVS_EX_HEADERDRAGDROP	0x00001000			// columns over 1 can be sorted using drag and drop
+#define 	TVS_EX_SINGLECHECKBOX	0x00002000			// checkboxes with single selection
+#define 	TVS_EX_STEPOUT			0x00004000			// can leave an edit control with the cursor buttons
+#define 	TVS_EX_BITCHECKBOX		0x00008000			// change only the first bit of the state
+#define 	TVS_EX_ITEMLINES		0x00010000			// draw the item separating lines
+#define 	TVS_EX_ALTERNATECOLOR	0x00020000			// use alternate lines background color 
+#define 	TVS_EX_SUBSELECT		0x00040000			// allow to select columns
+#define 	TVS_EX_FULLROWMARK		0x00080000			// the row mark fill the entire row
+#define 	TVS_EX_TOOLTIPNOTIFY	0x00100000			// send a TVN_ITEMTOOLTIP notify to query for tooltip
+#define 	TVS_EX_AUTOEXPANDICON	0x00200000			// use automaticaly the next icon for expanded items
+#define 	TVS_EX_NOCHARSELCET		0x00400000			// disable looping selection of items via keyboard 
+#define 	TVS_EX_NOCOLUMNRESIZE	0x00800000			// user cannot change the columns width
+#define 	TVS_EX_HIDEHEADERS		0x01000000			// hide the header
+#define 	TVS_EX_GRAYEDDISABLE	0x02000000			// gray out the control when disabled
+#define 	TVS_EX_FULLROWITEMS		0x04000000			// backgrounds and lines takes the whole line (use with TVS_EX_ALTERNATECOLOR and TVS_EX_ITEMLINES)
+#define 	TVS_EX_FIXEDCOLSIZE		0x08000000			// the width of the whole columns stays constant when resizing columns (the right margin of last column do not change)
+#define 	TVS_EX_HOMEENDSELECT	0x10000000			// move to first / last item with Home / End keys
+#define 	TVS_EX_SHAREIMAGELISTS	0x20000000			// image list is not deleted when the control is destroyed
+#define 	TVS_EX_EDITCLICK		0x40000000			// enter edit mode with a single click
+#define 	TVS_EX_NOCURSORSET		0x80000000			// VK_EDITCLK always select the entire text. Don't set the cursor to the click point, if TVS_EX_EDITCLICK is used
 #ifndef		TVS_EX_MULTISELECT
-#define 	TVS_EX_MULTISELECT		0x00000002			// Eine Mehrfachauswahl erlauben
+#define 	TVS_EX_MULTISELECT		0x00000002			// allow multiple selections
 #endif
 #ifndef		TVS_EX_AUTOHSCROLL
-#define		TVS_EX_AUTOHSCROLL      0x00000020			// Horizontale Scrollbar ausblenden
+#define		TVS_EX_AUTOHSCROLL      0x00000020			// auto scroll to selected item (horizontal scrollbar stays hidden)
 #endif
 
 
-// Konstanten für Notify-Nachrichten
-#define		TVN_ITEMTOOLTIP			(TVN_FIRST-32)		// Notify Nachricht für Tooltip-Fenster
-#define     TVN_CBSTATECHANGED      (TVN_FIRST-33)		// Notify Nachricht für geänderte Checkbox
-#define		TVN_STEPSTATECHANGED	(TVN_FIRST-34)		// Notify Nachricht für geänderten Autoedit-Zustand
-#define		TVN_STARTEDIT			(TVN_FIRST-35)		// Notify Nachricht Felder zu editieren
-#define 	TVN_LBUTTONUP			(TVN_FIRST-36)		// Notify Nachricht wenn linke  Maustaste losgelassen wurde
-#define 	TVN_RBUTTONUP			(TVN_FIRST-37)		// Notify Nachricht wenn rechte Maustaste losgelassen wurde
-#define 	TVN_COLUMNCHANGED		(TVN_FIRST-38)		// Notify Nachricht wenn eine Spalte verändert wurde
+// constants for notify messages
+#define		TVN_ITEMTOOLTIP			(TVN_FIRST-32)		// tooltip query
+#define     TVN_CBSTATECHANGED      (TVN_FIRST-33)		// checkbox change
+#define		TVN_STEPSTATECHANGED	(TVN_FIRST-34)		// autoedit state changed
+#define		TVN_STARTEDIT			(TVN_FIRST-35)		// field edit
+#define 	TVN_LBUTTONUP			(TVN_FIRST-36)		// left button released
+#define 	TVN_RBUTTONUP			(TVN_FIRST-37)		// right button released
+#define 	TVN_COLUMNCHANGED		(TVN_FIRST-38)		// a column modified
 
 
-// Konstanten für neue Nachrichten
+// constants for new messages
 #define 	TVM_GETHEADER			(TV_FIRST+128-1)
 #define 	TVM_GETCOLUMNCOUNT		(TV_FIRST+128-2)
 #define 	TVM_DELETECOLUMN		(TV_FIRST+128-3)
