@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="TreeList"
 	ProjectGUID="{2BB726AC-03CD-41AA-885C-043AFA8BAE92}"
 	RootNamespace="TreeList"
@@ -408,7 +408,7 @@
 			IntermediateDirectory="dll_debug_unicode"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="1"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
 			>
@@ -440,7 +440,7 @@
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
-				UsePrecompiledHeader="1"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="stdafx.h"
 				PrecompiledHeaderFile="$(IntDir)/TreeList.pch"
 				AssemblerListingLocation="$(IntDir)\"
@@ -464,6 +464,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="user32.lib kernel32.lib gdi32.lib comctl32.lib"
 				OutputFile="$(OutDir)/TreeList.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -475,6 +476,7 @@
 				MapExports="true"
 				SubSystem="2"
 				EntryPointSymbol=""
+				SupportUnloadOfDelayLoadedDLL="false"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -482,6 +484,8 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="false"
+				VerboseOutput="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -515,6 +519,14 @@
 			<File
 				RelativePath=".\StdAfx.cpp"
 				>
+				<FileConfiguration
+					Name="Dll Debug Unicode|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\TreeList.cpp"
