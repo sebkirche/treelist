@@ -520,8 +520,17 @@ end function
 public function long expand (unsignedlong aul_parent);return Send(hwnd, TVM_EXPAND, TVE_EXPAND, aul_parent)
 end function
 
-public function long expandall (unsignedlong aul_parent);return Send(hwnd, TVM_EXPAND, &
-	TVE_EXPANDRECURSIVE + TVE_EXPANDFORCE + TVE_ALLCHILDS + TVE_EXPAND, &
+public function long expandall (unsignedlong aul_parent);if aul_parent = TVI_ROOT then
+	ulong lul_handle
+	lul_handle = getchild( TVI_ROOT )
+	do while lul_handle > 0
+		expandall( lul_handle )
+		lul_handle = getNextsiblingitem( lul_handle )
+	loop
+	return 0
+end if
+
+return Send(hwnd, TVM_EXPAND, TVE_ALLCHILDS + TVE_EXPAND, &
 	aul_parent)
 end function
 
@@ -733,6 +742,7 @@ public function string getlabel (unsignedlong handle);
 tv_item item
 item.hitem = handle
 item.mask = TVIF_TEXT
+item.psztext = space(256)
 item.cchTextMax = 256 //FIXME => constante de l'objet !!!!!!!
 
 if getitem(ref item) then
@@ -752,7 +762,6 @@ end on
 event constructor;
 
 hwnd = handle(this)
-
 
 unsignedlong lul_style
 //lul_style = style
@@ -780,7 +789,7 @@ if IBS_RTLREADING then lul_style += tvs_rtlreading
 SetWindowLong(hWnd, GWL_STYLE, lul_style)
 
 long lul_exstyle
-//lul_exstyle = GetWindowLong(hWnd, GWL_EXSTYLE)
+lul_exstyle = Send( hwnd, TVM_GETEXTENDEDSTYLE, 0, 0)
 if IBS_EX_ALTERNATECOLOR then lul_exstyle += TVS_EX_ALTERNATECOLOR
 if IBS_EX_AUTOEXPANDICON then lul_exstyle += TVS_EX_AUTOEXPANDICON
 if IBS_EX_AUTOHSCROLL then lul_exstyle += TVS_EX_AUTOHSCROLL
@@ -804,8 +813,7 @@ if IBS_EX_SINGLECHECKBOX then lul_exstyle += TVS_EX_SINGLECHECKBOX
 if IBS_EX_STEPOUT then lul_exstyle += TVS_EX_STEPOUT
 if IBS_EX_SUBSELECT then lul_exstyle += TVS_EX_SUBSELECT
 if IBS_EX_TOOLTIPNOTIFY then lul_exstyle += TVS_EX_TOOLTIPNOTIFY
-SetWindowLong(hWnd, GWL_EXSTYLE, lul_exstyle)
-
+Send( hwnd, TVM_SETEXTENDEDSTYLE, -1, lul_exstyle )
 
 post event post_constructor( )
 

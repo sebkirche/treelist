@@ -183,3 +183,5 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+/dll_debug_unicode
+/PB/treelist115.usr.opt
