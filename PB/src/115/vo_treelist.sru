@@ -16,6 +16,8 @@ type nmhdr from structure within vo_treelist
 end type
 type point from structure within vo_treelist
 end type
+type logfont from structure within vo_treelist
+end type
 end forward
 
 type TV_COLUMN from structure
@@ -76,6 +78,23 @@ type point from structure
 	long		y
 end type
 
+type logfont from structure
+	long		lfheight
+	long		lfwidth
+	long		lfescapement
+	long		lforientation
+	long		lfweight
+	byte		lfitalic
+	byte		lfunderline
+	byte		lfstrikeout
+	byte		lfcharset
+	byte		lfoutprecision
+	byte		lfclipprecision
+	byte		lfquality
+	character		lfpitchandfamily
+	character		lffacename[32]
+end type
+
 global type vo_treelist from userobject
 integer width = 247
 integer height = 144
@@ -103,8 +122,16 @@ subroutine CopyMemorynmtreeview(ref nmtreeview Destination,ulong Source,ulong Le
 Function ULONG GetWindowLong(Ulong hWn, long nIndex) library "user32.dll" alias for "GetWindowLongW"
 Function ULONG SetWindowLong(Ulong hWn, long nIndex, ULONG dwNewLong) library "user32.dll" alias for "SetWindowLongW"
 
-end prototypes
+Function ulong CreateFont(long nHeight,ulong nWidth,ulong nEscapement,ulong nOrientation,ulong fnWeight,boolean fdwItalic,boolean fdwUnderline,boolean fdwStrikeOut,ulong fdwCharSet,ulong fdwOutputPrecision,ulong fdwClipPrecision,ulong fdwQuality,ulong dwPitchAndFamily,ref string lpszFace) LIBRARY "gdi32.dll" ALIAS FOR "CreateFontW"  
+Function uLong CreateFontIndirect( Ref Logfont lplf ) Library 'gdi32' alias for "CreateFontIndirectW"
+Function Boolean DeleteObject( uLong hObject ) Library "gdi32"
+function long MulDiv(long nNumber, long nNumerator, int nDenominator) library "kernel32.dll"
+Function ulong GetDeviceCaps(ulong hdc,ulong nIndex) library "gdi32.dll"
+Function ULong GetDC(ULong handle) Library "User32.DLL"
+Function ULong ReleaseDC(ULong handle, ULong hDC) Library "User32.DLL"
 
+
+end prototypes
 type variables
 public:
 //styles
@@ -168,6 +195,15 @@ constant long SIZEOF_TVCOLUMN=44
 constant long SIZEOF_TVINSERTSTRUCT=64
 
 //Constants generated from conv_defs.pl ( TreeListWnd.h + commctrl.h )
+constant ulong TVCFMT_BITMAP_ON_RIGHT = 4096
+constant ulong TVCFMT_CENTER = 2
+constant ulong TVCFMT_COL_HAS_IMAGES = 32768
+constant ulong TVCFMT_FIXED = 536870912
+constant ulong TVCFMT_IMAGE = 2048
+constant ulong TVCFMT_LEFT = 0
+constant ulong TVCFMT_MARK = 268435456
+constant ulong TVCFMT_RIGHT = 1
+
 constant ulong TVCF_FIXED = 1073741824
 constant ulong TVCF_FMT = 1
 constant ulong TVCF_IMAGE = 16
@@ -410,12 +446,18 @@ constant ulong TVS_TRACKSELECT = 512
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
 
-
 protected:
 ulong hwnd
+long il_curcol = 0
 
 private:
-long il_curcol = 0
+ulong il_custom_font = 0
+
+constant long WM_SETFONT = 48
+constant integer FW_NORMAL     = 400
+constant integer FW_BOLD       = 700
+constant ulong LOGPIXELSX = 88  //Number of pixels per logical inch along the screen width.
+constant ulong DEFAULT_CHARSET     = 1   //(x01)
 
 end variables
 
@@ -443,6 +485,13 @@ public function unsignedlong getchild (unsignedlong handle)
 protected function boolean getitem (ref tv_item item)
 public function string getlabel (unsignedlong handle)
 public function integer reset ()
+private function unsignedlong _createfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout)
+public subroutine setfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout)
+public subroutine setfont (unsignedlong hfont)
+public function long deletecolumn (long al_column_id)
+public function long showcolumn (long al_column_id)
+public function long hidecolumn (long al_column_id)
+public function long setitembackcolor (long handle, long al_column_id, long al_color)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -459,6 +508,36 @@ event wm_notify;if lparam > 0 then
 									msgdata.itemnew.state, &
 									msgdata.ptdrag.x, &
 									msgdata.ptdrag.y)
+		//TODO:
+		case TVN_DELETEITEM
+		case TVN_COLUMNCHANGED
+		case TVN_BEGINLABELEDIT
+		case TVN_ENDLABELEDIT
+		case TVN_SETDISPINFO
+		case TVN_KEYDOWN
+		case TVN_STARTEDIT
+		case TVN_STEPSTATECHANGED
+		case TVN_BEGINDRAG
+		case TVN_ITEMTOOLTIP
+		case TVN_GETINFOTIP
+		case TVN_ITEMEXPANDING
+		case TVN_ITEMEXPANDED
+		case TVN_SELCHANGED
+		case TVN_SELCHANGING
+		case TVN_SINGLEEXPAND
+		case TVN_LBUTTONUP
+		case TVN_RBUTTONUP
+//		case NM_RETURN
+//		case NM_SETFOCUS
+//		case NM_KILLFOCUS
+//		case NM_DBLCLK
+//		case NM_RCLICK
+//		case NM_RDBLCLK
+		case TVN_LAST
+		case TVN_FIRST
+		case TVN_COLUMNDBLCLICK
+		case TVN_COLUMNCLICK
+		case TVN_BEGINRDRAG
 		case else
 	end choose	
 end if
@@ -506,8 +585,13 @@ return l_ret
 
 end function
 
-public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);tv_item itemdata
-itemdata.mask = TVIF_SUBITEM + TVIF_TEXT
+public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);
+tv_item itemdata
+
+if isnull(as_text) then as_text = ""
+
+itemdata.mask = TVIF_TEXT
+if al_column > 0 then itemdata.mask += TVIF_SUBITEM 
 itemdata.hitem = aul_parent
 itemdata.stateMask = 0
 itemdata.psztext = as_text
@@ -758,6 +842,96 @@ public function integer reset ();DeleteItem( TVI_ROOT )
 return 0
 end function
 
+private function unsignedlong _createfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout);uLong	lul_Font
+logfont lf
+
+lf.lfFaceName = as_FaceName
+lf.lfWeight= ai_Weight
+lf.lfHeight= ai_Height
+
+lf.lfPitchAndFamily = '1'
+lf.lfClipPrecision = 2
+lf.lfOutPrecision = 1
+lf.lfQuality = 1
+
+If ab_Italic Then lf.lfItalic = 255
+If ab_UnderLine Then lf.lfUnderline = 255
+If ab_StrikeOut Then lf.lfStrikeOut = 255
+
+lul_Font = CreateFontIndirect(lf)
+
+Return lul_Font
+
+end function
+
+public subroutine setfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout);
+ulong ll_hdc
+integer li_height
+
+ll_hdc = GetDC(hwnd)
+li_height = -MulDiv(ai_height, GetDeviceCaps(ll_hdc, LOGPIXELSX), 72)
+if il_custom_font <> 0 then DeleteObject(il_custom_font)
+//il_custom_font = _CreateFont( as_FaceName, li_height, ai_Weight, ab_Italic, ab_Underline, ab_StrikeOut )
+il_custom_font = CreateFont(li_height, 0, 0, 0, ai_Weight, ab_italic, ab_underline, ab_strikeout, 0, DEFAULT_CHARSET, 0, 0, 0, as_facename)
+
+If il_custom_font > 0 Then
+	SetFont( il_custom_font )
+	//no! do that if needed later when recreating a new font or destroying the item
+	//DeleteObject( lul_Font )
+End If
+ReleaseDC(hwnd, ll_hdc)
+
+end subroutine
+
+public subroutine setfont (unsignedlong hfont);
+Send( hwnd, WM_SETFONT, hFont, 1 )
+
+end subroutine
+
+public function long deletecolumn (long al_column_id);
+/* 
+	Delete a column by it's id
+	
+	al_column_id : the id of the column to delete
+	
+*/
+
+long l_ret
+
+l_ret = Send( hwnd, TVM_DELETECOLUMN, al_column_id, 0 )
+return l_ret
+
+end function
+
+public function long showcolumn (long al_column_id);TV_COLUMN col
+
+col.fmt = 0
+col.mask = TVCF_FIXED + TVCF_WIDTH
+col.cx = TVCF_LASTSIZE
+
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
+
+return l_ret
+
+end function
+
+public function long hidecolumn (long al_column_id);TV_COLUMN col
+
+col.fmt = TVCFMT_FIXED
+col.mask = TVCF_FIXED + TVCF_WIDTH
+col.cx = 0
+
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
+
+return l_ret
+
+end function
+
+public function long setitembackcolor (long handle, long al_column_id, long al_color);return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
+end function
+
 on vo_treelist.create
 end on
 
@@ -822,6 +996,12 @@ Send( hwnd, TVM_SETEXTENDEDSTYLE, -1, lul_exstyle )
 
 post event post_constructor( )
 
+
+end event
+
+event destructor;
+//clean the custom font if it was allocated
+if il_custom_font <> 0 then DeleteObject(il_custom_font)
 
 end event
 
