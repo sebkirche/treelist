@@ -164,8 +164,8 @@ typedef		TVSORTEX				TV_SORTEX;
 #define 	TVCFMT_IMAGE			LVCFMT_IMAGE
 #define 	TVCFMT_LEFT				LVCFMT_LEFT
 #define 	TVCFMT_RIGHT			LVCFMT_RIGHT
-#define 	TVCFMT_FIXED			0x20000000			// Maske für Spalten fixieren
-#define 	TVCFMT_MARK				0x10000000			// Maske für Spalten markieren
+#define 	TVCFMT_FIXED			0x20000000			// flag for fixing the column
+#define 	TVCFMT_MARK				0x10000000			// flag for marking the column
 
 
 // constants for Column AutoEdit

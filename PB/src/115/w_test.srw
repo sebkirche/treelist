@@ -94,6 +94,9 @@ r = uo_tree.setitemtext(i5, 1, string(i5))
 //uo_tree.expand( i4 )
 //uo_tree.expand( 0 )
 uo_tree.expandall(i1)
+
+uo_tree.setfont( "Times New Roman", 12, 400, false, false, false)
+
 end event
 
 event resize;

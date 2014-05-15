@@ -3,18 +3,24 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <stdio.h>
-#include "TreeListWnd.h"
+#include "../TreeListWnd.h"
 
 HINSTANCE hInst;
-
+BOOL bUseDll = FALSE;
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-int main(int argc, char *argv[]){
-	
+int main(int argc, char *argv[]) {
+
 	HINSTANCE hInst;
 
 	hInst = GetModuleHandle(NULL);
-	
+
+	//printf("argc = %d argv=%s\n", argc, argc==2 && argv[1]?argv[1]:"");
+	if (argc == 2 && stricmp(argv[1], "dll") == 0){
+		printf("use dll\n");
+		bUseDll = TRUE;
+	}
+		
 	WNDCLASSEX wcex = {
 		sizeof(WNDCLASSEX), 0, WndProc, 0, 0, hInst, LoadIcon(NULL, IDI_APPLICATION),
 		LoadCursor(NULL, IDC_ARROW), (HBRUSH)(COLOR_WINDOW + 1), NULL, TEXT("TreeListDemo"), NULL,
@@ -43,48 +49,60 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		case WM_CREATE: {
 			BOOL bRet;
 
-			//~ typedef int (* PTLR)(HINSTANCE hInstance); 
+			//~ typedef int (* PTLR)(HINSTANCE hInstance);
 			HINSTANCE hInst;
+			HMODULE hLib;
 			//~ PTLR pTLR;
 			//~ int initRet = 0;
 			hInst = GetModuleHandle(NULL);
-			//~ HMODULE hLib = LoadLibrary(TEXT("TreeList.dll"));
-			TreeListRegister(hInst);
+			if (bUseDll){
+				hLib = LoadLibrary(TEXT("..\\PB\\TreeList.dll"));
+				printf("class registration: hInst=%08lx, hLib=%08lx\n", hInst, hLib);
+			}
+			else
+				TreeListRegister(hInst);
 			//~ if(hLib){
-				//~ pTLR = (PTLR)GetProcAddress(hLib, "TreeListRegister");
-				//~ if(pTLR)
-					//~ initRet = pTLR(hInst);
+			//~ pTLR = (PTLR)GetProcAddress(hLib, "TreeListRegister");
+			//~ if(pTLR)
+			//~ initRet = pTLR(hInst);
 			//~ }
 			//~ printf("class registration: hInst=%08lx, hLib=%08lx, TreeListRegister=%08lx returned %d\n", hInst, hLib, pTLR, initRet);
-			
+
 			//~ hWndTL = CreateWindow( TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hLib, NULL );
-			hWndTL = CreateWindow( TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
-            //hWndTL = CreateWindowEx( TVS_EX_ITEMLINES, TEXT(TVC_CLASSNAME), TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
+			hWndTL = CreateWindow(TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE | WS_CHILD | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL);
+			//~ hWndTL = CreateWindow(TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
+			//hWndTL = CreateWindowEx( TVS_EX_ITEMLINES, TEXT(TVC_CLASSNAME), TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
 			printf("created windows is %08lx\n", hWndTL);
-            
-            SendMessage(hWndTL, TVM_SETEXTENDEDSTYLE, 0, TVS_EX_ITEMLINES|TVS_EX_ALTERNATECOLOR|TVS_EX_FULLROWMARK);
+
+			SendMessage(hWndTL, TVM_SETEXTENDEDSTYLE, 0, TVS_EX_ITEMLINES | TVS_EX_ALTERNATECOLOR | TVS_EX_FULLROWMARK);
 
 			int colIdx = 0;
+			int col1, col2, col3;
 			int lret;
 			TV_COLUMN col;
 			memset(&col, 0, sizeof(TV_COLUMN));
 			col.mask = 0;
 			col.mask |= TVCF_TEXT;
-			col.pszText = TEXT("titi");
+			col.pszText = TEXT("col 1");
 			col.cchTextMax = 256;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			lret = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
-			printf("TVM_INSERTCOLUMN returned %08lx\n", lret);
-			
-			col.pszText = TEXT("toto");
+			col1 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			printf("TVM_INSERTCOLUMN returned %08lx\n", col1);
+
+			col.pszText = TEXT("col 2");
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			lret = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
-			printf("TVM_INSERTCOLUMN returned %08lx\n", lret);
-			
+			col2 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			printf("TVM_INSERTCOLUMN returned %08lx\n", col2);
+
+			col.pszText = TEXT("col 3");
+			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
+			col3 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			printf("TVM_INSERTCOLUMN returned %08lx\n", col3);
+
 			//~ InsertItem(pItems1[i], i, i, TVI_ROOT)
 			//~ InsertItem(TVIF_TEXT|TVIF_IMAGE|TVIF_SELECTEDIMAGE           ,I,M,S,0,0,0,P,A)
 			//~ InsertItem(UINT nMask, LPCTSTR pText, int nImage, int nSelImage, UINT nState, UINT nStateMask, LPARAM lParam, HTREEITEM hParent, HTREEITEM hInsertAfter) {
-			
+
 			HTREEITEM inserted, inserted2;
 			TVINSERTSTRUCT item;
 			item.hParent				= 0;
@@ -99,7 +117,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			item.item.lParam			= 0;
 			inserted = (HTREEITEM)SendMessage(hWndTL, TVM_INSERTITEM, 0, (LPARAM)&item);
 			printf("inserted = %08lx\n", inserted);
-			
+
 			TVINSERTSTRUCT item2;
 			item2.hParent = inserted;
 			item2.hInsertAfter = TVI_LAST  ;
@@ -113,7 +131,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			item2.item.lParam			= 0;
 			inserted2 = (HTREEITEM)SendMessage(hWndTL, TVM_INSERTITEM, 0, (LPARAM)&item2);
 			printf("inserted = %08lx\n", inserted2);
-			if(inserted2){
+			if(inserted2) {
 				SendMessage(hWndTL, TVM_EXPAND, TVE_EXPAND, (LPARAM)inserted);
 				TV_ITEM itm;
 				itm.mask			= TVIF_SUBITEM | TVIF_TEXT;
@@ -127,8 +145,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				itm.cChildren		= 1;
 				itm.lParam			= 0;
 				SendMessage(hWndTL, TVM_SETITEM, 0, (LPARAM)&itm);
+				
+				itm.pszText			= TEXT("bli bli");
+				itm.cChildren		= 2;
+				SendMessage(hWndTL, TVM_SETITEM, 0, (LPARAM)&itm);
 			}
-			
+
 			TVINSERTSTRUCT item3;
 			item3.hParent = inserted2;
 			item3.hInsertAfter = TVI_LAST  ;
@@ -142,7 +164,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			item3.item.lParam			= 0;
 			inserted2 = (HTREEITEM)SendMessage(hWndTL, TVM_INSERTITEM, 0, (LPARAM)&item3);
 			printf("inserted = %08lx\n", inserted2);
-			
+
 			TVINSERTSTRUCT item4;
 			item4.hParent = inserted;
 			item4.hInsertAfter = TVI_LAST  ;
@@ -156,9 +178,33 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			item4.item.lParam			= 0;
 			inserted = (HTREEITEM)SendMessage(hWndTL, TVM_INSERTITEM, 0, (LPARAM)&item4);
 			printf("inserted = %08lx\n", inserted);
-			
+
 			SetWindowLong(hWndTL, GWL_EXSTYLE, GetWindowLong(hWndTL, GWL_EXSTYLE) | TVS_EX_ITEMLINES);
-      
+
+			HFONT hf;
+			HDC hdc;
+			long lfHeight;
+			
+			hdc = GetDC(NULL);
+			lfHeight = -MulDiv(10, GetDeviceCaps(hdc, LOGPIXELSY), 72);
+			ReleaseDC(NULL, hdc);
+
+			hf = CreateFont(lfHeight, 0, 0, 0, FW_NORMAL, FALSE /*italic*/, FALSE /*underline*/, FALSE /*strikethrough*/, 0, 0, 0, 0, 0, TEXT("Comic Sans MS"));
+			if(hf){
+				printf("CreateFont succeeded.\n");
+				SendMessage(hWndTL, WM_SETFONT, (WPARAM)hf, TRUE);
+				//DeleteObject(hf);
+			} else
+				printf("CreateFont failed!\n");
+
+			LVCOLUMN tcol;
+			tcol.fmt	= TVCFMT_FIXED|TVCFMT_MARK;
+			tcol.mask	= TVCF_FIXED | TVCF_MARK | TVCF_WIDTH;
+			tcol.cx    = 1;
+			SendMessage(hWndTL, TVM_SETCOLUMN, col2, (LPARAM)&tcol);
+
+			SendMessage(hWndTL, TVM_GETUNICODEFORMAT, 0, 0);
+
 			return 0;
 		}
 		break;
@@ -171,12 +217,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			TCHAR sMsg[50];
 			wsprintf(sMsg, TEXT("%d items"), SendMessage(hWndTL, TVM_GETROWCOUNT, (WPARAM)NULL, (LPARAM)NULL));
 			OutputDebugString(sMsg);
-			printf("%s",sMsg);
+			printf("%s", sMsg);
 			PostQuitMessage(0);
 			return 0;
 		}
 		break;
-		default:
+		default
+				:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 	return 0;

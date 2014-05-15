@@ -6,10 +6,11 @@
 //*
 //*****************************************************************************
 //
-//	Dieser Code erstellt ein Tree-Fenster mit einer Liste
+//	This code creates a tree window with a list
 //
 //
-//	Copyright (C) Anton Zechner 2007
+//	Copyright (C) Anton Zechner (az_software@inode.at) 2007
+//	Copyright (C) Sébastien Kirche (sebastien.kirche@free.fr) 2014
 //
 //	TreeListWnd is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)
 //	Sourcecode which use TreeListWnd must be published. Commercial users
@@ -21,7 +22,6 @@
 //	Komerzielle Nutzer müssen ihren Code ebenfalls veröffentlichen, oder
 //	eine Nutzungsvereinbarung mit mir treffen.
 //
-//	az_software@inode.at
 //
 //	Version:	2.04
 //
@@ -137,29 +137,29 @@
 #endif
 
 
-#define 	TVAX_NONE			(TVAE_NONE   >>TVAE_MODEPOS)// Kein atomatisches editieren
-#define 	TVAX_EDIT			(TVAE_EDIT	 >>TVAE_MODEPOS)// Atomatisches editieren mit Edit-Fenster
-#define 	TVAX_COMBO			(TVAE_COMBO	 >>TVAE_MODEPOS)// Atomatisches editieren mit ComboBox
-#define 	TVAX_CBLIST			(TVAE_CBLIST >>TVAE_MODEPOS)// Atomatisches editieren mit ComboListBox
+#define 	TVAX_NONE			(TVAE_NONE   >>TVAE_MODEPOS)// No automatic edit
+#define 	TVAX_EDIT			(TVAE_EDIT	 >>TVAE_MODEPOS)// automatic edit with edit
+#define 	TVAX_COMBO			(TVAE_COMBO	 >>TVAE_MODEPOS)// automatic edit with ComboBox
+#define 	TVAX_CBLIST			(TVAE_CBLIST >>TVAE_MODEPOS)// automatic edit with  ComboListBox
 #define 	TVAX_STEP			(TVAE_STEP	 >>TVAE_MODEPOS)// Einzelnes Weiterschalten mit Enter
 #define 	TVAX_STEPED			(TVAE_STEPED >>TVAE_MODEPOS)// Einzelnes Weiterschalten mit Enter und Edit
-#define 	TVAX_CHECK			(TVAE_CHECK	 >>TVAE_MODEPOS)// Atomatisches editieren mit CheckBox
-#define 	TVAX_CHECKED		(TVAE_CHECKED>>TVAE_MODEPOS)// Atomatisches editieren mit CheckBox und Edit
+#define 	TVAX_CHECK			(TVAE_CHECK	 >>TVAE_MODEPOS)// automatic edit with  CheckBox
+#define 	TVAX_CHECKED		(TVAE_CHECKED>>TVAE_MODEPOS)// automatic edit with CheckBox and Edit
 
-#define 	TVIX_VARBUTTON		0x01						// Schaltflächen sind nicht fix eingestellt
-#define 	TVIX_HASBUTTON		0x02						// Der Eintrag hat eine Schaltfläche
-#define 	TVIX_HASIMAGE		0x04						// Der Eintrag hat ein Icon
-#define 	TVIX_TRACKED		0x08						// Der Eintrag unter dem Cursor
-#define 	TVIX_TEXTCOLOR		0x10						// Der Eintrag hat eine eigene Textfarbe
-#define 	TVIX_BKCOLOR		0x20						// Der Eintrag hat eine eigene Hintergrundfarbe
-#define 	TVIX_FOCUSED		0x40						// Der Eintrag hat einen Eingabe-Focus
+#define 	TVIX_VARBUTTON		0x01						// buttons are not permanent
+#define 	TVIX_HASBUTTON		0x02						// entry has button
+#define 	TVIX_HASIMAGE		0x04						// entry has icon
+#define 	TVIX_TRACKED		0x08						// entry under the cursor
+#define 	TVIX_TEXTCOLOR		0x10						// entry has its own text color
+#define 	TVIX_BKCOLOR		0x20						// entry has its own backround color
+#define 	TVIX_FOCUSED		0x40						// entry has the focus
 
 typedef struct {
-	LPARAM		lParam;										// Ist der LPARAM Wert für den Eintrag
-	LPTSTR		pText;										// Zeiger auf Tree-Text
-	UINT		uState;										// Zustand des Eintrages
-	int			iImage;										// Ist die Nummer des an zu zeigenden Icons
-	int			iSelectedImage; 							// Ist die Nummer des an zu zeigenden Icons (wenn ausgewählt)
+	LPARAM		lParam;										// LPARAM argument for the item
+	LPTSTR		pText;										// pointer to the item text
+	UINT		uState;										// item state
+	int			iImage;										// item image index 
+	int			iSelectedImage; 							// item selected image index
 	unsigned	uShowPos;									// Ist die Position in der Sichtbarliste (0=unsichtbar)
 	unsigned	uFirstChild;								// Ist die Nummer des ersten Kind-Eintrages (0=keines)
 	unsigned	uLastChild;									// Ist die Nummer des letzten Kind-Eintrages (0=keines)
@@ -188,29 +188,29 @@ typedef struct {
 } ExtraItem;
 
 typedef struct {
-	void 	   *pCbData;									// Daten für das Autoeditieren
-	INT  	    iCbIcon;									// Startoffset für in Iconliste für Autoedit
-	short 		sSize;										// Ist die soll Breite einer Spalte
-	short 		sReal;										// Ist die wirkliche Breite einer Spalte
-	short 		sMin;										// Ist die Ausrichtung einer Spalte
-	short  	    sFixed;										// Ist die Spalte fixiert (ist die Breite vor dem Fixieren)
-	BYTE		bMinEx;										// Darf die Spaltenbreite auch nicht vom User unterschritten werden
-	BYTE		bWeight;									// Gewicht der variable Spalten
+	void 	   *pCbData;									// Data for autoedit
+	INT  	    iCbIcon;									// Starting offset for in icon list for autoedit
+	short 		sSize;										// width of the column
+	short 		sReal;										// real width of the column
+	short 		sMin;										// minimum width
+	short  	    sFixed;										// fixed width
+	BYTE		bMinEx;										// the width cannot be less than min width
+	BYTE		bWeight;									// weight for variable columns
 	BYTE		bNext;										// Ist die Spalte die nach der eigenen sichtbar ist	(gespeicherte Reihenfolge)
 	BYTE		bIndex;										// Ist die Spalte in der diese Reihe sichtbar ist (sichtbarer Index)
-	BYTE  	    bAlign;										// Text ausrichtung für die Spalten
+	BYTE  	    bAlign;										// Text alignment
 	BYTE  	    bEdit;										// Automaisches Editiern einer Spalte (siehe TVAE_???>>7)
 	BYTE  	    bFlags;										// Automaisches Editiern einer Spalte (siehe TVAE_???)
 	BYTE  	    bEnable;									// Automaisches einer mit Statebits aktivieren
-	BYTE  	    bCbSize;									// Maximale Anzahl der Einträge in der Datenliste
-	BYTE  	    bCbChar;									// Trennzeichnen für die Datenliste
-	BYTE  	    bMark;										// Ist die Spalte markiert
-	BYTE  	    bDummy[32 - 23 - sizeof(void *)];				// Füllbytes auf 32 Grenze
+	BYTE  	    bCbSize;									// Maximum number of entries in the data list
+	BYTE  	    bCbChar;									// separator for the data list
+	BYTE  	    bMark;										// is column marked ?
+	BYTE  	    bDummy[32 - 23 - sizeof(void *)];			// padding bytes - 32 bytes alignment
 } ColumnData;
 
 typedef struct {
-	HWND		hWnd;										// Fenster Handle
-	HANDLE		hSem;										// Zugriffssemaphore
+	HWND		hWnd;										// handle of the control
+	HANDLE		hSem;										// access semaphore
 	LPVOID		hTheme;										// Handle für benutztes Thema (TREELIST)
 	LPVOID		hThemeBt;									// Handle für benutztes Thema (BUTTON)
 	WNDPROC		pProcId3;									// Fenster Funktion für ID3 Fenster
@@ -373,12 +373,12 @@ int TreeListRegister(HINSTANCE hInstance) {
 	static int		iIsRegistered = FALSE;
 	WNDCLASSEX		sClass;
 
-	OutputDebugString(TEXT("TreeListRegister() - before checking"));
+	OutputDebugString(TEXT("TreeListRegister() - before checking\n"));
 
 	if(iIsRegistered)
 		return TRUE;
 
-	OutputDebugString(TEXT("TreeListRegister() - before registration"));
+	OutputDebugString(TEXT("TreeListRegister() - before registration\n"));
 
 	memset(&sClass, 0, sizeof(sClass));
 	sClass.cbSize           = sizeof(sClass);
@@ -397,7 +397,7 @@ int TreeListRegister(HINSTANCE hInstance) {
 	if(!RegisterClassEx(&sClass))
 		return 0;
 
-	OutputDebugString(TEXT("TreeListRegister() - registration done"));
+	OutputDebugString(TEXT("TreeListRegister() - registration done\n"));
 	iIsRegistered = TRUE;
 
 	return TRUE;
@@ -5305,7 +5305,7 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 		uCol = pData->uColumnCount;
 	}
 
-	if(pColumn->mask & TVCF_FMT) {								// Welche Textausrichtung
+	if(pColumn->mask & TVCF_FMT) {								// text alignment
 		sItem.mask    |= HDI_FORMAT;
 		sItem.fmt      = pColumn->fmt;
 
@@ -11427,7 +11427,7 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			pData	= GetHandle(hWnd);
 			lRet	= 0;
 
-			switch(U(wParam)&~TVOP_WRITEOPTION) {
+			switch(U(wParam) & ~TVOP_WRITEOPTION) {
 				case TVOP_AUTOEXPANDOFF:							// Icon Offset für TVS_EX_AUTOEXPANDICON
 
 					lRet = pData->iAutoAdd;
