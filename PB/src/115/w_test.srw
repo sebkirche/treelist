@@ -84,15 +84,15 @@ end forward
 
 global type w_test from window
 integer width = 3456
-integer height = 2500
+integer height = 2896
 boolean titlebar = true
-string title = "Untitled"
+string title = "TreeList testbed"
 boolean controlmenu = true
 boolean minbox = true
 boolean maxbox = true
 boolean resizable = true
 long backcolor = 67108864
-string icon = "AppIcon!"
+string icon = ".\res\TreeList.ico"
 boolean center = true
 event onnotify pbm_notify
 cbx_ex_headerdragdrop cbx_ex_headerdragdrop
@@ -1125,6 +1125,8 @@ integer y = 32
 integer width = 2002
 integer height = 1436
 integer taborder = 10
+boolean border = true
+borderstyle borderstyle = stylelowered!
 boolean ibs_hasbuttons = false
 boolean ibs_haslines = false
 boolean ibs_linesatroot = false

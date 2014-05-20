@@ -4,6 +4,7 @@ use feature qw(say);
 $|++;
 
 my @used_regex = (
+        qr/^TV_/,
         qr/^TVCFMT_/,
         qr/^TVS_/,
         qr/^TVM_/,
