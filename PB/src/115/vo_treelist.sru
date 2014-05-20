@@ -132,6 +132,7 @@ Function ULong ReleaseDC(ULong handle, ULong hDC) Library "User32.DLL"
 
 
 end prototypes
+
 type variables
 public:
 //styles
@@ -492,6 +493,12 @@ public function long deletecolumn (long al_column_id)
 public function long showcolumn (long al_column_id)
 public function long hidecolumn (long al_column_id)
 public function long setitembackcolor (long handle, long al_column_id, long al_color)
+public function ulong getstyle ()
+public function unsignedlong setstyle (unsignedlong aul_style)
+public function unsignedlong getexstyle ()
+public function unsignedlong setexstyle (unsignedlong aul_style)
+public function unsignedlong updateexstyles ()
+public function unsignedlong updatestyles ()
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -932,43 +939,31 @@ end function
 public function long setitembackcolor (long handle, long al_column_id, long al_color);return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
 end function
 
-on vo_treelist.create
-end on
+public function ulong getstyle ();
+return GetWindowLong(hWnd, GWL_STYLE)
 
-on vo_treelist.destroy
-end on
+end function
 
-event constructor;
+public function unsignedlong setstyle (unsignedlong aul_style);
 
-hwnd = handle(this)
+return SetWindowLong(hWnd, GWL_STYLE, aul_style)
 
-unsignedlong lul_style
-//lul_style = style
-lul_style = GetWindowLong(hWnd, GWL_STYLE)
-if IBS_HASBUTTONS then lul_style += tvs_hasbuttons
-if IBS_HASLINES then lul_style += tvs_haslines
-if IBS_LINESATROOT then lul_style += tvs_linesatroot
-if IBS_SHOWSELALWAYS then lul_style += tvs_showselalways
-if IBS_NOTOOLTIPS then lul_style += tvs_notooltips
-if IBS_CHECKBOXES then lul_style += tvs_checkboxes
-if IBS_TRACKSELECT then lul_style += tvs_trackselect
-if IBS_SINGLEEXPAND then lul_style += tvs_singleexpand
-if IBS_FULLROWSELECT and not IBS_HASLINES then lul_style += tvs_fullrowselect
-if IBS_NOSCROLL then lul_style += tvs_noscroll
-if IBS_NOHSCROLL then lul_style += tvs_nohscroll
-if IBS_NONEVENHEIGHT then lul_style += tvs_nonevenheight
-if IBS_EDITLABELS then lul_style += tvs_editlabels
-if IBS_DISABLEDRAGDROP then lul_style += tvs_disabledragdrop
-if IBS_RTLREADING then lul_style += tvs_rtlreading
-//TODO? if IBS_INFOTIP
+end function
 
-//if visible then lul_style += 1//ws_visible
-//if enabled then lul_style += cs_enable
-//style = lul_style
-SetWindowLong(hWnd, GWL_STYLE, lul_style)
+public function unsignedlong getexstyle ();
+return Send(hwnd, TVM_GETEXTENDEDSTYLE, 0, 0)
 
-long lul_exstyle
-lul_exstyle = Send( hwnd, TVM_GETEXTENDEDSTYLE, 0, 0)
+end function
+
+public function unsignedlong setexstyle (unsignedlong aul_style);
+return Send(hwnd, TVM_SETEXTENDEDSTYLE, -1, aul_style)
+
+end function
+
+public function unsignedlong updateexstyles ();
+long lul_exstyle = 0
+
+//lul_exstyle = Send( hwnd, TVM_GETEXTENDEDSTYLE, 0, 0)
 if IBS_EX_ALTERNATECOLOR then lul_exstyle += TVS_EX_ALTERNATECOLOR
 if IBS_EX_AUTOEXPANDICON then lul_exstyle += TVS_EX_AUTOEXPANDICON
 if IBS_EX_AUTOHSCROLL then lul_exstyle += TVS_EX_AUTOHSCROLL
@@ -992,10 +987,63 @@ if IBS_EX_SINGLECHECKBOX then lul_exstyle += TVS_EX_SINGLECHECKBOX
 if IBS_EX_STEPOUT then lul_exstyle += TVS_EX_STEPOUT
 if IBS_EX_SUBSELECT then lul_exstyle += TVS_EX_SUBSELECT
 if IBS_EX_TOOLTIPNOTIFY then lul_exstyle += TVS_EX_TOOLTIPNOTIFY
-Send( hwnd, TVM_SETEXTENDEDSTYLE, -1, lul_exstyle )
+
+return setexstyle(lul_exstyle)
+
+end function
+
+public function unsignedlong updatestyles ();
+ulong lul_style = 0
+
+lul_style = ws_child
+
+if IBS_HASBUTTONS then lul_style += tvs_hasbuttons
+if IBS_HASLINES then lul_style += tvs_haslines
+if IBS_LINESATROOT then lul_style += tvs_linesatroot
+if IBS_SHOWSELALWAYS then lul_style += tvs_showselalways
+if IBS_NOTOOLTIPS then lul_style += tvs_notooltips
+if IBS_CHECKBOXES then lul_style += tvs_checkboxes
+if IBS_TRACKSELECT then lul_style += tvs_trackselect
+if IBS_SINGLEEXPAND then lul_style += tvs_singleexpand
+if IBS_FULLROWSELECT and not IBS_HASLINES then lul_style += tvs_fullrowselect
+if IBS_NOSCROLL then lul_style += tvs_noscroll
+if IBS_NOHSCROLL then lul_style += tvs_nohscroll
+if IBS_NONEVENHEIGHT then lul_style += tvs_nonevenheight
+if IBS_EDITLABELS then lul_style += tvs_editlabels
+if IBS_DISABLEDRAGDROP then lul_style += tvs_disabledragdrop
+if IBS_RTLREADING then lul_style += tvs_rtlreading
+
+if visible then lul_style += ws_visible
+//if enabled then lul_style += CS_ENABLE
+//lul_style += ws_child
+
+return setstyle(lul_style)
+
+end function
+
+on vo_treelist.create
+end on
+
+on vo_treelist.destroy
+end on
+
+event constructor;
+
+hwnd = handle(this)
+
+//unsignedlong lul_style
+//lul_style = style
+//lul_style = getstyle( )
+//TODO? if IBS_INFOTIP
+
+//if visible then lul_style += 1//ws_visible
+//if enabled then lul_style += cs_enable
+//style = lul_style
+//setstyle(lul_style)
+updatestyles()
+updateexstyles()
 
 post event post_constructor( )
-
 
 end event
 

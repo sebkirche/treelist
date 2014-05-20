@@ -16,6 +16,8 @@ type nmhdr from structure within vo_treelist
 end type
 type point from structure within vo_treelist
 end type
+type logfont from structure within vo_treelist
+end type
 end forward
 
 type TV_COLUMN from structure
@@ -76,6 +78,23 @@ type point from structure
 	long		y
 end type
 
+type logfont from structure
+	long		lfheight
+	long		lfwidth
+	long		lfescapement
+	long		lforientation
+	long		lfweight
+	byte		lfitalic
+	byte		lfunderline
+	byte		lfstrikeout
+	byte		lfcharset
+	byte		lfoutprecision
+	byte		lfclipprecision
+	byte		lfquality
+	character		lfpitchandfamily
+	character		lffacename[32]
+end type
+
 global type vo_treelist from userobject
 integer width = 247
 integer height = 144
@@ -102,6 +121,15 @@ subroutine CopyMemorynmtreeview(ref nmtreeview Destination,ulong Source,ulong Le
 
 Function ULONG GetWindowLong(Ulong hWn, long nIndex) library "user32.dll" alias for "GetWindowLongW"
 Function ULONG SetWindowLong(Ulong hWn, long nIndex, ULONG dwNewLong) library "user32.dll" alias for "SetWindowLongW"
+
+Function ulong CreateFont(long nHeight,ulong nWidth,ulong nEscapement,ulong nOrientation,ulong fnWeight,boolean fdwItalic,boolean fdwUnderline,boolean fdwStrikeOut,ulong fdwCharSet,ulong fdwOutputPrecision,ulong fdwClipPrecision,ulong fdwQuality,ulong dwPitchAndFamily,ref string lpszFace) LIBRARY "gdi32.dll" ALIAS FOR "CreateFontW"  
+Function uLong CreateFontIndirect( Ref Logfont lplf ) Library 'gdi32' alias for "CreateFontIndirectW"
+Function Boolean DeleteObject( uLong hObject ) Library "gdi32"
+function long MulDiv(long nNumber, long nNumerator, int nDenominator) library "kernel32.dll"
+Function ulong GetDeviceCaps(ulong hdc,ulong nIndex) library "gdi32.dll"
+Function ULong GetDC(ULong handle) Library "User32.DLL"
+Function ULong ReleaseDC(ULong handle, ULong hDC) Library "User32.DLL"
+
 
 end prototypes
 
@@ -168,6 +196,15 @@ constant long SIZEOF_TVCOLUMN=44
 constant long SIZEOF_TVINSERTSTRUCT=64
 
 //Constants generated from conv_defs.pl ( TreeListWnd.h + commctrl.h )
+constant ulong TVCFMT_BITMAP_ON_RIGHT = 4096
+constant ulong TVCFMT_CENTER = 2
+constant ulong TVCFMT_COL_HAS_IMAGES = 32768
+constant ulong TVCFMT_FIXED = 536870912
+constant ulong TVCFMT_IMAGE = 2048
+constant ulong TVCFMT_LEFT = 0
+constant ulong TVCFMT_MARK = 268435456
+constant ulong TVCFMT_RIGHT = 1
+
 constant ulong TVCF_FIXED = 1073741824
 constant ulong TVCF_FMT = 1
 constant ulong TVCF_IMAGE = 16
@@ -410,20 +447,24 @@ constant ulong TVS_TRACKSELECT = 512
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
 
-
 protected:
 ulong hwnd
+long il_curcol = 0
 
 private:
-long il_curcol = 0
+ulong il_custom_font = 0
+
+constant long WM_SETFONT = 48
+constant integer FW_NORMAL     = 400
+constant integer FW_BOLD       = 700
+constant ulong LOGPIXELSX = 88  //Number of pixels per logical inch along the screen width.
+constant ulong DEFAULT_CHARSET     = 1   //(x01)
 
 end variables
 
 forward prototypes
 public function long addcolumn (string as_text)
 public function long insertcolumn (long al_index, string as_text)
-public function long insertitem (unsignedlong aul_parent, unsignedlong aul_flags, string as_text)
-public function long insertitem (unsignedlong aul_parent, string as_text)
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
 public function long expandall (unsignedlong aul_parent)
@@ -431,10 +472,33 @@ public function unsignedlong finditem (treenavigation navigationcode, unsignedlo
 public function unsignedlong finditem (treenavigation navigationcode, unsignedlong itemhandle, long al_column, string as_text, boolean ab_ignore_case)
 public function boolean getitemcheckbox (unsignedlong handle)
 public subroutine setitemcheckbox (unsignedlong handle, boolean ab_state)
-protected function long getitem (unsignedlong handle, ref tv_item item)
 protected function long setitem (unsignedlong handle, ref tv_item item)
 public function long deleteitem (unsignedlong handle)
 public function integer deleteitem (integer i)
+public function long insertitemlast (unsignedlong aul_parent, string as_text)
+public function long insertitem (unsignedlong aul_parent, unsignedlong aul_posflags, unsignedlong aul_flags, string as_text, long al_image, long al_selectedimage)
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image)
+protected function boolean getitem (unsignedlong handle, ref tv_item item)
+public function unsignedlong getnextitem (unsignedlong handle, unsignedlong which)
+public function unsignedlong getnextsiblingitem (unsignedlong handle)
+public function ulong getprevsiblingitem (unsignedlong handle)
+public function unsignedlong getchild (unsignedlong handle)
+protected function boolean getitem (ref tv_item item)
+public function string getlabel (unsignedlong handle)
+public function integer reset ()
+private function unsignedlong _createfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout)
+public subroutine setfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout)
+public subroutine setfont (unsignedlong hfont)
+public function long deletecolumn (long al_column_id)
+public function long showcolumn (long al_column_id)
+public function long hidecolumn (long al_column_id)
+public function long setitembackcolor (long handle, long al_column_id, long al_color)
+public function ulong getstyle ()
+public function unsignedlong setstyle (unsignedlong aul_style)
+public function unsignedlong getexstyle ()
+public function unsignedlong setexstyle (unsignedlong aul_style)
+public function unsignedlong updateexstyles ()
+public function unsignedlong updatestyles ()
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -451,6 +515,36 @@ event wm_notify;if lparam > 0 then
 									msgdata.itemnew.state, &
 									msgdata.ptdrag.x, &
 									msgdata.ptdrag.y)
+		//TODO:
+		case TVN_DELETEITEM
+		case TVN_COLUMNCHANGED
+		case TVN_BEGINLABELEDIT
+		case TVN_ENDLABELEDIT
+		case TVN_SETDISPINFO
+		case TVN_KEYDOWN
+		case TVN_STARTEDIT
+		case TVN_STEPSTATECHANGED
+		case TVN_BEGINDRAG
+		case TVN_ITEMTOOLTIP
+		case TVN_GETINFOTIP
+		case TVN_ITEMEXPANDING
+		case TVN_ITEMEXPANDED
+		case TVN_SELCHANGED
+		case TVN_SELCHANGING
+		case TVN_SINGLEEXPAND
+		case TVN_LBUTTONUP
+		case TVN_RBUTTONUP
+//		case NM_RETURN
+//		case NM_SETFOCUS
+//		case NM_KILLFOCUS
+//		case NM_DBLCLK
+//		case NM_RCLICK
+//		case NM_RDBLCLK
+		case TVN_LAST
+		case TVN_FIRST
+		case TVN_COLUMNDBLCLICK
+		case TVN_COLUMNCLICK
+		case TVN_BEGINRDRAG
 		case else
 	end choose	
 end if
@@ -498,39 +592,13 @@ return l_ret
 
 end function
 
-public function long insertitem (unsignedlong aul_parent, unsignedlong aul_flags, string as_text);
-/*
-	Insert intem into tree
-	
-*/
+public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);
+tv_item itemdata
 
-TV_INSERTSTRUCT item
+if isnull(as_text) then as_text = ""
 
-item.hParent			= aul_parent;
-item.hInsertAfter		= TVI_LAST;
-item.item.hItem		= 0;
-item.item.pszText		= as_text
-item.item.mask			= TVIF_TEXT;
-item.item.iImage		= TV_NOIMAGE;
-item.item.iSelectedImage = TV_NOIMAGE;
-item.item.state			= 0;
-item.item.stateMask		= 0;
-item.item.lParam			= 0;
-
-long l_ret
-l_ret = SendMessageInsertItem(hwnd, TVM_INSERTITEM, 0, ref item);
-
-return l_ret
-
-end function
-
-public function long insertitem (unsignedlong aul_parent, string as_text);
-return insertitem(aul_parent, TVIF_TEXT, as_text)
-
-end function
-
-public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);tv_item itemdata
-itemdata.mask = TVIF_SUBITEM + TVIF_TEXT
+itemdata.mask = TVIF_TEXT
+if al_column > 0 then itemdata.mask += TVIF_SUBITEM 
 itemdata.hitem = aul_parent
 itemdata.stateMask = 0
 itemdata.psztext = as_text
@@ -538,13 +606,23 @@ itemdata.cchTextMax = 256
 itemdata.cChildren = al_column
 
 return SendMessageItem( hwnd , TVM_SETITEM, 0, itemdata)
+
 end function
 
 public function long expand (unsignedlong aul_parent);return Send(hwnd, TVM_EXPAND, TVE_EXPAND, aul_parent)
 end function
 
-public function long expandall (unsignedlong aul_parent);return Send(hwnd, TVM_EXPAND, &
-	TVE_EXPANDRECURSIVE + TVE_EXPANDFORCE + TVE_ALLCHILDS + TVE_EXPAND, &
+public function long expandall (unsignedlong aul_parent);if aul_parent = TVI_ROOT then
+	ulong lul_handle
+	lul_handle = getchild( TVI_ROOT )
+	do while lul_handle > 0
+		expandall( lul_handle )
+		lul_handle = getNextsiblingitem( lul_handle )
+	loop
+	return 0
+end if
+
+return Send(hwnd, TVM_EXPAND, TVE_ALLCHILDS + TVE_EXPAND, &
 	aul_parent)
 end function
 
@@ -594,10 +672,11 @@ return r>0 //= 0x2000
 end function
 
 public subroutine setitemcheckbox (unsignedlong handle, boolean ab_state);ulong r
+boolean lb
 tv_item item
 item.mask = TVIF_STATE
 item.statemask = -1
-r = getitem(handle, ref item)
+lb = getitem(handle, ref item)
 r = item.state
 n_cst_numerical ln_bitops
 r = ln_bitops.of_bitwiseand( r, ln_bitops.of_bitwisenot( 8192 + 4096 ) )
@@ -610,15 +689,8 @@ item.state = r
 item.mask = TVIF_STATE
 item.statemask = -1
 setitem( handle, ref item )
+
 end subroutine
-
-protected function long getitem (unsignedlong handle, ref tv_item item);long l_ret
-item.hitem = handle
-l_ret = SendMessageItem(hwnd, TVM_GETITEM, 0, ref item);
-
-return l_ret
-
-end function
 
 protected function long setitem (unsignedlong handle, ref tv_item item);long l_ret
 item.hitem = handle
@@ -645,44 +717,253 @@ public function integer deleteitem (integer i);//to be sure an user will not cal
 return deleteitem(long(i))
 end function
 
-on vo_treelist.create
-end on
+public function long insertitemlast (unsignedlong aul_parent, string as_text);
+return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, TV_NOIMAGE, TV_NOIMAGE)
 
-on vo_treelist.destroy
-end on
+end function
 
-event constructor;
+public function long insertitem (unsignedlong aul_parent, unsignedlong aul_posflags, unsignedlong aul_flags, string as_text, long al_image, long al_selectedimage);
+/*
+	Insert intem into tree
+	
+*/
 
-hwnd = handle(this)
+TV_INSERTSTRUCT item
+
+item.hParent			= aul_parent;
+item.hInsertAfter		= aul_posflags;
+item.item.hItem		= 0;
+item.item.pszText		= as_text
+item.item.cchTextMax = 256 //!!!!!!!!!!!!!!!!!!!
+item.item.mask			= aul_flags;
+item.item.iImage		= al_image;
+item.item.iSelectedImage = al_selectedimage;
+item.item.state			= 0;
+item.item.stateMask		= 0;
+item.item.lParam			= 0;
+
+long l_ret
+l_ret = SendMessageInsertItem(hwnd, TVM_INSERTITEM, 0, ref item);
+
+return l_ret
+
+end function
+
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image);
+return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, al_image, al_image)
+
+end function
+
+protected function boolean getitem (unsignedlong handle, ref tv_item item);
+item.hitem = handle
+return getitem(item)
 
 
-unsignedlong lul_style
-//lul_style = style
-lul_style = GetWindowLong(hWnd, GWL_STYLE)
-if IBS_HASBUTTONS then lul_style += tvs_hasbuttons
-if IBS_HASLINES then lul_style += tvs_haslines
-if IBS_LINESATROOT then lul_style += tvs_linesatroot
-if IBS_SHOWSELALWAYS then lul_style += tvs_showselalways
-if IBS_NOTOOLTIPS then lul_style += tvs_notooltips
-if IBS_CHECKBOXES then lul_style += tvs_checkboxes
-if IBS_TRACKSELECT then lul_style += tvs_trackselect
-if IBS_SINGLEEXPAND then lul_style += tvs_singleexpand
-if IBS_FULLROWSELECT and not IBS_HASLINES then lul_style += tvs_fullrowselect
-if IBS_NOSCROLL then lul_style += tvs_noscroll
-if IBS_NOHSCROLL then lul_style += tvs_nohscroll
-if IBS_NONEVENHEIGHT then lul_style += tvs_nonevenheight
-if IBS_EDITLABELS then lul_style += tvs_editlabels
-if IBS_DISABLEDRAGDROP then lul_style += tvs_disabledragdrop
-if IBS_RTLREADING then lul_style += tvs_rtlreading
-//TODO? if IBS_INFOTIP
+end function
 
-//if visible then lul_style += 1//ws_visible
-//if enabled then lul_style += cs_enable
-//style = lul_style
-SetWindowLong(hWnd, GWL_STYLE, lul_style)
+public function unsignedlong getnextitem (unsignedlong handle, unsignedlong which);
+/* Return the next given item after the given handle or 0
 
-long lul_exstyle
-//lul_exstyle = GetWindowLong(hWnd, GWL_EXSTYLE)
+TVGN_CARET  Retrieves the currently selected item.  
+TVGN_CARETSUB  Retrieves the currently selected column.  
+TVGN_CHILD  Retrieves the first child item.  
+TVGN_DROPHILITE  Retrieves the item that is the target of a drag-and-drop operation.  
+TVGN_DROPHILITESUB  Retrieves the column that is the target of a drag-and-drop operation.  
+TVGN_FIRSTVISIBLE  Retrieves the first visible item.  
+TVGN_FOCUS  Retrieves the item which has the focus. If the window not have the focus, the first selected item is retrieved.  
+TVGN_FOCUSSUB  Retrieves the column which has the focus. If the window not have the focus, the selected column is retrieved.  
+TVGN_LASTCHILD  Retrieves the last child item.  
+TVGN_LASTVISIBLE  Retrieves the last expanded item in the tree. This does not retrieve the last item visible in the tree-view window.  
+TVGN_NEXT  Retrieves the next sibling item.  
+TVGN_NEXTITEM  Retrieves the next item. This is at first the child, then the sibling or at last the first sibling of the parent item.    
+TVGN_NEXTSELCHILD  Retrieves the next selected child item (see TVS_EX_MULTISELECT).  
+TVGN_NEXTSELECTED  Retrieves the next selected item (see TVS_EX_MULTISELECT).  
+TVGN_NEXTVISIBLE  Retrieves the next visible item that follows the specified item.  
+TVGN_PARENT  Retrieves the parent of the specified item.  
+TVGN_PREVIOUS  Retrieves the previous sibling item.  
+TVGN_PREVIOUSVISIBLE    Retrieves the first visible item that precedes the specified item.  
+TVGN_ROOT  Retrieves the first child item of the root item.
+
+*/
+
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, which, handle)
+
+return r
+
+end function
+
+public function unsignedlong getnextsiblingitem (unsignedlong handle);
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, TVGN_NEXT, handle)
+
+return r
+
+end function
+
+public function ulong getprevsiblingitem (unsignedlong handle);
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, TVGN_PREVIOUS, handle)
+
+return r
+
+end function
+
+public function unsignedlong getchild (unsignedlong handle);
+ulong r
+
+r = send( hwnd, TVM_GETNEXTITEM, TVGN_CHILD, handle)
+
+return r
+
+end function
+
+protected function boolean getitem (ref tv_item item);
+long l_ret
+l_ret = SendMessageItem(hwnd, TVM_GETITEM, 0, ref item);
+
+return l_ret = 1
+
+
+end function
+
+public function string getlabel (unsignedlong handle);
+tv_item item
+item.hitem = handle
+item.mask = TVIF_TEXT
+item.psztext = space(256)
+item.cchTextMax = 256 //FIXME => constante de l'objet !!!!!!!
+
+if getitem(ref item) then
+	return item.psztext
+else
+	return ""
+end if	
+
+end function
+
+public function integer reset ();DeleteItem( TVI_ROOT )
+return 0
+end function
+
+private function unsignedlong _createfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout);uLong	lul_Font
+logfont lf
+
+lf.lfFaceName = as_FaceName
+lf.lfWeight= ai_Weight
+lf.lfHeight= ai_Height
+
+lf.lfPitchAndFamily = '1'
+lf.lfClipPrecision = 2
+lf.lfOutPrecision = 1
+lf.lfQuality = 1
+
+If ab_Italic Then lf.lfItalic = 255
+If ab_UnderLine Then lf.lfUnderline = 255
+If ab_StrikeOut Then lf.lfStrikeOut = 255
+
+lul_Font = CreateFontIndirect(lf)
+
+Return lul_Font
+
+end function
+
+public subroutine setfont (string as_facename, integer ai_height, integer ai_weight, boolean ab_italic, boolean ab_underline, boolean ab_strikeout);
+ulong ll_hdc
+integer li_height
+
+ll_hdc = GetDC(hwnd)
+li_height = -MulDiv(ai_height, GetDeviceCaps(ll_hdc, LOGPIXELSX), 72)
+if il_custom_font <> 0 then DeleteObject(il_custom_font)
+//il_custom_font = _CreateFont( as_FaceName, li_height, ai_Weight, ab_Italic, ab_Underline, ab_StrikeOut )
+il_custom_font = CreateFont(li_height, 0, 0, 0, ai_Weight, ab_italic, ab_underline, ab_strikeout, 0, DEFAULT_CHARSET, 0, 0, 0, as_facename)
+
+If il_custom_font > 0 Then
+	SetFont( il_custom_font )
+	//no! do that if needed later when recreating a new font or destroying the item
+	//DeleteObject( lul_Font )
+End If
+ReleaseDC(hwnd, ll_hdc)
+
+end subroutine
+
+public subroutine setfont (unsignedlong hfont);
+Send( hwnd, WM_SETFONT, hFont, 1 )
+
+end subroutine
+
+public function long deletecolumn (long al_column_id);
+/* 
+	Delete a column by it's id
+	
+	al_column_id : the id of the column to delete
+	
+*/
+
+long l_ret
+
+l_ret = Send( hwnd, TVM_DELETECOLUMN, al_column_id, 0 )
+return l_ret
+
+end function
+
+public function long showcolumn (long al_column_id);TV_COLUMN col
+
+col.fmt = 0
+col.mask = TVCF_FIXED + TVCF_WIDTH
+col.cx = TVCF_LASTSIZE
+
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
+
+return l_ret
+
+end function
+
+public function long hidecolumn (long al_column_id);TV_COLUMN col
+
+col.fmt = TVCFMT_FIXED
+col.mask = TVCF_FIXED + TVCF_WIDTH
+col.cx = 0
+
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
+
+return l_ret
+
+end function
+
+public function long setitembackcolor (long handle, long al_column_id, long al_color);return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
+end function
+
+public function ulong getstyle ();
+return GetWindowLong(hWnd, GWL_STYLE)
+
+end function
+
+public function unsignedlong setstyle (unsignedlong aul_style);
+
+return SetWindowLong(hWnd, GWL_STYLE, aul_style)
+
+end function
+
+public function unsignedlong getexstyle ();
+return Send(hwnd, TVM_GETEXTENDEDSTYLE, 0, 0)
+
+end function
+
+public function unsignedlong setexstyle (unsignedlong aul_style);
+return Send(hwnd, TVM_SETEXTENDEDSTYLE, -1, aul_style)
+
+end function
+
+public function unsignedlong updateexstyles ();
+long lul_exstyle = 0
+
+//lul_exstyle = Send( hwnd, TVM_GETEXTENDEDSTYLE, 0, 0)
 if IBS_EX_ALTERNATECOLOR then lul_exstyle += TVS_EX_ALTERNATECOLOR
 if IBS_EX_AUTOEXPANDICON then lul_exstyle += TVS_EX_AUTOEXPANDICON
 if IBS_EX_AUTOHSCROLL then lul_exstyle += TVS_EX_AUTOHSCROLL
@@ -706,11 +987,69 @@ if IBS_EX_SINGLECHECKBOX then lul_exstyle += TVS_EX_SINGLECHECKBOX
 if IBS_EX_STEPOUT then lul_exstyle += TVS_EX_STEPOUT
 if IBS_EX_SUBSELECT then lul_exstyle += TVS_EX_SUBSELECT
 if IBS_EX_TOOLTIPNOTIFY then lul_exstyle += TVS_EX_TOOLTIPNOTIFY
-SetWindowLong(hWnd, GWL_EXSTYLE, lul_exstyle)
 
+return setexstyle(lul_exstyle)
+
+end function
+
+public function unsignedlong updatestyles ();
+ulong lul_style = 0
+
+lul_style = ws_child
+
+if IBS_HASBUTTONS then lul_style += tvs_hasbuttons
+if IBS_HASLINES then lul_style += tvs_haslines
+if IBS_LINESATROOT then lul_style += tvs_linesatroot
+if IBS_SHOWSELALWAYS then lul_style += tvs_showselalways
+if IBS_NOTOOLTIPS then lul_style += tvs_notooltips
+if IBS_CHECKBOXES then lul_style += tvs_checkboxes
+if IBS_TRACKSELECT then lul_style += tvs_trackselect
+if IBS_SINGLEEXPAND then lul_style += tvs_singleexpand
+if IBS_FULLROWSELECT and not IBS_HASLINES then lul_style += tvs_fullrowselect
+if IBS_NOSCROLL then lul_style += tvs_noscroll
+if IBS_NOHSCROLL then lul_style += tvs_nohscroll
+if IBS_NONEVENHEIGHT then lul_style += tvs_nonevenheight
+if IBS_EDITLABELS then lul_style += tvs_editlabels
+if IBS_DISABLEDRAGDROP then lul_style += tvs_disabledragdrop
+if IBS_RTLREADING then lul_style += tvs_rtlreading
+
+if visible then lul_style += ws_visible
+//if enabled then lul_style += CS_ENABLE
+//lul_style += ws_child
+
+return setstyle(lul_style)
+
+end function
+
+on vo_treelist.create
+end on
+
+on vo_treelist.destroy
+end on
+
+event constructor;
+
+hwnd = handle(this)
+
+//unsignedlong lul_style
+//lul_style = style
+//lul_style = getstyle( )
+//TODO? if IBS_INFOTIP
+
+//if visible then lul_style += 1//ws_visible
+//if enabled then lul_style += cs_enable
+//style = lul_style
+//setstyle(lul_style)
+updatestyles()
+updateexstyles()
 
 post event post_constructor( )
 
+end event
+
+event destructor;
+//clean the custom font if it was allocated
+if il_custom_font <> 0 then DeleteObject(il_custom_font)
 
 end event
 
