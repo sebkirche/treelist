@@ -2,6 +2,36 @@ HA$PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
+type cbx_disable from checkbox within w_test
+end type
+type cbx_def_butin from checkbox within w_test
+end type
+type cb_butin from commandbutton within w_test
+end type
+type cbx_def_frame from checkbox within w_test
+end type
+type cb_frame from commandbutton within w_test
+end type
+type cb_butex from commandbutton within w_test
+end type
+type cbx_def_butex from checkbox within w_test
+end type
+type cb_text from commandbutton within w_test
+end type
+type cbx_def_text from checkbox within w_test
+end type
+type cbx_def_even from checkbox within w_test
+end type
+type cb_even_col from commandbutton within w_test
+end type
+type cb_odd_col from commandbutton within w_test
+end type
+type cbx_def_odd from checkbox within w_test
+end type
+type cbx_def_back from checkbox within w_test
+end type
+type cb_back_col from commandbutton within w_test
+end type
 type cbx_ex_headerdragdrop from checkbox within w_test
 end type
 type cbx_ex_stepout from checkbox within w_test
@@ -80,21 +110,47 @@ type gb_styles from groupbox within w_test
 end type
 type gb_exstyles from groupbox within w_test
 end type
+type r_back from rectangle within w_test
+end type
+type r_odd from rectangle within w_test
+end type
+type r_even from rectangle within w_test
+end type
+type r_text from rectangle within w_test
+end type
+type r_frame from rectangle within w_test
+end type
+type r_butex from rectangle within w_test
+end type
+type r_butin from rectangle within w_test
+end type
 end forward
 
 global type w_test from window
-integer width = 3456
-integer height = 2896
+integer width = 3429
+integer height = 2848
 boolean titlebar = true
 string title = "TreeList testbed"
 boolean controlmenu = true
-boolean minbox = true
-boolean maxbox = true
-boolean resizable = true
 long backcolor = 67108864
 string icon = ".\res\TreeList.ico"
 boolean center = true
 event onnotify pbm_notify
+cbx_disable cbx_disable
+cbx_def_butin cbx_def_butin
+cb_butin cb_butin
+cbx_def_frame cbx_def_frame
+cb_frame cb_frame
+cb_butex cb_butex
+cbx_def_butex cbx_def_butex
+cb_text cb_text
+cbx_def_text cbx_def_text
+cbx_def_even cbx_def_even
+cb_even_col cb_even_col
+cb_odd_col cb_odd_col
+cbx_def_odd cbx_def_odd
+cbx_def_back cbx_def_back
+cb_back_col cb_back_col
 cbx_ex_headerdragdrop cbx_ex_headerdragdrop
 cbx_ex_stepout cbx_ex_stepout
 cbx_ex_editclick cbx_ex_editclick
@@ -134,6 +190,13 @@ cb_1 cb_1
 uo_tree uo_tree
 gb_styles gb_styles
 gb_exstyles gb_exstyles
+r_back r_back
+r_odd r_odd
+r_even r_even
+r_text r_text
+r_frame r_frame
+r_butex r_butex
+r_butin r_butin
 end type
 global w_test w_test
 
@@ -191,6 +254,21 @@ uo_tree.updateexstyles()
 end subroutine
 
 on w_test.create
+this.cbx_disable=create cbx_disable
+this.cbx_def_butin=create cbx_def_butin
+this.cb_butin=create cb_butin
+this.cbx_def_frame=create cbx_def_frame
+this.cb_frame=create cb_frame
+this.cb_butex=create cb_butex
+this.cbx_def_butex=create cbx_def_butex
+this.cb_text=create cb_text
+this.cbx_def_text=create cbx_def_text
+this.cbx_def_even=create cbx_def_even
+this.cb_even_col=create cb_even_col
+this.cb_odd_col=create cb_odd_col
+this.cbx_def_odd=create cbx_def_odd
+this.cbx_def_back=create cbx_def_back
+this.cb_back_col=create cb_back_col
 this.cbx_ex_headerdragdrop=create cbx_ex_headerdragdrop
 this.cbx_ex_stepout=create cbx_ex_stepout
 this.cbx_ex_editclick=create cbx_ex_editclick
@@ -230,7 +308,29 @@ this.cb_1=create cb_1
 this.uo_tree=create uo_tree
 this.gb_styles=create gb_styles
 this.gb_exstyles=create gb_exstyles
-this.Control[]={this.cbx_ex_headerdragdrop,&
+this.r_back=create r_back
+this.r_odd=create r_odd
+this.r_even=create r_even
+this.r_text=create r_text
+this.r_frame=create r_frame
+this.r_butex=create r_butex
+this.r_butin=create r_butin
+this.Control[]={this.cbx_disable,&
+this.cbx_def_butin,&
+this.cb_butin,&
+this.cbx_def_frame,&
+this.cb_frame,&
+this.cb_butex,&
+this.cbx_def_butex,&
+this.cb_text,&
+this.cbx_def_text,&
+this.cbx_def_even,&
+this.cb_even_col,&
+this.cb_odd_col,&
+this.cbx_def_odd,&
+this.cbx_def_back,&
+this.cb_back_col,&
+this.cbx_ex_headerdragdrop,&
 this.cbx_ex_stepout,&
 this.cbx_ex_editclick,&
 this.cbx_ex_fixedcolsize,&
@@ -268,10 +368,32 @@ this.cb_2,&
 this.cb_1,&
 this.uo_tree,&
 this.gb_styles,&
-this.gb_exstyles}
+this.gb_exstyles,&
+this.r_back,&
+this.r_odd,&
+this.r_even,&
+this.r_text,&
+this.r_frame,&
+this.r_butex,&
+this.r_butin}
 end on
 
 on w_test.destroy
+destroy(this.cbx_disable)
+destroy(this.cbx_def_butin)
+destroy(this.cb_butin)
+destroy(this.cbx_def_frame)
+destroy(this.cb_frame)
+destroy(this.cb_butex)
+destroy(this.cbx_def_butex)
+destroy(this.cb_text)
+destroy(this.cbx_def_text)
+destroy(this.cbx_def_even)
+destroy(this.cb_even_col)
+destroy(this.cb_odd_col)
+destroy(this.cbx_def_odd)
+destroy(this.cbx_def_back)
+destroy(this.cb_back_col)
 destroy(this.cbx_ex_headerdragdrop)
 destroy(this.cbx_ex_stepout)
 destroy(this.cbx_ex_editclick)
@@ -311,6 +433,13 @@ destroy(this.cb_1)
 destroy(this.uo_tree)
 destroy(this.gb_styles)
 destroy(this.gb_exstyles)
+destroy(this.r_back)
+destroy(this.r_odd)
+destroy(this.r_even)
+destroy(this.r_text)
+destroy(this.r_frame)
+destroy(this.r_butex)
+destroy(this.r_butin)
 end on
 
 event open;il_deltaheight = height - uo_tree.height //- uo_tree.y
@@ -352,6 +481,419 @@ event resize;
 //uo_tree.width = newwidth - uo_tree.x - pixelstounits(8, XPixelsToUnits!)
 uo_tree.width = max(newwidth - il_deltawidth, pixelstounits(50, XPixelsToUnits!))
 uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50, YPixelsToUnits!))
+
+end event
+
+type cbx_disable from checkbox within w_test
+integer x = 1193
+integer y = 2684
+integer width = 425
+integer height = 56
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Disable control"
+end type
+
+event clicked;
+uo_tree.enabled = not checked
+
+end event
+
+type cbx_def_butin from checkbox within w_test
+integer x = 1019
+integer y = 2592
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_butin.fillcolor
+end if
+
+uo_tree.setbuttonincolor(l_col)
+
+end event
+
+type cb_butin from commandbutton within w_test
+integer x = 690
+integer y = 2592
+integer width = 297
+integer height = 72
+integer taborder = 60
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Buttons ins"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_butin.checked = false
+r_butin.fillcolor = l_col
+uo_tree.setbuttonincolor(l_col)
+
+end event
+
+type cbx_def_frame from checkbox within w_test
+integer x = 416
+integer y = 2496
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_frame.fillcolor
+end if
+
+uo_tree.setframecolor(l_col)
+
+end event
+
+type cb_frame from commandbutton within w_test
+integer x = 110
+integer y = 2496
+integer width = 297
+integer height = 72
+integer taborder = 50
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Frame"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_frame.checked = false
+r_frame.fillcolor = l_col
+uo_tree.setframecolor(l_col)
+
+end event
+
+type cb_butex from commandbutton within w_test
+integer x = 695
+integer y = 2496
+integer width = 297
+integer height = 72
+integer taborder = 50
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Buttons ext"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_butex.checked = false
+r_butex.fillcolor = l_col
+uo_tree.setbuttonextcolor(l_col)
+
+end event
+
+type cbx_def_butex from checkbox within w_test
+integer x = 1019
+integer y = 2504
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_butex.fillcolor
+end if
+
+uo_tree.setbuttonextcolor(l_col)
+
+end event
+
+type cb_text from commandbutton within w_test
+integer x = 695
+integer y = 2308
+integer width = 297
+integer height = 72
+integer taborder = 30
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "text"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_text.checked = false
+r_text.fillcolor = l_col
+uo_tree.settextcolor(l_col)
+
+end event
+
+type cbx_def_text from checkbox within w_test
+integer x = 1019
+integer y = 2308
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_text.fillcolor
+end if
+
+uo_tree.settextcolor(l_col)
+
+end event
+
+type cbx_def_even from checkbox within w_test
+integer x = 1019
+integer y = 2400
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_even.fillcolor
+end if
+
+uo_tree.setevencolor(l_col)
+
+end event
+
+type cb_even_col from commandbutton within w_test
+integer x = 695
+integer y = 2400
+integer width = 297
+integer height = 72
+integer taborder = 40
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Even"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_even.checked = false
+r_even.fillcolor = l_col
+uo_tree.setevencolor(l_col)
+
+end event
+
+type cb_odd_col from commandbutton within w_test
+integer x = 110
+integer y = 2400
+integer width = 297
+integer height = 72
+integer taborder = 30
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Odd"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_odd.checked = false
+r_odd.fillcolor = l_col
+uo_tree.setoddcolor(l_col)
+
+end event
+
+type cbx_def_odd from checkbox within w_test
+integer x = 416
+integer y = 2400
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_odd.fillcolor
+end if
+
+uo_tree.setoddcolor(l_col)
+
+end event
+
+type cbx_def_back from checkbox within w_test
+integer x = 416
+integer y = 2316
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_back.fillcolor
+end if
+
+uo_tree.setbackcolor(l_col)
+
+end event
+
+type cb_back_col from commandbutton within w_test
+integer x = 110
+integer y = 2308
+integer width = 297
+integer height = 72
+integer taborder = 30
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Background"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_back.checked = false
+r_back.fillcolor = l_col
+uo_tree.setbackcolor(l_col)
 
 end event
 
@@ -1123,7 +1665,7 @@ type uo_tree from vo_treelist within w_test
 integer x = 878
 integer y = 32
 integer width = 2002
-integer height = 1436
+integer height = 2080
 integer taborder = 10
 boolean border = true
 borderstyle borderstyle = stylelowered!
@@ -1174,5 +1716,75 @@ string facename = "Tahoma"
 long textcolor = 33554432
 long backcolor = 67108864
 string text = "Extended Styles"
+end type
+
+type r_back from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 37
+integer y = 2308
+integer width = 64
+integer height = 72
+end type
+
+type r_odd from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 37
+integer y = 2400
+integer width = 64
+integer height = 72
+end type
+
+type r_even from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 622
+integer y = 2400
+integer width = 64
+integer height = 72
+end type
+
+type r_text from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 622
+integer y = 2308
+integer width = 64
+integer height = 72
+end type
+
+type r_frame from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 37
+integer y = 2496
+integer width = 64
+integer height = 72
+end type
+
+type r_butex from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 622
+integer y = 2496
+integer width = 64
+integer height = 72
+end type
+
+type r_butin from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 622
+integer y = 2592
+integer width = 64
+integer height = 72
 end type
 

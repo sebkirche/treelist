@@ -196,6 +196,24 @@ constant long SIZEOF_TVCOLUMN=44
 constant long SIZEOF_TVINSERTSTRUCT=64
 
 //Constants generated from conv_defs.pl ( TreeListWnd.h + commctrl.h )
+constant ulong TVC_BK =					0					// Background
+constant ulong TVC_ODD =					1					// alternate colors / odd    (see TVS_EX_ALTERNATECOLOR)
+constant ulong TVC_EVEN =				2					// alternate colors / even	(see TVS_EX_ALTERNATECOLOR)
+constant ulong TVC_FRAME =				3					// separator lines	(see TVS_EX_ITEMLINES)
+constant ulong TVC_TEXT =				4					// text
+constant ulong TVC_LINE =				5					// interior of the buttons
+constant ulong TVC_BOX =					6					// exterior of the buttons
+constant ulong TVC_TRACK =				7					// tracked item text
+constant ulong TVC_MARK =				8					// selected line
+constant ulong TVC_MARKODD =				8					// selected line (odd)
+constant ulong TVC_MARKEVEN =			9					// selected line (even)
+constant ulong TVC_INSERT =				10					// insertion point
+constant ulong TVC_BOXBG =				11					// background of buttons 
+constant ulong TVC_COLBK =				12					// background of marked column
+constant ulong TVC_COLODD =				13					// alternate odd color of marked column
+constant ulong TVC_COLEVEN =				14					// alternate even color of marked column
+constant ulong TVC_GRAYED =				15					// background when disabled
+
 constant ulong TVCFMT_BITMAP_ON_RIGHT = 4096
 constant ulong TVCFMT_CENTER = 2
 constant ulong TVCFMT_COL_HAS_IMAGES = 32768
@@ -446,6 +464,7 @@ constant ulong TVS_SINGLEEXPAND = 1024
 constant ulong TVS_TRACKSELECT = 512
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
+constant long TV_NOCOLOR = -1
 
 protected:
 ulong hwnd
@@ -499,6 +518,19 @@ public function unsignedlong getexstyle ()
 public function unsignedlong setexstyle (unsignedlong aul_style)
 public function unsignedlong updateexstyles ()
 public function unsignedlong updatestyles ()
+private function unsignedlong setcolor (long colitem, long color)
+public function unsignedlong setbackcolor (long color)
+public function unsignedlong setoddcolor (long color)
+public function unsignedlong setevencolor (long color)
+public function unsignedlong settextcolor (long color)
+public function unsignedlong setframecolor (long color)
+public function unsignedlong setlinecolor (long color)
+public function unsignedlong setbuttonextcolor (long color)
+public function unsignedlong setbuttonincolor (long color)
+public function unsignedlong settrackcolor (long color)
+public function unsignedlong setmarkcolor (long color)
+public function unsignedlong setmarkoddcolor (long color)
+public function unsignedlong setmarkevencolor (long color)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -936,7 +968,8 @@ return l_ret
 
 end function
 
-public function long setitembackcolor (long handle, long al_column_id, long al_color);return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
+public function long setitembackcolor (long handle, long al_column_id, long al_color);
+return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
 end function
 
 public function ulong getstyle ();
@@ -1018,6 +1051,95 @@ if visible then lul_style += ws_visible
 //lul_style += ws_child
 
 return setstyle(lul_style)
+
+end function
+
+private function unsignedlong setcolor (long colitem, long color);
+//Set the color for a part of the TreeList
+
+return send(hwnd, TVM_SETBKCOLOR, colitem, color)
+
+end function
+
+public function unsignedlong setbackcolor (long color);
+// Set the background color
+
+return setcolor(TVC_BK, color)
+
+end function
+
+public function unsignedlong setoddcolor (long color);
+// Set the background color of odd lines
+
+return setcolor(TVC_ODD, color)
+
+end function
+
+public function unsignedlong setevencolor (long color);
+// Set the background color of even lines
+
+return setcolor(TVC_EVEN, color)
+
+end function
+
+public function unsignedlong settextcolor (long color);
+// Set the color of text
+
+return setcolor(TVC_TEXT, color)
+
+end function
+
+public function unsignedlong setframecolor (long color);
+return setcolor(TVC_FRAME, color)
+
+end function
+
+public function unsignedlong setlinecolor (long color);
+// Set the interior color of buttons
+
+return setcolor(TVC_LINE, color)
+
+end function
+
+public function unsignedlong setbuttonextcolor (long color);
+// Set the exterior color of the buttons (the box)
+
+return setcolor(TVC_BOX, color)
+
+end function
+
+public function unsignedlong setbuttonincolor (long color);
+// Set the interior color of the buttons ( + / - )
+
+return setcolor(TVC_LINE, color)
+
+end function
+
+public function unsignedlong settrackcolor (long color);
+// Set the color of tracked lines
+
+return setcolor(TVC_TRACK, color)
+
+end function
+
+public function unsignedlong setmarkcolor (long color);
+// Set the color of marked lines
+
+return setcolor(TVC_MARK, color)
+
+end function
+
+public function unsignedlong setmarkoddcolor (long color);
+// Set the color of odd marked lines
+
+return setcolor(TVC_MARKODD, color)
+
+end function
+
+public function unsignedlong setmarkevencolor (long color);
+// Set the color of even marked lines
+
+return setcolor(TVC_MARKEVEN, color)
 
 end function
 
