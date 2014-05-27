@@ -20,9 +20,9 @@ type logfont from structure within vo_treelist
 end type
 end forward
 
-type TV_COLUMN from structure
-	unsignedlong		mask
-	long		fmt
+type tv_column from structure
+	ulong		mask
+	ulong		fmt
 	long		cx
 	string		psztext
 	long		cchtextmax
@@ -102,7 +102,7 @@ userobjects objecttype = externalvisual!
 long backcolor = 67108864
 string classname = "TreeList"
 string libraryname = "treelist.dll"
-string text = "none"
+string text = "PBTreeList"
 event wm_notify pbm_notify
 event type long oncbstatechanged ( unsignedlong action,  unsignedlong itemhandle,  unsignedlong olditemstate,  unsignedlong newitemstate,  long ptdrag_x,  long ptdrag_y )
 event post_constructor ( )
@@ -539,7 +539,12 @@ public function unsignedlong setgrayedcolor (long color)
 public function long setcolumn (long al_column_id, tv_column atv_col)
 public function long setcolumnmark (long al_col, boolean ab_mark)
 public function long getcolumn (long al_column_id, ref tv_column atv_col)
-public function boolean getcolumnmark (long al_col)
+public function long getcolumnwidth (long al_col)
+public function long getcolumncount ()
+public function long getrowcount ()
+public function boolean iscolumnmarked (long al_col)
+public function boolean iscolumnhidden (long al_col)
+public function long setcolumnvisible (long al_col, boolean ab_visible)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -1192,6 +1197,8 @@ end function
 public function long setcolumnmark (long al_col, boolean ab_mark);
 TV_COLUMN col
 
+if al_col > getcolumncount() then return -1
+
 if ab_mark then
 	col.fmt = TVCFMT_MARK
 end if
@@ -1209,20 +1216,81 @@ return l_ret
 
 end function
 
-public function boolean getcolumnmark (long al_col);
+public function long getcolumnwidth (long al_col);
 TV_COLUMN col
 long r
 
 col.fmt = 0
-col.mask = TVCF_MARK
+col.mask = TVCF_WIDTH
 
 r = getcolumn(al_col, col)
 
-//FIXME : REPLACE WITH C FUNC
+return col.cx
+
+end function
+
+public function long getcolumncount ();
+//return the number of columns 
+
+return send(hwnd, TVM_GETCOLUMNCOUNT, 0, 0)
+
+end function
+
+public function long getrowcount ();
+//return the number of columns 
+
+return send(hwnd, TVM_GETROWCOUNT, 0, 0)
+
+end function
+
+public function boolean iscolumnmarked (long al_col);
+TV_COLUMN col
+long r
+
+if al_col > getcolumncount() then return false
+
+col.fmt = TVCFMT_MARK
+col.mask = TVCF_FMT
+
+r = getcolumn(al_col, col)
+
 n_cst_numerical ln_bitops
 r = ln_bitops.of_bitwiseand(col.fmt, TVCFMT_MARK)
 
 return r > 0
+
+end function
+
+public function boolean iscolumnhidden (long al_col);
+TV_COLUMN col
+long r
+
+if al_col > getcolumncount() then return false
+
+//col.fmt = TVCFMT_FIXED
+col.mask = TVCF_FMT /*TVCF_FIXED*/ + TVCF_WIDTH
+
+r = getcolumn(al_col, col)
+
+n_cst_numerical ln_bitops
+r = ln_bitops.of_bitwiseand(col.fmt, TVCFMT_FIXED)
+if col.cx = 0 and r > 0 then
+	return true
+end if
+
+return false
+
+end function
+
+public function long setcolumnvisible (long al_col, boolean ab_visible);
+long r
+if ab_visible then
+	r = showcolumn(al_col)
+else
+	r = hidecolumn(al_col)
+end if
+
+return r
 
 end function
 

@@ -12227,16 +12227,9 @@ NextExp:
 					BYTE bAlign;
 
 					switch(pCol->fmt) {
-						case TVCFMT_CENTER:
-							bAlign = DT_CENTER;
-							break;
-						case TVCFMT_RIGHT:
-							bAlign = DT_RIGHT;
-							break;
-						default
-								:
-							bAlign = DT_LEFT;
-							break;
+						case TVCFMT_CENTER: bAlign = DT_CENTER;	break;
+						case TVCFMT_RIGHT:  bAlign = DT_RIGHT; 	break;
+						default:            bAlign = DT_LEFT;   break;
 					}
 
 					if(pData->aColumn[uCol].bAlign != bAlign) {
@@ -12294,8 +12287,11 @@ NextExp:
 				if(sItem.mask & HDI_FORMAT) {
 					pCol->mask |= TVCF_FMT;
 					pCol->fmt    = sItem.fmt;
+
 					if(bWantMark && pData->aColumn[uCol].bMark)
 						pCol->fmt |= TVCFMT_MARK;
+					if(!pData->aColumn[uCol].sReal && pData->aColumn[uCol].sFixed)
+						pCol->fmt |= TVCFMT_FIXED;
 				}
 				if(sItem.mask & HDI_IMAGE)  {pCol->mask |= TVCF_IMAGE; pCol->iImage = sItem.iImage; }
 				if(sItem.mask & HDI_WIDTH)  {pCol->mask |= TVCF_WIDTH; pCol->cx     = sItem.cxy;    }
