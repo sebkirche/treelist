@@ -12212,14 +12212,10 @@ NextExp:
 				}
 
 				sItem.mask = 0;
-				if(pCol->mask & TVCF_FMT)
-				{sItem.mask |= HDI_FORMAT; sItem.fmt    = pCol->fmt | HDF_STRING;}
-				if(pCol->mask & TVCF_IMAGE)
-				{sItem.mask |= HDI_IMAGE;  sItem.iImage = pCol->iImage;        }
-				if(pCol->mask & TVCF_WIDTH)
-				{sItem.mask |= HDI_WIDTH;  sItem.cxy    = uVal; pData->aColumn[uCol].sSize = (short)sItem.cxy;}
-				if(pCol->mask & TVCF_TEXT)
-				{sItem.mask |= HDI_TEXT;   sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
+				if(pCol->mask & TVCF_FMT)   {sItem.mask |= HDI_FORMAT; sItem.fmt    = pCol->fmt | HDF_STRING;}
+				if(pCol->mask & TVCF_IMAGE) {sItem.mask |= HDI_IMAGE;  sItem.iImage = pCol->iImage;        }
+				if(pCol->mask & TVCF_WIDTH) {sItem.mask |= HDI_WIDTH;  sItem.cxy    = uVal; pData->aColumn[uCol].sSize = (short)sItem.cxy;}
+				if(pCol->mask & TVCF_TEXT) 	{sItem.mask |= HDI_TEXT;  sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
 
 				if(sItem.mask) {
 					lRet = SendMessage(pData->hHeader, HDM_SETITEM, uCol, (LPARAM)&sItem);
@@ -12278,29 +12274,33 @@ NextExp:
 			if(pData->hHeader) {
 				HDITEM		sItem;
 				TV_COLUMN  *pCol = (TV_COLUMN *)lParam;
-
+				int bWantMark;
+				unsigned	uCol;
+				
+				uCol = U(wParam);
 				sItem.mask = 0;
-				if(pCol->mask & TVCF_FMT)
-				{sItem.mask |= HDI_FORMAT;}
-				if(pCol->mask & TVCF_IMAGE)
-				{sItem.mask |= HDI_IMAGE; }
-				if(pCol->mask & TVCF_WIDTH)
-				{sItem.mask |= HDI_WIDTH; }
-				if(pCol->mask & TVCF_TEXT)
-				{sItem.mask |= HDI_TEXT ; sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
+				if(pCol->mask & TVCF_FMT)   {
+					sItem.mask |= HDI_FORMAT;
+					bWantMark = pCol->fmt & TVCFMT_MARK;	//memorize if we want the marked state
+				}
+				if(pCol->mask & TVCF_IMAGE) {sItem.mask |= HDI_IMAGE; }
+				if(pCol->mask & TVCF_WIDTH) {sItem.mask |= HDI_WIDTH; }
+				if(pCol->mask & TVCF_TEXT)  {sItem.mask |= HDI_TEXT ; sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
 
 				lRet = SendMessage(pData->hHeader, HDM_GETITEM, wParam, (LPARAM)&sItem);
 
 				pCol->mask = 0;
 
-				if(sItem.mask |= HDI_FORMAT)
-				{pCol->mask |= TVCF_FMT  ; pCol->fmt    = sItem.fmt;    }
-				if(sItem.mask |= HDI_IMAGE)
-				{pCol->mask |= TVCF_IMAGE; pCol->iImage = sItem.iImage; }
-				if(sItem.mask |= HDI_WIDTH)
-				{pCol->mask |= TVCF_WIDTH; pCol->cx     = sItem.cxy;    }
-				if(sItem.mask |= HDI_TEXT)
-				{pCol->mask |= TVCF_TEXT ; pCol->pszText = sItem.pszText;  pCol->cchTextMax = sItem.cchTextMax;}
+				if(sItem.mask & HDI_FORMAT) {
+					pCol->mask |= TVCF_FMT;
+					pCol->fmt    = sItem.fmt;
+					if(bWantMark && pData->aColumn[uCol].bMark)
+						pCol->fmt |= TVCFMT_MARK;
+				}
+				if(sItem.mask & HDI_IMAGE)  {pCol->mask |= TVCF_IMAGE; pCol->iImage = sItem.iImage; }
+				if(sItem.mask & HDI_WIDTH)  {pCol->mask |= TVCF_WIDTH; pCol->cx     = sItem.cxy;    }
+				if(sItem.mask & HDI_TEXT)   {pCol->mask |= TVCF_TEXT ; pCol->pszText = sItem.pszText;  pCol->cchTextMax = sItem.cchTextMax;}
+
 			} else {
 				lRet = 0;
 			}
