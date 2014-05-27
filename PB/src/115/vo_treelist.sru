@@ -38,15 +38,15 @@ type tv_item from structure
 	unsignedlong		statemask
 	string		psztext
 	unsignedlong		cchtextmax
-	unsignedlong		iimage
-	unsignedlong		iselectedimage
+	long		iimage
+	long		iselectedimage
 	unsignedlong		cchildren
 	unsignedlong		lparam
 end type
 
 type tv_insertstruct from structure
 	unsignedlong		hparent
-	ulong		hinsertafter
+	unsignedlong		hinsertafter
 	tv_item		item
 end type
 
@@ -91,7 +91,7 @@ type logfont from structure
 	byte		lfoutprecision
 	byte		lfclipprecision
 	byte		lfquality
-	character		lfpitchandfamily
+	byte		lfpitchandfamily
 	character		lffacename[32]
 end type
 
@@ -124,12 +124,44 @@ Function ULONG SetWindowLong(Ulong hWn, long nIndex, ULONG dwNewLong) library "u
 
 Function ulong CreateFont(long nHeight,ulong nWidth,ulong nEscapement,ulong nOrientation,ulong fnWeight,boolean fdwItalic,boolean fdwUnderline,boolean fdwStrikeOut,ulong fdwCharSet,ulong fdwOutputPrecision,ulong fdwClipPrecision,ulong fdwQuality,ulong dwPitchAndFamily,ref string lpszFace) LIBRARY "gdi32.dll" ALIAS FOR "CreateFontW"  
 Function uLong CreateFontIndirect( Ref Logfont lplf ) Library 'gdi32' alias for "CreateFontIndirectW"
+Function ulong GetFontObject(ulong hfont, long cbBuffer, ref logfont lpvObject) library "gdi32.dll" alias for "GetObjectW"
 Function Boolean DeleteObject( uLong hObject ) Library "gdi32"
 function long MulDiv(long nNumber, long nNumerator, int nDenominator) library "kernel32.dll"
 Function ulong GetDeviceCaps(ulong hdc,ulong nIndex) library "gdi32.dll"
 Function ULong GetDC(ULong handle) Library "User32.DLL"
 Function ULong ReleaseDC(ULong handle, ULong hDC) Library "User32.DLL"
 
+Function ulong ImageList_Create(long cx, long cy, ulong flags, long cInitial, long cGrow) Library "comctl32.dll"
+Function long ImageList_GetImageCount(ulong himl) Library "comctl32.dll"
+Function long ImageList_Add(ulong himl, long hbmImage, long hbmMask) Library "comctl32.dll"
+Function long ImageList_ReplaceIcon(ulong himl, long i, long hicon) Library "comctl32.dll"
+Function long ImageList_AddMasked(ulong himl, long hbmImage, ulong crMask) Library "comctl32.dll"
+Function long ImageList_GetIcon(ulong himl, long i, ulong flags) Library "comctl32.dll"
+Function long ImageList_LoadImage(ulong hInstance, String lpbmp, long cx, long cGrow, ulong crMask, ulong uType, ulong uFlags) Library "comctl32.dll" ALIAS FOR "ImageList_LoadImageW"
+Function long ImageList_Merge(ulong himl1, long i1, long himl2, long i2, long dx, long dy) Library "comctl32.dll"
+Function ulong ImageList_SetBkColor(long himl, ulong clrBk) Library "comctl32.dll"
+Function ulong ImageList_GetBkColor(long himl) Library "comctl32.dll"
+Function boolean ImageList_Destroy(long himl) Library "comctl32.dll"
+Function boolean ImageList_SetOverlayImage(long himl, long iImage, long iOverlay) Library "comctl32.dll"
+Function boolean ImageList_Draw(long himl, long i, long hdcDst, long xx, long yy, ulong fStyle) Library "comctl32.dll"
+//Function boolean ImageList_DrawIndirect(IMAGELISTDRAWPARAMS p) Library "comctl32.dll"
+Function boolean ImageList_Replace( long himl, long i, long hbmImage, long hbmMask) Library "comctl32.dll"
+Function boolean ImageList_DrawEx( long himl, long i, long hdcDst, long xx, long yy, long dx, long dy, ulong rgbBk, ulong rgbFg, ulong fStyle) Library "comctl32.dll"
+Function boolean ImageList_Remove( long himl, long i) Library "comctl32.dll"
+Function boolean ImageList_BeginDrag( long himlTrack, long iTrack, long dxHotspot, long dyHotspot) Library "comctl32.dll"
+Function boolean ImageList_EndDrag() Library "comctl32.dll"
+Function boolean ImageList_DragEnter( long  hwndLock, long xx, long yy) Library "comctl32.dll"
+Function boolean ImageList_DragLeave( long hwndLock) Library "comctl32.dll"
+Function boolean ImageList_DragMove( long xx, long yy) Library "comctl32.dll"
+Function boolean ImageList_SetDragCursorImage( long himlDrag, long iDrag, long dxHotspot, long dyHotspot) Library "comctl32.dll"
+Function boolean ImageList_DragShowNolock( boolean fShow) Library "comctl32.dll"
+Function boolean ImageList_GetIconSize(long himl, Ref long cx, Ref Long cy) Library "comctl32.dll"
+Function boolean ImageList_SetIconSize(long himl, long cx, long cy) Library "comctl32.dll"
+//Function boolean ImageList_GetImageInfo(long himl, long i, Ref IMAGEINFO pImageInfo) Library "comctl32.dll"
+Function long ImageList_Duplicate( long himl) Library "comctl32.dll"
+Function long ImageList_Read( long pstm) Library "comctl32.dll"
+Function boolean ImageList_Write( long himl, long pstm) Library "comctl32.dll"
+FUNCTION long DrawState(Long hdc, Long hBrush, Long lpDrawStateProc , Long lParam, Long wParam, Long xX, Long yY, Long cX, Long cY, Long fuFlags) Library "user32.dll" Alias for "DrawStateW"
 
 end prototypes
 
@@ -180,13 +212,31 @@ boolean IBS_EX_STEPOUT
 boolean IBS_EX_SUBSELECT
 boolean IBS_EX_TOOLTIPNOTIFY
 
+protected:
+ulong hwnd
+long il_curcol = 0
+
+private:
+ulong il_custom_font = 0
+
+constant long WM_SETFONT = 48
+constant long WM_GETFONT = 49
+constant integer FW_NORMAL     = 400
+constant integer FW_BOLD       = 700
+constant ulong LOGPIXELSX = 88  //Number of pixels per logical inch along the screen width.
+constant ulong DEFAULT_CHARSET     = 1   //(x01)
+constant long IMAGE_BITMAP = 0
+constant long LR_LOADFROMFILE = 16
 constant long GWL_STYLE = -16
 constant long GWL_EXSTYLE = -20
 constant unsignedlong WS_CHILD = 1073741824
 constant unsignedlong WS_VISIBLE = 268435456
 constant long CS_ENABLE = 1
 
-//Constants computed:
+
+public:
+
+//Constants computed:------------------------------------------------------
 constant long SIZEOF_NMHDR=12
 constant long SIZEOF_TVITEM=40
 constant long SIZEOF_POINT=8
@@ -464,20 +514,7 @@ constant ulong TVS_SINGLEEXPAND = 1024
 constant ulong TVS_TRACKSELECT = 512
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
-constant long TV_NOCOLOR = -1
-
-protected:
-ulong hwnd
-long il_curcol = 0
-
-private:
-ulong il_custom_font = 0
-
-constant long WM_SETFONT = 48
-constant integer FW_NORMAL     = 400
-constant integer FW_BOLD       = 700
-constant ulong LOGPIXELSX = 88  //Number of pixels per logical inch along the screen width.
-constant ulong DEFAULT_CHARSET     = 1   //(x01)
+constant ulong TV_NOCOLOR = -1
 
 end variables
 
@@ -496,7 +533,6 @@ public function long deleteitem (unsignedlong handle)
 public function integer deleteitem (integer i)
 public function long insertitemlast (unsignedlong aul_parent, string as_text)
 public function long insertitem (unsignedlong aul_parent, unsignedlong aul_posflags, unsignedlong aul_flags, string as_text, long al_image, long al_selectedimage)
-public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image)
 protected function boolean getitem (unsignedlong handle, ref tv_item item)
 public function unsignedlong getnextitem (unsignedlong handle, unsignedlong which)
 public function unsignedlong getnextsiblingitem (unsignedlong handle)
@@ -545,6 +581,12 @@ public function long getrowcount ()
 public function boolean iscolumnmarked (long al_col)
 public function boolean iscolumnhidden (long al_col)
 public function long setcolumnvisible (long al_col, boolean ab_visible)
+public function ulong getimagelist (integer ai_list)
+public function ulong setimagelist (integer ai_list, unsignedlong ah_list)
+public function long loadimagelistfromfile (integer ai_list, string as_file)
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image, long al_image_sel)
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image)
+public function boolean getfont (ref logfont a_font)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -764,7 +806,7 @@ return deleteitem(long(i))
 end function
 
 public function long insertitemlast (unsignedlong aul_parent, string as_text);
-return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, TV_NOIMAGE, TV_NOIMAGE)
+return insertitem(aul_parent, TVI_LAST, TVIF_TEXT+TVIF_IMAGE+TVIF_SELECTEDIMAGE, as_text, TV_NOIMAGE, TV_NOIMAGE)
 
 end function
 
@@ -792,11 +834,6 @@ long l_ret
 l_ret = SendMessageInsertItem(hwnd, TVM_INSERTITEM, 0, ref item);
 
 return l_ret
-
-end function
-
-public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image);
-return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, al_image, al_image)
 
 end function
 
@@ -902,7 +939,7 @@ lf.lfFaceName = as_FaceName
 lf.lfWeight= ai_Weight
 lf.lfHeight= ai_Height
 
-lf.lfPitchAndFamily = '1'
+lf.lfPitchAndFamily = 1
 lf.lfClipPrecision = 2
 lf.lfOutPrecision = 1
 lf.lfQuality = 1
@@ -1292,6 +1329,59 @@ end if
 
 return r
 
+end function
+
+public function ulong getimagelist (integer ai_list);
+return send(hwnd, TVM_GETIMAGELIST, ai_list, 0)
+end function
+
+public function ulong setimagelist (integer ai_list, unsignedlong ah_list);
+return send(hwnd, TVM_SETIMAGELIST, ai_list, ah_list)
+
+end function
+
+public function long loadimagelistfromfile (integer ai_list, string as_file);
+ulong himg
+long r
+
+himg = ImageList_LoadImage(0, as_file, 16, 8, rgb(0, 255,255) , IMAGE_BITMAP, LR_LOADFROMFILE/*LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_SHARED | LR_LOADTRANSPARENT*/)
+if himg <> 0 then
+	r = setimagelist( ai_list, himg)
+end if
+
+return r
+
+end function
+
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image, long al_image_sel);
+ulong lul_flags
+
+if as_text <> "" then lul_flags += TVIF_TEXT
+/*if al_image <> TV_NOIMAGE then*/ lul_flags += TVIF_IMAGE
+/*if al_image_sel <> TV_NOIMAGE then*/ lul_flags +=TVIF_SELECTEDIMAGE
+
+return insertitem(aul_parent, TVI_LAST, lul_flags, as_text, al_image, al_image_sel)
+
+end function
+
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image);
+return insertitemlast(aul_parent, as_text, al_image, al_image)
+
+end function
+
+public function boolean getfont (ref logfont a_font);
+ulong hfont
+boolean b_ret = false
+
+hfont = Send(hwnd, WM_GETFONT, 0, 0)
+
+if hfont > 0 then
+	int t
+	t = GetFontObject(hfont, 92, a_font)
+	b_ret = t = 92
+end if
+
+return b_ret
 end function
 
 on vo_treelist.create

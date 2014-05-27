@@ -717,19 +717,21 @@ uo_tree.addcolumn("col 2")
 il_maxcol = uo_tree.getcolumncount() - 1
 em_col.minmax = "0~~" + string(il_maxcol)
 
+
 ulong r, i1, i2, i3, i4, i5
-i1 = uo_tree.insertitemlast(0,"foo")
+r = uo_tree.loadimagelistfromfile( 0 /*TVSIL_NORMAL*/, "res\flags.bmp")
+i1 = uo_tree.insertitemlast(0,"foo", 0)
 r = uo_tree.setitemtext(i1, 1, string(i1))
 r = uo_tree.setitemtext(i1, 2, "data3")
-i2 = uo_tree.insertitemlast(1,"bar")
+i2 = uo_tree.insertitemlast(1, "bar", 1)
 r = uo_tree.setitemtext(i2, 1, string(i2))
-i3 = uo_tree.insertitemlast(2,"baz")
+i3 = uo_tree.insertitemlast(2, "baz", 3)
 r = uo_tree.setitemtext(i3, 1, string(i3))
-i4 = uo_tree.insertitemlast(1,"asdf")
+i4 = uo_tree.insertitemlast(1, "asdf", 2)
 r = uo_tree.setitemtext(i4, 1, string(i4))
-i5 = uo_tree.insertitemlast(0,"row2-crash")	//make ite crash!
+i5 = uo_tree.insertitemlast(0, "row2-crash")	//make ite crash!
 r = uo_tree.setitemtext(i5, 1, string(i5))
-i5 = uo_tree.insertitemlast(-1,"row2")
+i5 = uo_tree.insertitemlast(-1, "row2")
 r = uo_tree.setitemtext(i5, 1, string(i5))
 
 int i
@@ -775,8 +777,14 @@ end type
 
 event clicked;
 n_choosefont f
+string ls_facename
+vo_treelist`logfont lf
 
-if f.of_choosefont(parent, "") then
+if uo_tree.getfont(lf) then
+	ls_facename = lf.lffacename
+end if
+
+if f.of_choosefont(parent, ls_facename) then
 	uo_tree.setfont( f.ifacename , f.itextsize, f.iweight, f.iitalic, f.iunderline , f.istrikeout)
 end if
 
@@ -2543,7 +2551,6 @@ string facename = "Tahoma"
 long textcolor = 33554432
 long backcolor = 67108864
 string text = "TVS_CHECKBOXES"
-boolean checked = true
 end type
 
 event clicked;

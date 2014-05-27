@@ -10659,6 +10659,16 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 			return 0;
 
+		case WM_GETFONT:											//tell what font we are using
+			
+			HFONT hFont;
+			pData	= GetHandle(hWnd);
+
+			LOCK(pData);
+			hFont = pData->hFontN;
+			UNLOCK(pData);
+			return (LRESULT)hFont;
+
 		case WM_SETFONT:											// Einen neuen Font zuweisen
 
 			pData	= GetHandle(hWnd);
