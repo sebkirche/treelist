@@ -524,13 +524,22 @@ public function unsignedlong setoddcolor (long color)
 public function unsignedlong setevencolor (long color)
 public function unsignedlong settextcolor (long color)
 public function unsignedlong setframecolor (long color)
-public function unsignedlong setlinecolor (long color)
 public function unsignedlong setbuttonextcolor (long color)
 public function unsignedlong setbuttonincolor (long color)
 public function unsignedlong settrackcolor (long color)
-public function unsignedlong setmarkcolor (long color)
 public function unsignedlong setmarkoddcolor (long color)
 public function unsignedlong setmarkevencolor (long color)
+public function unsignedlong setinsertcolor (long color)
+public function unsignedlong setbuttonbgcolor (long color)
+public function unsignedlong setmarkedcoloddcolor (long color)
+public function unsignedlong setmarkedcolevencolor (long color)
+public function unsignedlong setmarkedcolbgcolor (long color)
+public function unsignedlong setlinemarkcolor (long color)
+public function unsignedlong setgrayedcolor (long color)
+public function long setcolumn (long al_column_id, tv_column atv_col)
+public function long setcolumnmark (long al_col, boolean ab_mark)
+public function long getcolumn (long al_column_id, ref tv_column atv_col)
+public function boolean getcolumnmark (long al_col)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -948,10 +957,7 @@ col.fmt = 0
 col.mask = TVCF_FIXED + TVCF_WIDTH
 col.cx = TVCF_LASTSIZE
 
-long l_ret
-l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
-
-return l_ret
+return setcolumn(al_column_id, col)
 
 end function
 
@@ -961,10 +967,7 @@ col.fmt = TVCFMT_FIXED
 col.mask = TVCF_FIXED + TVCF_WIDTH
 col.cx = 0
 
-long l_ret
-l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
-
-return l_ret
+return setcolumn(al_column_id, col)
 
 end function
 
@@ -1094,13 +1097,6 @@ return setcolor(TVC_FRAME, color)
 
 end function
 
-public function unsignedlong setlinecolor (long color);
-// Set the interior color of buttons
-
-return setcolor(TVC_LINE, color)
-
-end function
-
 public function unsignedlong setbuttonextcolor (long color);
 // Set the exterior color of the buttons (the box)
 
@@ -1122,13 +1118,6 @@ return setcolor(TVC_TRACK, color)
 
 end function
 
-public function unsignedlong setmarkcolor (long color);
-// Set the color of marked lines
-
-return setcolor(TVC_MARK, color)
-
-end function
-
 public function unsignedlong setmarkoddcolor (long color);
 // Set the color of odd marked lines
 
@@ -1140,6 +1129,100 @@ public function unsignedlong setmarkevencolor (long color);
 // Set the color of even marked lines
 
 return setcolor(TVC_MARKEVEN, color)
+
+end function
+
+public function unsignedlong setinsertcolor (long color);
+// Set the color of insertion point
+
+return setcolor(TVC_INSERT, color)
+
+end function
+
+public function unsignedlong setbuttonbgcolor (long color);
+// Set the background color of buttons
+
+return setcolor(TVC_BOXBG, color)
+
+end function
+
+public function unsignedlong setmarkedcoloddcolor (long color);
+// Set the ODD line background color of marked column
+
+return setcolor(TVC_COLODD, color)
+
+end function
+
+public function unsignedlong setmarkedcolevencolor (long color);
+// Set the EVEN line background color of marked column
+
+return setcolor(TVC_COLEVEN, color)
+
+end function
+
+public function unsignedlong setmarkedcolbgcolor (long color);
+// Set the background color of marked column
+
+return setcolor(TVC_COLBK, color)
+
+end function
+
+public function unsignedlong setlinemarkcolor (long color);
+// Set the color of marked lines
+
+return setcolor(TVC_MARK, color)
+
+end function
+
+public function unsignedlong setgrayedcolor (long color);
+// Set the background color when disabled
+
+return setcolor(TVC_GRAYED, color)
+
+end function
+
+public function long setcolumn (long al_column_id, tv_column atv_col);
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref atv_col)
+
+return l_ret
+
+end function
+
+public function long setcolumnmark (long al_col, boolean ab_mark);
+TV_COLUMN col
+
+if ab_mark then
+	col.fmt = TVCFMT_MARK
+end if
+col.mask = TVCF_MARK
+
+return setcolumn(al_col, col)
+
+end function
+
+public function long getcolumn (long al_column_id, ref tv_column atv_col);
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_GETCOLUMN, al_column_id, ref atv_col)
+
+return l_ret
+
+end function
+
+public function boolean getcolumnmark (long al_col);
+TV_COLUMN col
+long r
+
+col.fmt = 0
+col.mask = TVCF_MARK
+
+r = getcolumn(al_col, col)
+
+//FIXME : REPLACE WITH C FUNC
+n_cst_numerical ln_bitops
+r = ln_bitops.of_bitwiseand(col.fmt, TVCFMT_MARK)
+
+return r > 0
 
 end function
 

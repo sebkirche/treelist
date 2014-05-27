@@ -2,6 +2,52 @@ HA$PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
+type cb_showcol from commandbutton within w_test
+end type
+type cb_unmarkcol from commandbutton within w_test
+end type
+type cb_hidecol from commandbutton within w_test
+end type
+type cb_markcol from commandbutton within w_test
+end type
+type em_col from editmask within w_test
+end type
+type cb_colmark from commandbutton within w_test
+end type
+type cbx_def_colmark from checkbox within w_test
+end type
+type cb_colmarkodd from commandbutton within w_test
+end type
+type cbx_def_colmarkodd from checkbox within w_test
+end type
+type cb_colmarkeven from commandbutton within w_test
+end type
+type cbx_def_colmarkeven from checkbox within w_test
+end type
+type cb_grayed from commandbutton within w_test
+end type
+type cbx_def_grayed from checkbox within w_test
+end type
+type cbx_def_butbox from checkbox within w_test
+end type
+type cb_butbox from commandbutton within w_test
+end type
+type cbx_def_insert from checkbox within w_test
+end type
+type cb_insert from commandbutton within w_test
+end type
+type cbx_def_markeven from checkbox within w_test
+end type
+type cb_markeven from commandbutton within w_test
+end type
+type cbx_def_mark from checkbox within w_test
+end type
+type cb_mark from commandbutton within w_test
+end type
+type cb_track from commandbutton within w_test
+end type
+type cbx_def_track from checkbox within w_test
+end type
 type cbx_disable from checkbox within w_test
 end type
 type cbx_def_butin from checkbox within w_test
@@ -124,10 +170,28 @@ type r_butex from rectangle within w_test
 end type
 type r_butin from rectangle within w_test
 end type
+type r_track from rectangle within w_test
+end type
+type r_mark from rectangle within w_test
+end type
+type r_markeven from rectangle within w_test
+end type
+type r_insert from rectangle within w_test
+end type
+type r_butbox from rectangle within w_test
+end type
+type r_colmark from rectangle within w_test
+end type
+type r_colmarkodd from rectangle within w_test
+end type
+type r_colmarkeven from rectangle within w_test
+end type
+type r_grayed from rectangle within w_test
+end type
 end forward
 
 global type w_test from window
-integer width = 3429
+integer width = 3479
 integer height = 2848
 boolean titlebar = true
 string title = "TreeList testbed"
@@ -136,6 +200,29 @@ long backcolor = 67108864
 string icon = ".\res\TreeList.ico"
 boolean center = true
 event onnotify pbm_notify
+cb_showcol cb_showcol
+cb_unmarkcol cb_unmarkcol
+cb_hidecol cb_hidecol
+cb_markcol cb_markcol
+em_col em_col
+cb_colmark cb_colmark
+cbx_def_colmark cbx_def_colmark
+cb_colmarkodd cb_colmarkodd
+cbx_def_colmarkodd cbx_def_colmarkodd
+cb_colmarkeven cb_colmarkeven
+cbx_def_colmarkeven cbx_def_colmarkeven
+cb_grayed cb_grayed
+cbx_def_grayed cbx_def_grayed
+cbx_def_butbox cbx_def_butbox
+cb_butbox cb_butbox
+cbx_def_insert cbx_def_insert
+cb_insert cb_insert
+cbx_def_markeven cbx_def_markeven
+cb_markeven cb_markeven
+cbx_def_mark cbx_def_mark
+cb_mark cb_mark
+cb_track cb_track
+cbx_def_track cbx_def_track
 cbx_disable cbx_disable
 cbx_def_butin cbx_def_butin
 cb_butin cb_butin
@@ -197,6 +284,15 @@ r_text r_text
 r_frame r_frame
 r_butex r_butex
 r_butin r_butin
+r_track r_track
+r_mark r_mark
+r_markeven r_markeven
+r_insert r_insert
+r_butbox r_butbox
+r_colmark r_colmark
+r_colmarkodd r_colmarkodd
+r_colmarkeven r_colmarkeven
+r_grayed r_grayed
 end type
 global w_test w_test
 
@@ -254,6 +350,29 @@ uo_tree.updateexstyles()
 end subroutine
 
 on w_test.create
+this.cb_showcol=create cb_showcol
+this.cb_unmarkcol=create cb_unmarkcol
+this.cb_hidecol=create cb_hidecol
+this.cb_markcol=create cb_markcol
+this.em_col=create em_col
+this.cb_colmark=create cb_colmark
+this.cbx_def_colmark=create cbx_def_colmark
+this.cb_colmarkodd=create cb_colmarkodd
+this.cbx_def_colmarkodd=create cbx_def_colmarkodd
+this.cb_colmarkeven=create cb_colmarkeven
+this.cbx_def_colmarkeven=create cbx_def_colmarkeven
+this.cb_grayed=create cb_grayed
+this.cbx_def_grayed=create cbx_def_grayed
+this.cbx_def_butbox=create cbx_def_butbox
+this.cb_butbox=create cb_butbox
+this.cbx_def_insert=create cbx_def_insert
+this.cb_insert=create cb_insert
+this.cbx_def_markeven=create cbx_def_markeven
+this.cb_markeven=create cb_markeven
+this.cbx_def_mark=create cbx_def_mark
+this.cb_mark=create cb_mark
+this.cb_track=create cb_track
+this.cbx_def_track=create cbx_def_track
 this.cbx_disable=create cbx_disable
 this.cbx_def_butin=create cbx_def_butin
 this.cb_butin=create cb_butin
@@ -315,7 +434,39 @@ this.r_text=create r_text
 this.r_frame=create r_frame
 this.r_butex=create r_butex
 this.r_butin=create r_butin
-this.Control[]={this.cbx_disable,&
+this.r_track=create r_track
+this.r_mark=create r_mark
+this.r_markeven=create r_markeven
+this.r_insert=create r_insert
+this.r_butbox=create r_butbox
+this.r_colmark=create r_colmark
+this.r_colmarkodd=create r_colmarkodd
+this.r_colmarkeven=create r_colmarkeven
+this.r_grayed=create r_grayed
+this.Control[]={this.cb_showcol,&
+this.cb_unmarkcol,&
+this.cb_hidecol,&
+this.cb_markcol,&
+this.em_col,&
+this.cb_colmark,&
+this.cbx_def_colmark,&
+this.cb_colmarkodd,&
+this.cbx_def_colmarkodd,&
+this.cb_colmarkeven,&
+this.cbx_def_colmarkeven,&
+this.cb_grayed,&
+this.cbx_def_grayed,&
+this.cbx_def_butbox,&
+this.cb_butbox,&
+this.cbx_def_insert,&
+this.cb_insert,&
+this.cbx_def_markeven,&
+this.cb_markeven,&
+this.cbx_def_mark,&
+this.cb_mark,&
+this.cb_track,&
+this.cbx_def_track,&
+this.cbx_disable,&
 this.cbx_def_butin,&
 this.cb_butin,&
 this.cbx_def_frame,&
@@ -375,10 +526,42 @@ this.r_even,&
 this.r_text,&
 this.r_frame,&
 this.r_butex,&
-this.r_butin}
+this.r_butin,&
+this.r_track,&
+this.r_mark,&
+this.r_markeven,&
+this.r_insert,&
+this.r_butbox,&
+this.r_colmark,&
+this.r_colmarkodd,&
+this.r_colmarkeven,&
+this.r_grayed}
 end on
 
 on w_test.destroy
+destroy(this.cb_showcol)
+destroy(this.cb_unmarkcol)
+destroy(this.cb_hidecol)
+destroy(this.cb_markcol)
+destroy(this.em_col)
+destroy(this.cb_colmark)
+destroy(this.cbx_def_colmark)
+destroy(this.cb_colmarkodd)
+destroy(this.cbx_def_colmarkodd)
+destroy(this.cb_colmarkeven)
+destroy(this.cbx_def_colmarkeven)
+destroy(this.cb_grayed)
+destroy(this.cbx_def_grayed)
+destroy(this.cbx_def_butbox)
+destroy(this.cb_butbox)
+destroy(this.cbx_def_insert)
+destroy(this.cb_insert)
+destroy(this.cbx_def_markeven)
+destroy(this.cb_markeven)
+destroy(this.cbx_def_mark)
+destroy(this.cb_mark)
+destroy(this.cb_track)
+destroy(this.cbx_def_track)
 destroy(this.cbx_disable)
 destroy(this.cbx_def_butin)
 destroy(this.cb_butin)
@@ -440,6 +623,15 @@ destroy(this.r_text)
 destroy(this.r_frame)
 destroy(this.r_butex)
 destroy(this.r_butin)
+destroy(this.r_track)
+destroy(this.r_mark)
+destroy(this.r_markeven)
+destroy(this.r_insert)
+destroy(this.r_butbox)
+destroy(this.r_colmark)
+destroy(this.r_colmarkodd)
+destroy(this.r_colmarkeven)
+destroy(this.r_grayed)
 end on
 
 event open;il_deltaheight = height - uo_tree.height //- uo_tree.y
@@ -447,9 +639,9 @@ il_deltawidth = width - uo_tree.width //+ pixelstounits(100, XPixelsToUnits!)
 
 updatestyle()
 
-uo_tree.insertcolumn(0, "col 1")
-uo_tree.insertcolumn(1,"col 2")
-uo_tree.addcolumn("col 3")
+uo_tree.insertcolumn(0, "col 0")
+uo_tree.insertcolumn(1,"col 1")
+uo_tree.addcolumn("col 2")
 
 ulong r, i1, i2, i3, i4, i5
 i1 = uo_tree.insertitemlast(0,"foo")
@@ -484,6 +676,620 @@ uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50, YPixelsToUnit
 
 end event
 
+type cb_showcol from commandbutton within w_test
+integer x = 1861
+integer y = 2580
+integer width = 411
+integer height = 72
+integer taborder = 120
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Show column"
+end type
+
+event clicked;
+dec ld_col
+em_col.getdata(ld_col)
+
+uo_tree.showcolumn(ld_col)
+
+end event
+
+type cb_unmarkcol from commandbutton within w_test
+integer x = 1417
+integer y = 2580
+integer width = 411
+integer height = 72
+integer taborder = 110
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Unmark column"
+end type
+
+event clicked;
+
+dec ld_col
+em_col.getdata(ld_col)
+
+uo_tree.setcolumnmark(ld_col, false)
+
+end event
+
+type cb_hidecol from commandbutton within w_test
+integer x = 1861
+integer y = 2492
+integer width = 411
+integer height = 72
+integer taborder = 100
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Hide column"
+end type
+
+event clicked;
+dec ld_col
+em_col.getdata(ld_col)
+
+uo_tree.hidecolumn(ld_col)
+
+end event
+
+type cb_markcol from commandbutton within w_test
+integer x = 1417
+integer y = 2492
+integer width = 411
+integer height = 72
+integer taborder = 90
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Mark column"
+end type
+
+event clicked;
+dec ld_col
+em_col.getdata(ld_col)
+
+uo_tree.setcolumnmark(ld_col, true)
+
+end event
+
+type em_col from editmask within w_test
+integer x = 1202
+integer y = 2524
+integer width = 165
+integer height = 92
+integer taborder = 90
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+borderstyle borderstyle = stylelowered!
+string mask = "##"
+end type
+
+type cb_colmark from commandbutton within w_test
+integer x = 2990
+integer y = 1560
+integer width = 297
+integer height = 72
+integer taborder = 30
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Col marked"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_colmark.checked = false
+r_colmark.fillcolor = l_col
+uo_tree.setmarkedcolbgcolor(l_col)
+
+end event
+
+type cbx_def_colmark from checkbox within w_test
+integer x = 3296
+integer y = 1568
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_colmark.fillcolor
+end if
+
+uo_tree.setmarkedcolbgcolor(l_col)
+
+end event
+
+type cb_colmarkodd from commandbutton within w_test
+integer x = 2990
+integer y = 1652
+integer width = 297
+integer height = 72
+integer taborder = 80
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Col m odd"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_colmarkodd.checked = false
+r_colmarkodd.fillcolor = l_col
+uo_tree.setmarkedcoloddcolor(l_col)
+
+end event
+
+type cbx_def_colmarkodd from checkbox within w_test
+integer x = 3296
+integer y = 1660
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_colmarkodd.fillcolor
+end if
+
+uo_tree.setmarkedcoloddcolor(l_col)
+
+end event
+
+type cb_colmarkeven from commandbutton within w_test
+integer x = 2990
+integer y = 1744
+integer width = 297
+integer height = 72
+integer taborder = 80
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Col m even"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_colmarkeven.checked = false
+r_colmarkeven.fillcolor = l_col
+uo_tree.setmarkedcolevencolor(l_col)
+
+end event
+
+type cbx_def_colmarkeven from checkbox within w_test
+integer x = 3296
+integer y = 1752
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_colmarkeven.fillcolor
+end if
+
+uo_tree.setmarkedcolevencolor(l_col)
+
+end event
+
+type cb_grayed from commandbutton within w_test
+integer x = 2990
+integer y = 1836
+integer width = 297
+integer height = 72
+integer taborder = 80
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Grayed"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_grayed.checked = false
+r_grayed.fillcolor = l_col
+uo_tree.setgrayedcolor(l_col)
+
+end event
+
+type cbx_def_grayed from checkbox within w_test
+integer x = 3296
+integer y = 1844
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_grayed.fillcolor
+end if
+
+uo_tree.setgrayedcolor(l_col)
+
+end event
+
+type cbx_def_butbox from checkbox within w_test
+integer x = 3296
+integer y = 1108
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_butbox.fillcolor
+end if
+
+uo_tree.setbuttonbgcolor(l_col)
+
+end event
+
+type cb_butbox from commandbutton within w_test
+integer x = 2990
+integer y = 1100
+integer width = 297
+integer height = 72
+integer taborder = 70
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Butt. box"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_butbox.checked = false
+r_butbox.fillcolor = l_col
+uo_tree.setbuttonbgcolor(l_col)
+
+end event
+
+type cbx_def_insert from checkbox within w_test
+integer x = 3296
+integer y = 1476
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_insert.fillcolor
+end if
+
+uo_tree.setinsertcolor(l_col)
+
+end event
+
+type cb_insert from commandbutton within w_test
+integer x = 2990
+integer y = 1468
+integer width = 297
+integer height = 72
+integer taborder = 70
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Insert"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_insert.checked = false
+r_insert.fillcolor = l_col
+uo_tree.setinsertcolor(l_col)
+
+end event
+
+type cbx_def_markeven from checkbox within w_test
+integer x = 3296
+integer y = 1384
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_markeven .fillcolor
+end if
+
+uo_tree.setmarkevencolor(l_col)
+
+end event
+
+type cb_markeven from commandbutton within w_test
+integer x = 2990
+integer y = 1376
+integer width = 297
+integer height = 72
+integer taborder = 70
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Mark even"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_markeven.checked = false
+r_markeven.fillcolor = l_col
+uo_tree.setmarkevencolor(l_col)
+
+end event
+
+type cbx_def_mark from checkbox within w_test
+integer x = 3296
+integer y = 1292
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_mark.fillcolor
+end if
+
+uo_tree.setlinemarkcolor(l_col)
+
+end event
+
+type cb_mark from commandbutton within w_test
+integer x = 2990
+integer y = 1284
+integer width = 297
+integer height = 72
+integer taborder = 70
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Mark"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_mark.checked = false
+r_mark.fillcolor = l_col
+uo_tree.setlinemarkcolor(l_col)
+
+end event
+
+type cb_track from commandbutton within w_test
+integer x = 2990
+integer y = 1192
+integer width = 297
+integer height = 72
+integer taborder = 70
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Tracked"
+end type
+
+event clicked;
+long l_col
+
+if choosecolor(l_col) < 1 then return
+
+cbx_def_track.checked = false
+r_track.fillcolor = l_col
+uo_tree.settrackcolor(l_col)
+
+end event
+
+type cbx_def_track from checkbox within w_test
+integer x = 3296
+integer y = 1200
+integer width = 178
+integer height = 56
+integer textsize = -7
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Def."
+boolean checked = true
+end type
+
+event clicked;
+long l_col
+
+if checked then
+	l_col = vo_treelist.TV_NOCOLOR
+else
+	l_col = r_track.fillcolor
+end if
+
+uo_tree.settrackcolor(l_col)
+
+end event
+
 type cbx_disable from checkbox within w_test
 integer x = 1193
 integer y = 2684
@@ -506,8 +1312,8 @@ uo_tree.enabled = not checked
 end event
 
 type cbx_def_butin from checkbox within w_test
-integer x = 1019
-integer y = 2592
+integer x = 3296
+integer y = 1016
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -536,8 +1342,8 @@ uo_tree.setbuttonincolor(l_col)
 end event
 
 type cb_butin from commandbutton within w_test
-integer x = 690
-integer y = 2592
+integer x = 2990
+integer y = 1008
 integer width = 297
 integer height = 72
 integer taborder = 60
@@ -562,8 +1368,8 @@ uo_tree.setbuttonincolor(l_col)
 end event
 
 type cbx_def_frame from checkbox within w_test
-integer x = 416
-integer y = 2496
+integer x = 3296
+integer y = 648
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -592,8 +1398,8 @@ uo_tree.setframecolor(l_col)
 end event
 
 type cb_frame from commandbutton within w_test
-integer x = 110
-integer y = 2496
+integer x = 2990
+integer y = 640
 integer width = 297
 integer height = 72
 integer taborder = 50
@@ -618,8 +1424,8 @@ uo_tree.setframecolor(l_col)
 end event
 
 type cb_butex from commandbutton within w_test
-integer x = 695
-integer y = 2496
+integer x = 2990
+integer y = 916
 integer width = 297
 integer height = 72
 integer taborder = 50
@@ -644,8 +1450,8 @@ uo_tree.setbuttonextcolor(l_col)
 end event
 
 type cbx_def_butex from checkbox within w_test
-integer x = 1019
-integer y = 2504
+integer x = 3296
+integer y = 924
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -674,8 +1480,8 @@ uo_tree.setbuttonextcolor(l_col)
 end event
 
 type cb_text from commandbutton within w_test
-integer x = 695
-integer y = 2308
+integer x = 2990
+integer y = 732
 integer width = 297
 integer height = 72
 integer taborder = 30
@@ -700,8 +1506,8 @@ uo_tree.settextcolor(l_col)
 end event
 
 type cbx_def_text from checkbox within w_test
-integer x = 1019
-integer y = 2308
+integer x = 3296
+integer y = 740
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -730,8 +1536,8 @@ uo_tree.settextcolor(l_col)
 end event
 
 type cbx_def_even from checkbox within w_test
-integer x = 1019
-integer y = 2400
+integer x = 3296
+integer y = 832
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -760,8 +1566,8 @@ uo_tree.setevencolor(l_col)
 end event
 
 type cb_even_col from commandbutton within w_test
-integer x = 695
-integer y = 2400
+integer x = 2990
+integer y = 824
 integer width = 297
 integer height = 72
 integer taborder = 40
@@ -786,8 +1592,8 @@ uo_tree.setevencolor(l_col)
 end event
 
 type cb_odd_col from commandbutton within w_test
-integer x = 110
-integer y = 2400
+integer x = 2990
+integer y = 548
 integer width = 297
 integer height = 72
 integer taborder = 30
@@ -812,8 +1618,8 @@ uo_tree.setoddcolor(l_col)
 end event
 
 type cbx_def_odd from checkbox within w_test
-integer x = 416
-integer y = 2400
+integer x = 3296
+integer y = 556
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -842,8 +1648,8 @@ uo_tree.setoddcolor(l_col)
 end event
 
 type cbx_def_back from checkbox within w_test
-integer x = 416
-integer y = 2316
+integer x = 3296
+integer y = 464
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -872,8 +1678,8 @@ uo_tree.setbackcolor(l_col)
 end event
 
 type cb_back_col from commandbutton within w_test
-integer x = 110
-integer y = 2308
+integer x = 2990
+integer y = 456
 integer width = 297
 integer height = 72
 integer taborder = 30
@@ -1722,8 +2528,8 @@ type r_back from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
-integer x = 37
-integer y = 2308
+integer x = 2917
+integer y = 456
 integer width = 64
 integer height = 72
 end type
@@ -1732,8 +2538,8 @@ type r_odd from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
-integer x = 37
-integer y = 2400
+integer x = 2917
+integer y = 548
 integer width = 64
 integer height = 72
 end type
@@ -1742,8 +2548,8 @@ type r_even from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
-integer x = 622
-integer y = 2400
+integer x = 2917
+integer y = 824
 integer width = 64
 integer height = 72
 end type
@@ -1752,8 +2558,8 @@ type r_text from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
-integer x = 622
-integer y = 2308
+integer x = 2917
+integer y = 732
 integer width = 64
 integer height = 72
 end type
@@ -1762,8 +2568,8 @@ type r_frame from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
-integer x = 37
-integer y = 2496
+integer x = 2917
+integer y = 640
 integer width = 64
 integer height = 72
 end type
@@ -1772,8 +2578,8 @@ type r_butex from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
-integer x = 622
-integer y = 2496
+integer x = 2917
+integer y = 916
 integer width = 64
 integer height = 72
 end type
@@ -1782,8 +2588,98 @@ type r_butin from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
-integer x = 622
-integer y = 2592
+integer x = 2917
+integer y = 1008
+integer width = 64
+integer height = 72
+end type
+
+type r_track from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1192
+integer width = 64
+integer height = 72
+end type
+
+type r_mark from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1284
+integer width = 64
+integer height = 72
+end type
+
+type r_markeven from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1376
+integer width = 64
+integer height = 72
+end type
+
+type r_insert from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1468
+integer width = 64
+integer height = 72
+end type
+
+type r_butbox from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1100
+integer width = 64
+integer height = 72
+end type
+
+type r_colmark from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1560
+integer width = 64
+integer height = 72
+end type
+
+type r_colmarkodd from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1652
+integer width = 64
+integer height = 72
+end type
+
+type r_colmarkeven from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1744
+integer width = 64
+integer height = 72
+end type
+
+type r_grayed from rectangle within w_test
+long linecolor = 33554432
+integer linethickness = 4
+long fillcolor = 1073741824
+integer x = 2917
+integer y = 1836
 integer width = 64
 integer height = 72
 end type
