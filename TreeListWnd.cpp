@@ -334,6 +334,8 @@ typedef	LPVOID (WINAPI *OpenThemeDataT)(HWND hwnd, LPCWSTR pszClassList);
 typedef	HRESULT(WINAPI *CloseThemeDataT)(LPVOID);
 typedef	HRESULT(WINAPI *DrawThemeBackgT)(LPVOID, HDC, int, int, const RECT *, const RECT *);
 typedef	HRESULT(WINAPI *GetThemeBackgRcT)(LPVOID, HDC, int, int, LPCRECT, LPRECT);
+typedef BOOL (WINAPI *IsAppThemedT)();
+typedef BOOL (WINAPI *IsThemeActiveT)();
 
 static HMODULE			hUxThemeDll		= NULL;
 static SetWindowThemeT	pSetWindowTheme	= NULL;
@@ -345,6 +347,8 @@ static OpenThemeDataT	pOpenThemeData	= NULL;
 static CloseThemeDataT	pCloseThemeData	= NULL;
 static DrawThemeBackgT	pDrawThemeBackg	= NULL;
 static GetThemeBackgRcT	pGetThemeBackgRc = NULL;
+static IsAppThemedT		pIsAppThemed	= NULL;
+static IsThemeActiveT	pIsThemeActive  = NULL;
 static HPEN				hPatternPen		= NULL;
 static HFONT			hDefaultFontN	= NULL;
 static HFONT			hDefaultFontB	= NULL;
@@ -360,6 +364,7 @@ static int				TreeListGetItemRect(TreeListData *pData, unsigned uItem, unsigned 
 static int				TreeListStartNotifyEdit(TreeListData *pData, unsigned uItem, unsigned uSub, WPARAM wParam, LPARAM lParam);
 static int				TreeListStartAutoEdit(TreeListData *pData, unsigned uColumn, WPARAM wParam, LPARAM lParam);
 static int				TreeListEndLabelEdit(TreeListData *pData, int iMode);
+static BOOL				bDrawWithTheme = FALSE;
 
 //*****************************************************************************
 //*
@@ -445,7 +450,11 @@ static void GlobalInit() {
 			pCloseThemeData	 = (CloseThemeDataT)GetProcAddress(hUxThemeDll, "CloseThemeData");
 			pDrawThemeBackg	 = (DrawThemeBackgT)GetProcAddress(hUxThemeDll, "DrawThemeBackground");
 			pGetThemeBackgRc = (GetThemeBackgRcT)GetProcAddress(hUxThemeDll, "GetThemeBackgroundContentRect");
+			pIsAppThemed     = (IsAppThemedT)GetProcAddress(hUxThemeDll, "IsAppThemed");
+			pIsThemeActive   = (IsThemeActiveT)GetProcAddress(hUxThemeDll, "IsThemeActive");
 
+			if(pIsAppThemed && pIsThemeActive)
+				bDrawWithTheme = pIsAppThemed() && pIsThemeActive();
 		}
 	}
 
@@ -1437,9 +1446,9 @@ static void UpdateColors(TreeListData *pData) {
 //*		UpdateHeight
 //*
 //*****************************************************************************
-//	Prüft ob die Zeilenhöhe sich geäntert hat
-//	pData		: Zeiger auf die Fensterdaten
-//	Ergibt 1 bei Änderungen sonst 0
+//	Checks if the row height has changed
+//	pData		: pointer to the window data
+//	Returns 1 if changed or 0 else.
 static int UpdateHeight(TreeListData *pData) {
 
 	int		iHeight;
@@ -4058,6 +4067,8 @@ static unsigned TreeListInsertItem(TreeListData *pData, TV_INSERTSTRUCT *pInsert
 	pData->uNextSeachPos = uPos;
 
 	memset(pNew, 0, sizeof(BaseItem));						// Erstelle den neuen Eintrag
+	pNew->iImage = TV_NOIMAGE;
+	pNew->iSelectedImage = TV_NOIMAGE;
 
 	uBits = pInsert->item.mask;
 
@@ -5235,11 +5246,11 @@ static int TreeListDeleteColumn(TreeListData *pData, unsigned uCol) {
 //*		TreeListInsertColumn
 //*
 //*****************************************************************************
-//	Fügt eine neue Spalte in den Header ein
+//	Adds a new column in the header
 //	pData		: Zeiger auf die Fensterdaten
 //	uCol		: Ist die Nummer der Spalte die eingefügt wird
 //	pInsert		: Zeiger auf die ein zu fügenden Daten
-//	Ergibt die Einfügeposition der neuen Spalte bzw. -1 bei eimem Fehler
+//	Returns the positio of the new column or -1 if an error occurs.
 static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *pColumn) {
 
 	ExtraItem **pList;
@@ -5268,8 +5279,8 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 
 	GetClientRect(pData->hWnd, &sRect);
 
-	if(!pData->hHeader) {										// Einen neuen Header erzeugen
-		iStart = GetSystemMetrics(SM_CYHSCROLL);
+	if(!pData->hHeader) {										// Create a new header
+		iStart = bDrawWithTheme ? GetSystemMetrics(SM_CYHSCROLL) : 17; //SM_CYHSCROLL is not enough tall with themes disabled apps;
 		iYoff  = sRect.top + iStart;
 
 		if(pData->uStyleEx & TVS_EX_HIDEHEADERS) {
@@ -5283,7 +5294,6 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 		pData->uStartPixel = (pData->uStyleEx & TVS_EX_HIDEHEADERS) ? 0 : iStart;
 		pData->iRowHeight  = 1;
 		UpdateHeight(pData);
-
 
 		InvalidateRect(pData->hWnd, &sRect, FALSE);
 		SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
@@ -9102,7 +9112,7 @@ static HWND TreeListEditLabel(TreeListData *pData, unsigned uItem, unsigned uSub
 	if(!pData->hEdit)
 		return NULL;
 
-	if(pSetWindowTheme) {									// Entferne die Visual-Styles (ab XP)
+	if(pSetWindowTheme) {									// Remove the Visual-Styles (XP+)
 		pSetWindowTheme(pData->hEdit, L"", L"");
 	}
 
