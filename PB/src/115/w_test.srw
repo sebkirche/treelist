@@ -711,8 +711,9 @@ il_deltawidth = width - uo_tree.width //+ pixelstounits(100, XPixelsToUnits!)
 updatestyle()
 
 uo_tree.insertcolumn(0, "col 0")
-uo_tree.insertcolumn(1,"col 1")
-uo_tree.addcolumn("col 2")
+//uo_tree.insertcolumn(1,"col 1", center!)
+uo_tree.insertcolumn(1, "col 1", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 11)
+uo_tree.addcolumn("col 2", right!)
 
 il_maxcol = uo_tree.getcolumncount() - 1
 em_col.minmax = "0~~" + string(il_maxcol)
@@ -1649,7 +1650,7 @@ end event
 
 type cbx_def_frame from checkbox within w_test
 integer x = 3296
-integer y = 648
+integer y = 832
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -1679,7 +1680,7 @@ end event
 
 type cb_frame from commandbutton within w_test
 integer x = 2990
-integer y = 640
+integer y = 824
 integer width = 297
 integer height = 72
 integer taborder = 50
@@ -1817,7 +1818,7 @@ end event
 
 type cbx_def_even from checkbox within w_test
 integer x = 3296
-integer y = 832
+integer y = 648
 integer width = 178
 integer height = 56
 integer textsize = -7
@@ -1847,7 +1848,7 @@ end event
 
 type cb_even_col from commandbutton within w_test
 integer x = 2990
-integer y = 824
+integer y = 640
 integer width = 297
 integer height = 72
 integer taborder = 40
@@ -2845,7 +2846,7 @@ long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
 integer x = 2917
-integer y = 824
+integer y = 640
 integer width = 64
 integer height = 72
 end type
@@ -2865,7 +2866,7 @@ long linecolor = 33554432
 integer linethickness = 4
 long fillcolor = 1073741824
 integer x = 2917
-integer y = 640
+integer y = 824
 integer width = 64
 integer height = 72
 end type

@@ -21,8 +21,8 @@ end type
 end forward
 
 type tv_column from structure
-	ulong		mask
-	ulong		fmt
+	unsignedlong		mask
+	unsignedlong		fmt
 	long		cx
 	string		psztext
 	long		cchtextmax
@@ -519,8 +519,6 @@ constant ulong TV_NOCOLOR = -1
 end variables
 
 forward prototypes
-public function long addcolumn (string as_text)
-public function long insertcolumn (long al_index, string as_text)
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
 public function long expandall (unsignedlong aul_parent)
@@ -587,6 +585,11 @@ public function long loadimagelistfromfile (integer ai_list, string as_file)
 public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image, long al_image_sel)
 public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image)
 public function boolean getfont (ref logfont a_font)
+public function long insertcolumn (long al_index, string as_text, unsignedlong aul_mask, unsignedlong aul_fmt, long al_image)
+public function long insertcolumn (integer al_index, string as_text)
+public function long insertcolumn (integer al_index, string as_text, alignment a_align)
+public function long addcolumn (string as_text, alignment a_align)
+public function long addcolumn (string as_text)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -639,46 +642,6 @@ end if
 return 0
 
 end event
-
-public function long addcolumn (string as_text);
-/* 
-	Add a new column at the end of existing columns
-	
-	as_text : the title of the column
-	
-*/
-
-long l_ret
-
-l_ret = InsertColumn(il_curcol, as_text)
-//il_curcol++
-
-return l_ret
-
-end function
-
-public function long insertcolumn (long al_index, string as_text);
-/* 
-	Insert a new column
-
-	ai_index : 0 based index of the new column
-	as_text  : the column title
-*/
-
-TV_COLUMN col
-
-col.mask = 0;
-col.mask = TVCF_TEXT;
-col.pszText = as_text;
-col.cchTextMax = 256;
-
-long l_ret
-l_ret = SendMessageColumn(hwnd, TVM_INSERTCOLUMN, al_index, ref col);
-if l_ret >= 0 then il_curcol++
-
-return l_ret
-
-end function
 
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);
 tv_item itemdata
@@ -806,7 +769,7 @@ return deleteitem(long(i))
 end function
 
 public function long insertitemlast (unsignedlong aul_parent, string as_text);
-return insertitem(aul_parent, TVI_LAST, TVIF_TEXT+TVIF_IMAGE+TVIF_SELECTEDIMAGE, as_text, TV_NOIMAGE, TV_NOIMAGE)
+return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, TV_NOIMAGE, TV_NOIMAGE)
 
 end function
 
@@ -1354,11 +1317,10 @@ return r
 end function
 
 public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image, long al_image_sel);
-ulong lul_flags
+ulong lul_flags = 0
 
 if as_text <> "" then lul_flags += TVIF_TEXT
-/*if al_image <> TV_NOIMAGE then*/ lul_flags += TVIF_IMAGE
-/*if al_image_sel <> TV_NOIMAGE then*/ lul_flags +=TVIF_SELECTEDIMAGE
+lul_flags += TVIF_IMAGE + TVIF_SELECTEDIMAGE
 
 return insertitem(aul_parent, TVI_LAST, lul_flags, as_text, al_image, al_image_sel)
 
@@ -1382,6 +1344,71 @@ if hfont > 0 then
 end if
 
 return b_ret
+end function
+
+public function long insertcolumn (long al_index, string as_text, unsignedlong aul_mask, unsignedlong aul_fmt, long al_image);
+/* 
+	Insert a new column
+
+	ai_index : 0 based index of the new column
+	as_text  : the column title
+*/
+
+TV_COLUMN col
+
+col.mask = aul_mask;
+col.fmt = aul_fmt
+col.pszText = as_text;
+col.iimage = al_image
+col.cchTextMax = 256;
+
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_INSERTCOLUMN, al_index, ref col);
+if l_ret >= 0 then il_curcol++
+
+return l_ret
+
+end function
+
+public function long insertcolumn (integer al_index, string as_text);
+return insertcolumn(al_index, as_text, TVCF_TEXT, 0, TV_NOIMAGE)
+
+end function
+
+public function long insertcolumn (integer al_index, string as_text, alignment a_align);
+long l_align
+
+choose case a_align
+	case left!;		l_align = TVCFMT_LEFT
+	case right!;	l_align = TVCFMT_RIGHT
+	case center!;	l_align = TVCFMT_CENTER
+end choose
+		
+
+return insertcolumn(al_index, as_text, TVCF_TEXT + TVCF_FMT, l_align, TV_NOIMAGE)
+
+end function
+
+public function long addcolumn (string as_text, alignment a_align);
+/* 
+	Add a new column at the end of existing columns
+	
+	as_text : the title of the column
+	a_align : the text alignment
+*/
+
+long l_ret
+
+l_ret = InsertColumn(il_curcol, as_text, a_align)
+
+return l_ret
+
+end function
+
+public function long addcolumn (string as_text);
+
+return addcolumn(as_text, left!)
+
 end function
 
 on vo_treelist.create
