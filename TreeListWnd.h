@@ -424,7 +424,7 @@ typedef		TVSORTEX				TV_SORTEX;
 #define		TreeList_GetSelectionColumn(h)				((int)TreeView_GetNextItem(h, NULL,  TVGN_CARETSUB))
 #define		TreeList_GetDropHilightColumn(h)			((int)TreeView_GetNextItem(h, NULL,  TVGN_DROPHILITESUB))
 
-int			TreeListRegister(HINSTANCE hInstance=0);
-BOOL		TreeListUnregister(HINSTANCE hInstance=0);
+extern int	TreeListRegister(HINSTANCE hInstance=0);
+extern BOOL	TreeListUnregister(HINSTANCE hInstance=0);
 
 #endif

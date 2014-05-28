@@ -4,6 +4,7 @@
 #include <commctrl.h>
 #include <stdio.h>
 #include "../TreeListWnd.h"
+#include "../resource.h"
 
 HINSTANCE hInst;
 BOOL bUseDll = FALSE;
@@ -16,13 +17,13 @@ int main(int argc, char *argv[]) {
 	hInst = GetModuleHandle(NULL);
 
 	//printf("argc = %d argv=%s\n", argc, argc==2 && argv[1]?argv[1]:"");
-	if (argc == 2 && stricmp(argv[1], "dll") == 0){
+	if (argc == 2 && _stricmp(argv[1], "dll") == 0){
 		printf("use dll\n");
 		bUseDll = TRUE;
 	}
 		
 	WNDCLASSEX wcex = {
-		sizeof(WNDCLASSEX), 0, WndProc, 0, 0, hInst, LoadIcon(NULL, IDI_APPLICATION),
+		sizeof(WNDCLASSEX), 0, WndProc, 0, 0, hInst, /*IDR_MAINFRAME */ LoadIcon(NULL, IDI_APPLICATION),
 		LoadCursor(NULL, IDC_ARROW), (HBRUSH)(COLOR_WINDOW + 1), NULL, TEXT("TreeListDemo"), NULL,
 	};
 	if(!RegisterClassEx(&wcex))
@@ -76,6 +77,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 			SendMessage(hWndTL, TVM_SETEXTENDEDSTYLE, 0, TVS_EX_ITEMLINES | TVS_EX_ALTERNATECOLOR | TVS_EX_FULLROWMARK);
 
+			HIMAGELIST hImageList = ImageList_LoadImage(NULL, TEXT("flags.bmp"), 16, 10, CLR_DEFAULT, IMAGE_BITMAP, LR_LOADFROMFILE /*LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_SHARED | LR_LOADTRANSPARENT*/);
+			if(NULL == hImageList){
+				DWORD dwErr = ::GetLastError();
+				printf("ImageList_LoadImage() failed: %d.\n", dwErr);
+			} else{
+					printf("ImageList_LoadImage() succeeded, TVM_SETIMAGELIST returned %d.\n", SendMessage(hWndTL, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)hImageList));
+					;
+			}
+
+			//------------------------COLUMNS----------------------------------------------------------------
 			int colIdx = 0;
 			int col1, col2, col3;
 			int lret;
@@ -83,25 +94,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			memset(&col, 0, sizeof(TV_COLUMN));
 			col.mask = 0;
 			col.mask |= TVCF_TEXT;
-			col.pszText = TEXT("col 1");
+			col.pszText = TEXT("Tree (col 0)");
 			col.cchTextMax = 256;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
 			col1 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col1);
 
-			col.pszText = TEXT("col 2");
+			col.pszText = TEXT("col 1");
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
 			col2 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col2);
 
-			col.pszText = TEXT("col 3");
+			col.mask |= TVCF_IMAGE | TVCF_FMT;
+			col.pszText = TEXT("col 2");
+			col.iImage = 12;
+			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
 			col3 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col3);
 
-			//~ InsertItem(pItems1[i], i, i, TVI_ROOT)
-			//~ InsertItem(TVIF_TEXT|TVIF_IMAGE|TVIF_SELECTEDIMAGE           ,I,M,S,0,0,0,P,A)
-			//~ InsertItem(UINT nMask, LPCTSTR pText, int nImage, int nSelImage, UINT nState, UINT nStateMask, LPARAM lParam, HTREEITEM hParent, HTREEITEM hInsertAfter) {
+			//------------------------LINES----------------------------------------------------------------
 
 			HTREEITEM inserted, inserted2;
 			TVINSERTSTRUCT item;
@@ -109,9 +121,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			item.hInsertAfter		= TVI_SORTEX;
 			item.item.hItem			= 0;//(HTREEITEM)pCmpProc;
 			item.item.pszText		= TEXT("Item 1");
-			item.item.mask			= TVIF_TEXT;
-			item.item.iImage		= TV_NOIMAGE;
-			item.item.iSelectedImage = TV_NOIMAGE;
+			item.item.mask			= TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+			item.item.iImage		= 0;
+			item.item.iSelectedImage = 2;
 			item.item.state			= 0;
 			item.item.stateMask		= 0;
 			item.item.lParam			= 0;
@@ -146,8 +158,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				itm.lParam			= 0;
 				SendMessage(hWndTL, TVM_SETITEM, 0, (LPARAM)&itm);
 				
+				itm.mask			= TVIF_SUBITEM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
 				itm.pszText			= TEXT("bli bli");
 				itm.cChildren		= 2;
+				itm.iImage			= 11;
+				itm.iSelectedImage  = 11;
 				SendMessage(hWndTL, TVM_SETITEM, 0, (LPARAM)&itm);
 			}
 
@@ -180,6 +195,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			printf("inserted = %08lx\n", inserted);
 
 			SetWindowLong(hWndTL, GWL_EXSTYLE, GetWindowLong(hWndTL, GWL_EXSTYLE) | TVS_EX_ITEMLINES);
+
+			//---------------SET THE FONT--------------------------------------------
 
 			HFONT hf;
 			HDC hdc;
