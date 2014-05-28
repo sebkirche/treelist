@@ -18,6 +18,8 @@ type point from structure within vo_treelist
 end type
 type logfont from structure within vo_treelist
 end type
+type nmheader from structure within vo_treelist
+end type
 end forward
 
 type tv_column from structure
@@ -95,6 +97,13 @@ type logfont from structure
 	character		lffacename[32]
 end type
 
+type nmheader from structure
+	nmhdr		hdr
+	long		iitem
+	long		ibutton
+	unsignedlong		pitem
+end type
+
 global type vo_treelist from userobject
 integer width = 247
 integer height = 144
@@ -106,6 +115,7 @@ string text = "PBTreeList"
 event wm_notify pbm_notify
 event type long oncbstatechanged ( unsignedlong action,  unsignedlong itemhandle,  unsignedlong olditemstate,  unsignedlong newitemstate,  long ptdrag_x,  long ptdrag_y )
 event post_constructor ( )
+event type long oncolumnclicked ( long item,  long button,  unsignedlong pitem )
 end type
 global vo_treelist vo_treelist
 
@@ -117,6 +127,7 @@ Function uLong SendMessageFind( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_FIN
 
 subroutine CopyMemory(ulong Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemoryNMHDR(ref nmhdr Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
+subroutine CopyMemoryNMHEADER(ref nmheader Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemorynmtreeview(ref nmtreeview Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 
 Function ULONG GetWindowLong(Ulong hWn, long nIndex) library "user32.dll" alias for "GetWindowLongW"
@@ -231,6 +242,7 @@ constant long GWL_STYLE = -16
 constant long GWL_EXSTYLE = -20
 constant unsignedlong WS_CHILD = 1073741824
 constant unsignedlong WS_VISIBLE = 268435456
+constant unsignedlong WS_CLIPSIBLINGS = 67108864
 constant long CS_ENABLE = 1
 
 
@@ -244,6 +256,7 @@ constant long SIZEOF_NMTREEVIEW=104
 constant long SIZEOF_TVFIND=24
 constant long SIZEOF_TVCOLUMN=44
 constant long SIZEOF_TVINSERTSTRUCT=64
+constant long SIZEOF_NMHEADER=SIZEOF_NMHDR+3*4
 
 //Constants generated from conv_defs.pl ( TreeListWnd.h + commctrl.h )
 constant ulong TVC_BK =					0					// Background
@@ -563,6 +576,7 @@ public function unsignedlong setbuttonincolor (long color)
 public function unsignedlong settrackcolor (long color)
 public function unsignedlong setmarkoddcolor (long color)
 public function unsignedlong setmarkevencolor (long color)
+public function long collapseall (unsignedlong aul_parent)
 public function unsignedlong setinsertcolor (long color)
 public function unsignedlong setbuttonbgcolor (long color)
 public function unsignedlong setmarkedcoloddcolor (long color)
@@ -594,10 +608,12 @@ end prototypes
 
 event wm_notify;if lparam > 0 then
 	nmhdr header
+	nmtreeview msgdata
+	nmheader columndata
 	CopyMemoryNMHDR( ref header, lparam, SIZEOF_NMHDR )
 	choose case header.code 
 		case TVN_CBSTATECHANGED
-			nmtreeview msgdata
+			
 			CopyMemorynmtreeview( ref msgdata, lparam, SIZEOF_NMTREEVIEW)
 			return event oncbstatechanged( &
 									msgdata.action, &
@@ -606,6 +622,15 @@ event wm_notify;if lparam > 0 then
 									msgdata.itemnew.state, &
 									msgdata.ptdrag.x, &
 									msgdata.ptdrag.y)
+		case TVN_COLUMNCLICK//, 4294967291
+			CopyMemorynmheader( ref columndata, lparam, SIZEOF_NMHEADER)
+			return event oncolumnclicked(        &
+									columndata.iitem,  &
+									columndata.ibutton,&
+									columndata.pitem   &
+									)
+/*
+		case TVN_COLUMNDBLCLICK
 		//TODO:
 		case TVN_DELETEITEM
 		case TVN_COLUMNCHANGED
@@ -633,10 +658,10 @@ event wm_notify;if lparam > 0 then
 //		case NM_RDBLCLK
 		case TVN_LAST
 		case TVN_FIRST
-		case TVN_COLUMNDBLCLICK
-		case TVN_COLUMNCLICK
 		case TVN_BEGINRDRAG
-		case else
+*/
+//		case else
+//			debug_message( classname(), "wm_notify hdr.code="+string(header.code ))
 	end choose	
 end if
 return 0
@@ -1036,7 +1061,7 @@ end function
 public function unsignedlong updatestyles ();
 ulong lul_style = 0
 
-lul_style = ws_child
+lul_style = ws_child + ws_clipsiblings
 
 if IBS_HASBUTTONS then lul_style += tvs_hasbuttons
 if IBS_HASLINES then lul_style += tvs_haslines
@@ -1135,6 +1160,20 @@ public function unsignedlong setmarkevencolor (long color);
 
 return setcolor(TVC_MARKEVEN, color)
 
+end function
+
+public function long collapseall (unsignedlong aul_parent);if aul_parent = TVI_ROOT then
+	ulong lul_handle
+	lul_handle = getchild( TVI_ROOT )
+	do while lul_handle > 0
+		collapseall( lul_handle )
+		lul_handle = getNextsiblingitem( lul_handle )
+	loop
+	return 0
+end if
+
+return Send(hwnd, TVM_EXPAND , TVE_ALLCHILDS + TVE_COLLAPSE , &
+	aul_parent)
 end function
 
 public function unsignedlong setinsertcolor (long color);
