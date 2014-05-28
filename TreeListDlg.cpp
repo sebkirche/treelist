@@ -264,7 +264,6 @@ BOOL CTreeListDlg::OnInitDialog() {
 	m_cTreeList.SetUserDataSize(USER_DATA_SIZE);
 
 
-
 	for(i = 0; i < ENTRIES(aComboIds); i++) {
 		for(j = 0; j < ENTRIES(aColors); j++) {
 			((CComboBox *)GetDlgItem(aComboIds[i]))->InsertString(j, _T(""));
@@ -272,11 +271,13 @@ BOOL CTreeListDlg::OnInitDialog() {
 		((CComboBox *)GetDlgItem(aComboIds[i]))->SetCurSel(0);
 	}
 
+	//the top-level items (continents) Europe / Asia / America
 	for(i = 0; i < 3; i++) {
 		hItem1[i] = m_cTreeList.InsertItem(pItems1[i], i, i, TVI_ROOT);
 		m_cTreeList.Expand(hItem1[i], TVE_EXPAND);
 	}
 
+	// level 2 - countries  Austria/Germany/China/Japan/Canada/Mexico
 	for(i = 0; i < 3 * 2; i++) {
 		hItem2[i] = m_cTreeList.InsertItem(pItems2[i], i + 3, i + 3, hItem1[i / 2]);
 		if(i == 0)
@@ -284,6 +285,7 @@ BOOL CTreeListDlg::OnInitDialog() {
 		m_cTreeList.SetItem(hItem2[i], 1 + (i & 1), TVIF_IMAGE | TVIF_TEXT, _T("Text"), i + 3, i + 3, 0, 0, 0);
 	}
 
+	// level 3 : cities
 	for(i = 0; i < 3 * 2 * 3; i++) {
 		hItem3[i] = m_cTreeList.InsertItem(pItems3[i], TV_NOIMAGE, TV_NOIMAGE, hItem2[i / 3]);
 		m_cTreeList.SetItem(hItem3[i], 1 + (i & 1), TVIF_TEXT, _T("Text"), 0, 0, 0, 0, 0);

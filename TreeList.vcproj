@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="1"
@@ -114,7 +114,7 @@
 		<Configuration
 			Name="Release Unicode|Win32"
 			OutputDirectory=".\Release_Unicode"
-			IntermediateDirectory=".\Release_Unicode"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="1"
@@ -211,7 +211,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="1"
@@ -308,7 +308,7 @@
 		<Configuration
 			Name="Debug Unicode|Win32"
 			OutputDirectory=".\Debug_Unicode"
-			IntermediateDirectory=".\Debug_Unicode"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="1"
@@ -405,7 +405,7 @@
 		<Configuration
 			Name="Dll Debug Unicode|Win32"
 			OutputDirectory="$(ProjectDir)/PB"
-			IntermediateDirectory="dll_debug_unicode"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -511,7 +511,7 @@
 		<Configuration
 			Name="Dll Release Unicode|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -622,7 +622,7 @@
 		<Configuration
 			Name="Dll Debug Unicode mini test|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -728,7 +728,7 @@
 		<Configuration
 			Name="mini test unicode|Win32"
 			OutputDirectory="$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory=".\obj"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -1281,18 +1281,6 @@
 		<Filter
 			Name="Tests"
 			>
-			<File
-				RelativePath=".\tests\simple_static.cpp"
-				>
-				<FileConfiguration
-					Name="Dll Debug Unicode mini test|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>

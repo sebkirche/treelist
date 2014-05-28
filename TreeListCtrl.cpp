@@ -350,7 +350,7 @@ int CTreeListCtrl::ListInsertItem(int iRow, LPCTSTR pText, int nImage, int nStat
 	}
 
 	if(nImage >= 0) {
-		sData.item.mask		     |= TVIF_SELECTEDIMAGE | TVIF_IMAGE ;
+		sData.item.mask		     |= (TVIF_SELECTEDIMAGE | TVIF_IMAGE) ;
 		sData.item.iImage		  = nImage;
 		sData.item.iSelectedImage = nImage;
 	}
@@ -912,7 +912,7 @@ BOOL CTreeListCtrl::SetColumnMark(int nCol, BOOL bOn) {
 //	nCol	: is the number of the column
 //	bOn		: is the fixed state
 //	iWidth	: is the new width for the column (-1 means don't change width)
-//			  TVCF_LASTSIZE restore size befor fixing
+//			  TVCF_LASTSIZE restore precedent size
 //	Returns TRUE if succesfull
 BOOL CTreeListCtrl::FixColumnSize(int nCol, BOOL bOn, int iWidth) {
 	LV_COLUMN	sData;

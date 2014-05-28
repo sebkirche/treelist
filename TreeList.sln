@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TreeList", "TreeList.vcproj", "{2BB726AC-03CD-41AA-885C-043AFA8BAE92}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleTest", "SimpleTest.vcproj", "{AE688866-22EC-4FAD-8C1F-F1BC0159910A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Unicode|Win32 = Debug Unicode|Win32
@@ -31,6 +33,22 @@ Global
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Release Unicode|Win32.Build.0 = Release Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Release|Win32.ActiveCfg = Release|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Release|Win32.Build.0 = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Debug Unicode|Win32.ActiveCfg = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Debug Unicode|Win32.Build.0 = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Debug|Win32.Build.0 = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug Unicode mini test|Win32.ActiveCfg = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug Unicode mini test|Win32.Build.0 = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug Unicode|Win32.ActiveCfg = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug Unicode|Win32.Build.0 = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Release Unicode|Win32.ActiveCfg = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Release Unicode|Win32.Build.0 = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.mini test unicode|Win32.ActiveCfg = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.mini test unicode|Win32.Build.0 = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Release Unicode|Win32.ActiveCfg = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Release Unicode|Win32.Build.0 = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Release|Win32.ActiveCfg = Release|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
