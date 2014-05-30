@@ -218,6 +218,7 @@ typedef struct {
 	HIMAGELIST	hImages;									// Handle der Icon-Liste
 	HIMAGELIST	hChecks;									// Handle der Icon-Liste für die Checkboxen in den Spalten
 	HIMAGELIST	hSubImg;									// Handle der Icon-Liste für die Spalten
+	HIMAGELIST	hHeadImg;									// Handle for header images
 	HFONT		hFontN;										// Ist der normale Zeichensatz
 	HFONT		hFontB;										// Ist der fette Zeichensatz
 	HFONT		hFontL;										// Der letzte zugewiesene Font
@@ -5296,7 +5297,7 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 		UpdateHeight(pData);
 
 		InvalidateRect(pData->hWnd, &sRect, FALSE);
-		SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
+		SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
 		SendMessage(pData->hHeader, WM_SETFONT, (WPARAM)hDefaultFontN, 0);
 
 		if(pData->uSizeX <= pData->uStartPixel)
@@ -10083,6 +10084,7 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 				}
 				pData->hImages = 0;
 				pData->hSubImg = 0;
+				pData->hHeadImg = 0;
 			} else {
 				if(pData->hStates){
 					ImageList_Destroy(pData->hStates); 
@@ -10099,6 +10101,10 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 				if(pData->hSubImg){
 					ImageList_Destroy(pData->hSubImg); 
 					pData->hSubImg = 0;
+				}
+				if(pData->hHeadImg){
+					ImageList_Destroy(pData->hHeadImg); 
+					pData->hHeadImg = 0;
 				}
 			}
 
@@ -11292,8 +11298,6 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 						ImageList_GetImageInfo(pData->hImages, 0, &sInfo);
 						pData->iImagesXsize = sInfo.rcImage.right - sInfo.rcImage.left;
 						pData->iImagesYsize = sInfo.rcImage.bottom - sInfo.rcImage.top;
-						if(pData->hHeader)
-							SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
 					}
 
 					if(!pData->iSubImgMode || pData->hSubImg == pData->hImages) {
@@ -11311,6 +11315,25 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 						UpdateView(pData);
 					}
 
+					break;
+
+				case TVSIL_HEADER:
+					lRet = (LPARAM)pData->hHeadImg;
+					if(lRet == lParam)
+						break;
+
+					pData->hHeadImg = (HIMAGELIST)lParam;
+
+					if(pData->hHeader) 
+						SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
+
+					if(!pData->cFixedHeight) {
+						pData->iRowHeight = 1;
+						UpdateHeight(pData);
+						UpdateScrollY(pData);
+					} else {
+						UpdateView(pData);
+					}
 					break;
 
 				case TVSIL_STATE:
@@ -11466,6 +11489,9 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 					break;
 				case TVSIL_CHECK:
 					lRet = (LPARAM)pData->hChecks;
+					break;
+				case TVSIL_HEADER:
+					lRet = (LPARAM)pData->hHeadImg;
 					break;
 				default
 						:

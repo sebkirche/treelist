@@ -77,12 +77,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 			SendMessage(hWndTL, TVM_SETEXTENDEDSTYLE, 0, TVS_EX_ITEMLINES | TVS_EX_ALTERNATECOLOR | TVS_EX_FULLROWMARK);
 
-			HIMAGELIST hImageList = ImageList_LoadImage(NULL, TEXT("flags.bmp"), 16, 10, CLR_DEFAULT, IMAGE_BITMAP, LR_LOADFROMFILE /*LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_SHARED | LR_LOADTRANSPARENT*/);
-			if(NULL == hImageList){
+			HIMAGELIST hImgTree = ImageList_LoadImage(NULL, TEXT("flags.bmp"), 16, 10, CLR_DEFAULT, IMAGE_BITMAP, LR_LOADFROMFILE /*LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_SHARED | LR_LOADTRANSPARENT*/);
+			if(NULL == hImgTree){
 				DWORD dwErr = ::GetLastError();
-				printf("ImageList_LoadImage() failed: %d.\n", dwErr);
+				printf("ImageList_LoadImage() tree failed: %d.\n", dwErr);
 			} else{
-					printf("ImageList_LoadImage() succeeded, TVM_SETIMAGELIST returned %d.\n", SendMessage(hWndTL, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)hImageList));
+					printf("ImageList_LoadImage() tree succeeded, TVM_SETIMAGELIST returned %d.\n", SendMessage(hWndTL, TVM_SETIMAGELIST, TVSIL_NORMAL, (LPARAM)hImgTree));
+					;
+			}
+			HIMAGELIST hImgHead = ImageList_LoadImage(NULL, TEXT("header.bmp"), 16, 10, CLR_DEFAULT, IMAGE_BITMAP, LR_LOADFROMFILE /*LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_SHARED | LR_LOADTRANSPARENT*/);
+			if(NULL == hImgHead){
+				DWORD dwErr = ::GetLastError();
+				printf("ImageList_LoadImage() header failed: %d.\n", dwErr);
+			} else{
+					printf("ImageList_LoadImage() header succeeded, TVM_SETIMAGELIST returned %d.\n", SendMessage(hWndTL, TVM_SETIMAGELIST, TVSIL_HEADER, (LPARAM)hImgHead));
 					;
 			}
 
@@ -133,8 +141,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			item.item.hItem			= 0;//(HTREEITEM)pCmpProc;
 			item.item.pszText		= TEXT("Item 1");
 			item.item.mask			= TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-			item.item.iImage		= 3;
-			item.item.iSelectedImage = 5;
+			item.item.iImage		= 0;
+			item.item.iSelectedImage = 2;
 			item.item.state			= 0;
 			item.item.stateMask		= 0;
 			item.item.lParam			= 0;
@@ -172,8 +180,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				itm.mask			= TVIF_SUBITEM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
 				itm.pszText			= TEXT("bli bli");
 				itm.cChildren		= 2;
-				itm.iImage			= 14;
-				itm.iSelectedImage  = 14;
+				itm.iImage			= 11;
+				itm.iSelectedImage  = 11;
 				SendMessage(hWndTL, TVM_SETITEM, 0, (LPARAM)&itm);
 			}
 
