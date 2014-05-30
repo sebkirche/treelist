@@ -88,30 +88,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 			//------------------------COLUMNS----------------------------------------------------------------
 			int colIdx = 0;
-			int col1, col2, col3;
 			int lret;
 			TV_COLUMN col;
 			memset(&col, 0, sizeof(TV_COLUMN));
-			col.mask = 0;
-			col.mask |= TVCF_TEXT;
+			col.mask = TVCF_TEXT;
 			col.pszText = TEXT("Tree (col 0)");
 			col.cchTextMax = 256;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			col1 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			int col1 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col1);
 
+			col.mask = TVCF_TEXT | TVCF_IMAGE | TVCF_FMT;
+			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
 			col.pszText = TEXT("col 1");
+			col.iImage = 0;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			col2 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			int col2 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col2);
 
-			col.mask |= TVCF_IMAGE | TVCF_FMT;
+			col.mask = TVCF_TEXT | TVCF_IMAGE | TVCF_FMT;
+			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
 			col.pszText = TEXT("col 2");
-			col.iImage = 12;
+			col.iImage = 1;
 			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			col3 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			int col3 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col3);
+
+			col.mask = TVCF_TEXT | TVCF_IMAGE | TVCF_FMT;
+			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
+			col.pszText = TEXT("col 3");
+			col.iImage = 2;
+			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
+			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
+			int col4 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			printf("TVM_INSERTCOLUMN returned %08lx\n", col4);
 
 			//------------------------LINES----------------------------------------------------------------
 
@@ -122,8 +133,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			item.item.hItem			= 0;//(HTREEITEM)pCmpProc;
 			item.item.pszText		= TEXT("Item 1");
 			item.item.mask			= TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
-			item.item.iImage		= 0;
-			item.item.iSelectedImage = 2;
+			item.item.iImage		= 3;
+			item.item.iSelectedImage = 5;
 			item.item.state			= 0;
 			item.item.stateMask		= 0;
 			item.item.lParam			= 0;
@@ -161,8 +172,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				itm.mask			= TVIF_SUBITEM | TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
 				itm.pszText			= TEXT("bli bli");
 				itm.cChildren		= 2;
-				itm.iImage			= 11;
-				itm.iSelectedImage  = 11;
+				itm.iImage			= 14;
+				itm.iSelectedImage  = 14;
 				SendMessage(hWndTL, TVM_SETITEM, 0, (LPARAM)&itm);
 			}
 
