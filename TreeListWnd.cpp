@@ -7056,10 +7056,14 @@ static void TreeListMouseClick(TreeListData *pData, UINT uMsg, WPARAM wParam, LP
 								}
 
 								if(pEntry) {
-									if(iAdd < 0)
-									{if(pEntry->uShowPos > uPos && uPos > uStop)uPos--;}
-									else
-									{if(pEntry->uShowPos < uPos && uPos < uStop)uPos++;}
+									if(iAdd < 0){
+										if(pEntry->uShowPos > uPos && uPos > uStop)
+											uPos--;
+									}
+									else {
+										if(pEntry->uShowPos < uPos && uPos < uStop)
+											uPos++;
+									}
 								}
 							}
 
@@ -7493,8 +7497,7 @@ static void TreeListChar(TreeListData *pData, UINT nChar, LPARAM lParam) {
 					break;
 
 				for(i = iNum + 1; i != iNum; i++) {				// Suche Übereinstimmung
-					if(i >= iMax)
-					{i = -1; continue;}
+					if(i >= iMax) {i = -1; continue;}
 					uItem = pData->pItemPos[i];
 
 					if(uSub) {
@@ -9721,8 +9724,9 @@ static int TreeListStartAutoEdit(TreeListData *pData, unsigned uColumn, WPARAM w
 			}
 
 			for(uPos = 0;; uPos++) {
-				if(uPos >= uMax || !pList[uPos])
-				{uPos = 0; break;}
+				if(uPos >= uMax || !pList[uPos]){
+					uPos = 0; break;
+				}
 				if(str_cmp(sItem.pszText, pList[uPos]))
 					continue;
 				uPos++;
@@ -9901,10 +9905,14 @@ EditField:
 					}
 
 				if(cChar) {
-					if(uLen < 256)
-					{memcpy(cBuffer, pText, sizeof(TCHAR)*uLen); cBuffer[uLen] = 0;}
-					else
-					{memcpy(cBuffer, pText, sizeof(TCHAR) * 255); cBuffer[255 ] = 0;}
+					if(uLen < 256){
+						memcpy(cBuffer, pText, sizeof(TCHAR)*uLen); 
+						cBuffer[uLen] = 0;
+					}
+					else {
+						memcpy(cBuffer, pText, sizeof(TCHAR) * 255); 
+						cBuffer[255 ] = 0;
+					}
 					SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)cBuffer);
 				} else {
 					SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)pText);
@@ -10047,37 +10055,61 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 				pData->hStates = 0;
 			if(pData->hChecks == THEMEIMGLIST)
 				pData->hChecks = 0;
-			if(pData->hEdit)
-			{DestroyWindow(pData->hEdit); pData->hEdit   = 0;}
-			if(pData->hHeader)
-			{DestroyWindow(pData->hHeader); pData->hHeader = 0;}
-			if(pData->hToolTip)
-			{DestroyWindow(pData->hToolTip); pData->hToolTip = 0;}
-			if(pData->hStates)
-			{ImageList_Destroy(pData->hStates); pData->hStates = 0;}
+			if(pData->hEdit){
+				DestroyWindow(pData->hEdit); 
+				pData->hEdit   = 0;
+			}
+			if(pData->hHeader){
+				DestroyWindow(pData->hHeader); 
+				pData->hHeader = 0;
+			}
+			if(pData->hToolTip){
+				DestroyWindow(pData->hToolTip); 
+				pData->hToolTip = 0;
+			}
+			if(pData->hStates){
+				ImageList_Destroy(pData->hStates); 
+				pData->hStates = 0;
+			}
 
 			if(pData->uStyleEx & TVS_EX_SHAREIMAGELISTS) {
-				if(pData->hStates && pData->iStatesMode)
-				{ImageList_Destroy(pData->hStates); pData->hStates = 0;}
-				if(pData->hChecks && pData->iChecksMode)
-				{ImageList_Destroy(pData->hChecks); pData->hChecks = 0;}
+				if(pData->hStates && pData->iStatesMode) {
+					ImageList_Destroy(pData->hStates); 
+					pData->hStates = 0;
+				}
+				if(pData->hChecks && pData->iChecksMode) {
+					ImageList_Destroy(pData->hChecks); 
+					pData->hChecks = 0;
+				}
 				pData->hImages = 0;
 				pData->hSubImg = 0;
 			} else {
-				if(pData->hStates)
-				{ImageList_Destroy(pData->hStates); pData->hStates = 0;}
-				if(pData->hChecks)
-				{ImageList_Destroy(pData->hChecks); pData->hChecks = 0;}
-				if(pData->hImages)
-				{ImageList_Destroy(pData->hImages); pData->hImages = 0;}
-				if(pData->hSubImg)
-				{ImageList_Destroy(pData->hSubImg); pData->hSubImg = 0;}
+				if(pData->hStates){
+					ImageList_Destroy(pData->hStates); 
+					pData->hStates = 0;
+				}
+				if(pData->hChecks){
+					ImageList_Destroy(pData->hChecks); 
+					pData->hChecks = 0;
+				}
+				if(pData->hImages){
+					ImageList_Destroy(pData->hImages); 
+					pData->hImages = 0;
+				}
+				if(pData->hSubImg){
+					ImageList_Destroy(pData->hSubImg); 
+					pData->hSubImg = 0;
+				}
 			}
 
-			if(pData->hThemeBt)
-			{pCloseThemeData(pData->hThemeBt); pData->hThemeBt = 0;}
-			if(pData->hTheme)
-			{pCloseThemeData(pData->hTheme); pData->hTheme  = 0;}
+			if(pData->hThemeBt){
+				pCloseThemeData(pData->hThemeBt);
+				pData->hThemeBt = 0;
+			}
+			if(pData->hTheme){
+				pCloseThemeData(pData->hTheme); 
+				pData->hTheme  = 0;
+			}
 
 			for(uVal = 1; uVal < pData->uColumnCount; uVal++) {
 				delete pData->pExtraItems[uVal - 1];
@@ -12232,10 +12264,24 @@ NextExp:
 				}
 
 				sItem.mask = 0;
-				if(pCol->mask & TVCF_FMT)   {sItem.mask |= HDI_FORMAT; sItem.fmt    = pCol->fmt | HDF_STRING;}
-				if(pCol->mask & TVCF_IMAGE) {sItem.mask |= HDI_IMAGE;  sItem.iImage = pCol->iImage;        }
-				if(pCol->mask & TVCF_WIDTH) {sItem.mask |= HDI_WIDTH;  sItem.cxy    = uVal; pData->aColumn[uCol].sSize = (short)sItem.cxy;}
-				if(pCol->mask & TVCF_TEXT) 	{sItem.mask |= HDI_TEXT;  sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
+				if(pCol->mask & TVCF_FMT){
+					sItem.mask |= HDI_FORMAT; 
+					sItem.fmt    = pCol->fmt | HDF_STRING;
+				}
+				if(pCol->mask & TVCF_IMAGE){
+					sItem.mask |= HDI_IMAGE;  
+					sItem.iImage = pCol->iImage;        
+				}
+				if(pCol->mask & TVCF_WIDTH){
+					sItem.mask |= HDI_WIDTH;  
+					sItem.cxy    = uVal; 
+					pData->aColumn[uCol].sSize = (short)sItem.cxy;
+				}
+				if(pCol->mask & TVCF_TEXT){
+					sItem.mask |= HDI_TEXT;  
+					sItem.pszText = pCol->pszText;  
+					sItem.cchTextMax = pCol->cchTextMax;
+				}
 
 				if(sItem.mask) {
 					lRet = SendMessage(pData->hHeader, HDM_SETITEM, uCol, (LPARAM)&sItem);
@@ -12296,9 +12342,17 @@ NextExp:
 					sItem.mask |= HDI_FORMAT;
 					bWantMark = pCol->fmt & TVCFMT_MARK;	//memorize if we want the marked state
 				}
-				if(pCol->mask & TVCF_IMAGE) {sItem.mask |= HDI_IMAGE; }
-				if(pCol->mask & TVCF_WIDTH) {sItem.mask |= HDI_WIDTH; }
-				if(pCol->mask & TVCF_TEXT)  {sItem.mask |= HDI_TEXT ; sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
+				if(pCol->mask & TVCF_IMAGE){
+					sItem.mask |= HDI_IMAGE; 
+				}
+				if(pCol->mask & TVCF_WIDTH){
+					sItem.mask |= HDI_WIDTH;
+				}
+				if(pCol->mask & TVCF_TEXT){
+					sItem.mask |= HDI_TEXT; 
+					sItem.pszText = pCol->pszText;  
+					sItem.cchTextMax = pCol->cchTextMax;
+				}
 
 				lRet = SendMessage(pData->hHeader, HDM_GETITEM, wParam, (LPARAM)&sItem);
 
@@ -12313,9 +12367,19 @@ NextExp:
 					if(!pData->aColumn[uCol].sReal && pData->aColumn[uCol].sFixed)
 						pCol->fmt |= TVCFMT_FIXED;
 				}
-				if(sItem.mask & HDI_IMAGE)  {pCol->mask |= TVCF_IMAGE; pCol->iImage = sItem.iImage; }
-				if(sItem.mask & HDI_WIDTH)  {pCol->mask |= TVCF_WIDTH; pCol->cx     = sItem.cxy;    }
-				if(sItem.mask & HDI_TEXT)   {pCol->mask |= TVCF_TEXT ; pCol->pszText = sItem.pszText;  pCol->cchTextMax = sItem.cchTextMax;}
+				if(sItem.mask & HDI_IMAGE){
+					pCol->mask |= TVCF_IMAGE; 
+					pCol->iImage = sItem.iImage; 
+				}
+				if(sItem.mask & HDI_WIDTH){
+					pCol->mask |= TVCF_WIDTH; 
+					pCol->cx = sItem.cxy;    
+				}
+				if(sItem.mask & HDI_TEXT){
+					pCol->mask |= TVCF_TEXT;
+					pCol->pszText = sItem.pszText;  
+					pCol->cchTextMax = sItem.cchTextMax;
+				}
 
 			} else {
 				lRet = 0;
