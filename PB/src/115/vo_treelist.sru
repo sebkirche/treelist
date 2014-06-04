@@ -525,12 +525,17 @@ constant ulong TVS_RTLREADING = 64
 constant ulong TVS_SHOWSELALWAYS = 32
 constant ulong TVS_SINGLEEXPAND = 1024
 constant ulong TVS_TRACKSELECT = 512
+constant ulong TVSIL_NORMAL = 0
+constant ulong TVSIL_STATE = 2
+constant ulong TVSIL_CHECK = 3
+constant ulong TVSIL_SUBIMAGES = 4
+constant ulong TVSIL_HEADER = 5
+
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
 constant ulong TV_NOCOLOR = -1
 
 end variables
-
 forward prototypes
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)

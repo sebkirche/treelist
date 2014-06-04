@@ -710,6 +710,7 @@ il_deltawidth = width - uo_tree.width //+ pixelstounits(100, XPixelsToUnits!)
 
 updatestyle()
 
+ulong r
 uo_tree.insertcolumn(0, "col 0")
 //uo_tree.insertcolumn(1,"col 1", center!)
 uo_tree.insertcolumn(1, "col 1", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 0)
@@ -721,16 +722,17 @@ il_maxcol = uo_tree.getcolumncount() - 1
 em_col.minmax = "0~~" + string(il_maxcol)
 
 
-ulong r, i1, i2, i3, i4, i5
-r = uo_tree.loadimagelistfromfile( 0 /*TVSIL_NORMAL*/, "res\flags.bmp")
-i1 = uo_tree.insertitemlast(0,"foo", 3)
+ulong i1, i2, i3, i4, i5
+r = uo_tree.loadimagelistfromfile( vo_treelist.TVSIL_NORMAL, "res\flags.bmp")
+r = uo_tree.loadimagelistfromfile( vo_treelist.TVSIL_HEADER, "res\header.bmp")
+i1 = uo_tree.insertitemlast(0,"foo", 0)
 r = uo_tree.setitemtext(i1, 1, string(i1))
 r = uo_tree.setitemtext(i1, 2, "data3")
-i2 = uo_tree.insertitemlast(1, "bar", 4)
+i2 = uo_tree.insertitemlast(1, "bar", 1)
 r = uo_tree.setitemtext(i2, 1, string(i2))
-i3 = uo_tree.insertitemlast(2, "baz", 6)
+i3 = uo_tree.insertitemlast(2, "baz", 3)
 r = uo_tree.setitemtext(i3, 1, string(i3))
-i4 = uo_tree.insertitemlast(1, "asdf", 5)
+i4 = uo_tree.insertitemlast(1, "asdf", 2)
 r = uo_tree.setitemtext(i4, 1, string(i4))
 i5 = uo_tree.insertitemlast(0, "row2-crash")	//make ite crash!
 r = uo_tree.setitemtext(i5, 1, string(i5))
