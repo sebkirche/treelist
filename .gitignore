@@ -18,6 +18,11 @@ bld/
 [Oo]bj/
 PB/*.dll
 
+# PB files
+*.prp
+PB/TreeList105.pbl
+PB/TreeList115.pbl
+
 # Roslyn cache directories
 *.ide/
 

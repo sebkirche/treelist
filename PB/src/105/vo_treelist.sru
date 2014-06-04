@@ -18,11 +18,13 @@ type point from structure within vo_treelist
 end type
 type logfont from structure within vo_treelist
 end type
+type nmheader from structure within vo_treelist
+end type
 end forward
 
-type TV_COLUMN from structure
+type tv_column from structure
 	unsignedlong		mask
-	long		fmt
+	unsignedlong		fmt
 	long		cx
 	string		psztext
 	long		cchtextmax
@@ -38,15 +40,15 @@ type tv_item from structure
 	unsignedlong		statemask
 	string		psztext
 	unsignedlong		cchtextmax
-	unsignedlong		iimage
-	unsignedlong		iselectedimage
+	long		iimage
+	long		iselectedimage
 	unsignedlong		cchildren
 	unsignedlong		lparam
 end type
 
 type tv_insertstruct from structure
 	unsignedlong		hparent
-	ulong		hinsertafter
+	unsignedlong		hinsertafter
 	tv_item		item
 end type
 
@@ -91,8 +93,15 @@ type logfont from structure
 	byte		lfoutprecision
 	byte		lfclipprecision
 	byte		lfquality
-	character		lfpitchandfamily
+	byte		lfpitchandfamily
 	character		lffacename[32]
+end type
+
+type nmheader from structure
+	nmhdr		hdr
+	long		iitem
+	long		ibutton
+	unsignedlong		pitem
 end type
 
 global type vo_treelist from userobject
@@ -102,10 +111,11 @@ userobjects objecttype = externalvisual!
 long backcolor = 67108864
 string classname = "TreeList"
 string libraryname = "treelist.dll"
-string text = "none"
+string text = "PBTreeList"
 event wm_notify pbm_notify
 event type long oncbstatechanged ( unsignedlong action,  unsignedlong itemhandle,  unsignedlong olditemstate,  unsignedlong newitemstate,  long ptdrag_x,  long ptdrag_y )
 event post_constructor ( )
+event type long oncolumnclicked ( long item,  long button,  unsignedlong pitem )
 end type
 global vo_treelist vo_treelist
 
@@ -117,6 +127,7 @@ Function uLong SendMessageFind( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_FIN
 
 subroutine CopyMemory(ulong Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemoryNMHDR(ref nmhdr Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
+subroutine CopyMemoryNMHEADER(ref nmheader Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemorynmtreeview(ref nmtreeview Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 
 Function ULONG GetWindowLong(Ulong hWn, long nIndex) library "user32.dll" alias for "GetWindowLongW"
@@ -124,12 +135,44 @@ Function ULONG SetWindowLong(Ulong hWn, long nIndex, ULONG dwNewLong) library "u
 
 Function ulong CreateFont(long nHeight,ulong nWidth,ulong nEscapement,ulong nOrientation,ulong fnWeight,boolean fdwItalic,boolean fdwUnderline,boolean fdwStrikeOut,ulong fdwCharSet,ulong fdwOutputPrecision,ulong fdwClipPrecision,ulong fdwQuality,ulong dwPitchAndFamily,ref string lpszFace) LIBRARY "gdi32.dll" ALIAS FOR "CreateFontW"  
 Function uLong CreateFontIndirect( Ref Logfont lplf ) Library 'gdi32' alias for "CreateFontIndirectW"
+Function ulong GetFontObject(ulong hfont, long cbBuffer, ref logfont lpvObject) library "gdi32.dll" alias for "GetObjectW"
 Function Boolean DeleteObject( uLong hObject ) Library "gdi32"
 function long MulDiv(long nNumber, long nNumerator, int nDenominator) library "kernel32.dll"
 Function ulong GetDeviceCaps(ulong hdc,ulong nIndex) library "gdi32.dll"
 Function ULong GetDC(ULong handle) Library "User32.DLL"
 Function ULong ReleaseDC(ULong handle, ULong hDC) Library "User32.DLL"
 
+Function ulong ImageList_Create(long cx, long cy, ulong flags, long cInitial, long cGrow) Library "comctl32.dll"
+Function long ImageList_GetImageCount(ulong himl) Library "comctl32.dll"
+Function long ImageList_Add(ulong himl, long hbmImage, long hbmMask) Library "comctl32.dll"
+Function long ImageList_ReplaceIcon(ulong himl, long i, long hicon) Library "comctl32.dll"
+Function long ImageList_AddMasked(ulong himl, long hbmImage, ulong crMask) Library "comctl32.dll"
+Function long ImageList_GetIcon(ulong himl, long i, ulong flags) Library "comctl32.dll"
+Function long ImageList_LoadImage(ulong hInstance, String lpbmp, long cx, long cGrow, ulong crMask, ulong uType, ulong uFlags) Library "comctl32.dll" ALIAS FOR "ImageList_LoadImageW"
+Function long ImageList_Merge(ulong himl1, long i1, long himl2, long i2, long dx, long dy) Library "comctl32.dll"
+Function ulong ImageList_SetBkColor(long himl, ulong clrBk) Library "comctl32.dll"
+Function ulong ImageList_GetBkColor(long himl) Library "comctl32.dll"
+Function boolean ImageList_Destroy(long himl) Library "comctl32.dll"
+Function boolean ImageList_SetOverlayImage(long himl, long iImage, long iOverlay) Library "comctl32.dll"
+Function boolean ImageList_Draw(long himl, long i, long hdcDst, long xx, long yy, ulong fStyle) Library "comctl32.dll"
+//Function boolean ImageList_DrawIndirect(IMAGELISTDRAWPARAMS p) Library "comctl32.dll"
+Function boolean ImageList_Replace( long himl, long i, long hbmImage, long hbmMask) Library "comctl32.dll"
+Function boolean ImageList_DrawEx( long himl, long i, long hdcDst, long xx, long yy, long dx, long dy, ulong rgbBk, ulong rgbFg, ulong fStyle) Library "comctl32.dll"
+Function boolean ImageList_Remove( long himl, long i) Library "comctl32.dll"
+Function boolean ImageList_BeginDrag( long himlTrack, long iTrack, long dxHotspot, long dyHotspot) Library "comctl32.dll"
+Function boolean ImageList_EndDrag() Library "comctl32.dll"
+Function boolean ImageList_DragEnter( long  hwndLock, long xx, long yy) Library "comctl32.dll"
+Function boolean ImageList_DragLeave( long hwndLock) Library "comctl32.dll"
+Function boolean ImageList_DragMove( long xx, long yy) Library "comctl32.dll"
+Function boolean ImageList_SetDragCursorImage( long himlDrag, long iDrag, long dxHotspot, long dyHotspot) Library "comctl32.dll"
+Function boolean ImageList_DragShowNolock( boolean fShow) Library "comctl32.dll"
+Function boolean ImageList_GetIconSize(long himl, Ref long cx, Ref Long cy) Library "comctl32.dll"
+Function boolean ImageList_SetIconSize(long himl, long cx, long cy) Library "comctl32.dll"
+//Function boolean ImageList_GetImageInfo(long himl, long i, Ref IMAGEINFO pImageInfo) Library "comctl32.dll"
+Function long ImageList_Duplicate( long himl) Library "comctl32.dll"
+Function long ImageList_Read( long pstm) Library "comctl32.dll"
+Function boolean ImageList_Write( long himl, long pstm) Library "comctl32.dll"
+FUNCTION long DrawState(Long hdc, Long hBrush, Long lpDrawStateProc , Long lParam, Long wParam, Long xX, Long yY, Long cX, Long cY, Long fuFlags) Library "user32.dll" Alias for "DrawStateW"
 
 end prototypes
 
@@ -180,13 +223,32 @@ boolean IBS_EX_STEPOUT
 boolean IBS_EX_SUBSELECT
 boolean IBS_EX_TOOLTIPNOTIFY
 
+protected:
+ulong hwnd
+long il_curcol = 0
+
+private:
+ulong il_custom_font = 0
+
+constant long WM_SETFONT = 48
+constant long WM_GETFONT = 49
+constant integer FW_NORMAL     = 400
+constant integer FW_BOLD       = 700
+constant ulong LOGPIXELSX = 88  //Number of pixels per logical inch along the screen width.
+constant ulong DEFAULT_CHARSET     = 1   //(x01)
+constant long IMAGE_BITMAP = 0
+constant long LR_LOADFROMFILE = 16
 constant long GWL_STYLE = -16
 constant long GWL_EXSTYLE = -20
 constant unsignedlong WS_CHILD = 1073741824
 constant unsignedlong WS_VISIBLE = 268435456
+constant unsignedlong WS_CLIPSIBLINGS = 67108864
 constant long CS_ENABLE = 1
 
-//Constants computed:
+
+public:
+
+//Constants computed:------------------------------------------------------
 constant long SIZEOF_NMHDR=12
 constant long SIZEOF_TVITEM=40
 constant long SIZEOF_POINT=8
@@ -194,8 +256,27 @@ constant long SIZEOF_NMTREEVIEW=104
 constant long SIZEOF_TVFIND=24
 constant long SIZEOF_TVCOLUMN=44
 constant long SIZEOF_TVINSERTSTRUCT=64
+constant long SIZEOF_NMHEADER=SIZEOF_NMHDR+3*4
 
 //Constants generated from conv_defs.pl ( TreeListWnd.h + commctrl.h )
+constant ulong TVC_BK =					0					// Background
+constant ulong TVC_ODD =					1					// alternate colors / odd    (see TVS_EX_ALTERNATECOLOR)
+constant ulong TVC_EVEN =				2					// alternate colors / even	(see TVS_EX_ALTERNATECOLOR)
+constant ulong TVC_FRAME =				3					// separator lines	(see TVS_EX_ITEMLINES)
+constant ulong TVC_TEXT =				4					// text
+constant ulong TVC_LINE =				5					// interior of the buttons
+constant ulong TVC_BOX =					6					// exterior of the buttons
+constant ulong TVC_TRACK =				7					// tracked item text
+constant ulong TVC_MARK =				8					// selected line
+constant ulong TVC_MARKODD =				8					// selected line (odd)
+constant ulong TVC_MARKEVEN =			9					// selected line (even)
+constant ulong TVC_INSERT =				10					// insertion point
+constant ulong TVC_BOXBG =				11					// background of buttons 
+constant ulong TVC_COLBK =				12					// background of marked column
+constant ulong TVC_COLODD =				13					// alternate odd color of marked column
+constant ulong TVC_COLEVEN =				14					// alternate even color of marked column
+constant ulong TVC_GRAYED =				15					// background when disabled
+
 constant ulong TVCFMT_BITMAP_ON_RIGHT = 4096
 constant ulong TVCFMT_CENTER = 2
 constant ulong TVCFMT_COL_HAS_IMAGES = 32768
@@ -444,27 +525,18 @@ constant ulong TVS_RTLREADING = 64
 constant ulong TVS_SHOWSELALWAYS = 32
 constant ulong TVS_SINGLEEXPAND = 1024
 constant ulong TVS_TRACKSELECT = 512
+constant ulong TVSIL_NORMAL = 0
+constant ulong TVSIL_STATE = 2
+constant ulong TVSIL_CHECK = 3
+constant ulong TVSIL_SUBIMAGES = 4
+constant ulong TVSIL_HEADER = 5
+
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
-
-protected:
-ulong hwnd
-long il_curcol = 0
-
-private:
-ulong il_custom_font = 0
-
-constant long WM_SETFONT = 48
-constant integer FW_NORMAL     = 400
-constant integer FW_BOLD       = 700
-constant ulong LOGPIXELSX = 88  //Number of pixels per logical inch along the screen width.
-constant ulong DEFAULT_CHARSET     = 1   //(x01)
+constant ulong TV_NOCOLOR = -1
 
 end variables
-
 forward prototypes
-public function long addcolumn (string as_text)
-public function long insertcolumn (long al_index, string as_text)
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
 public function long expandall (unsignedlong aul_parent)
@@ -477,7 +549,6 @@ public function long deleteitem (unsignedlong handle)
 public function integer deleteitem (integer i)
 public function long insertitemlast (unsignedlong aul_parent, string as_text)
 public function long insertitem (unsignedlong aul_parent, unsignedlong aul_posflags, unsignedlong aul_flags, string as_text, long al_image, long al_selectedimage)
-public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image)
 protected function boolean getitem (unsignedlong handle, ref tv_item item)
 public function unsignedlong getnextitem (unsignedlong handle, unsignedlong which)
 public function unsignedlong getnextsiblingitem (unsignedlong handle)
@@ -499,14 +570,55 @@ public function unsignedlong getexstyle ()
 public function unsignedlong setexstyle (unsignedlong aul_style)
 public function unsignedlong updateexstyles ()
 public function unsignedlong updatestyles ()
+private function unsignedlong setcolor (long colitem, long color)
+public function unsignedlong setbackcolor (long color)
+public function unsignedlong setoddcolor (long color)
+public function unsignedlong setevencolor (long color)
+public function unsignedlong settextcolor (long color)
+public function unsignedlong setframecolor (long color)
+public function unsignedlong setbuttonextcolor (long color)
+public function unsignedlong setbuttonincolor (long color)
+public function unsignedlong settrackcolor (long color)
+public function unsignedlong setmarkoddcolor (long color)
+public function unsignedlong setmarkevencolor (long color)
+public function long collapseall (unsignedlong aul_parent)
+public function unsignedlong setinsertcolor (long color)
+public function unsignedlong setbuttonbgcolor (long color)
+public function unsignedlong setmarkedcoloddcolor (long color)
+public function unsignedlong setmarkedcolevencolor (long color)
+public function unsignedlong setmarkedcolbgcolor (long color)
+public function unsignedlong setlinemarkcolor (long color)
+public function unsignedlong setgrayedcolor (long color)
+public function long setcolumn (long al_column_id, tv_column atv_col)
+public function long setcolumnmark (long al_col, boolean ab_mark)
+public function long getcolumn (long al_column_id, ref tv_column atv_col)
+public function long getcolumnwidth (long al_col)
+public function long getcolumncount ()
+public function long getrowcount ()
+public function boolean iscolumnmarked (long al_col)
+public function boolean iscolumnhidden (long al_col)
+public function long setcolumnvisible (long al_col, boolean ab_visible)
+public function ulong getimagelist (integer ai_list)
+public function ulong setimagelist (integer ai_list, unsignedlong ah_list)
+public function long loadimagelistfromfile (integer ai_list, string as_file)
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image, long al_image_sel)
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image)
+public function boolean getfont (ref logfont a_font)
+public function long insertcolumn (long al_index, string as_text, unsignedlong aul_mask, unsignedlong aul_fmt, long al_image)
+public function long insertcolumn (integer al_index, string as_text)
+public function long insertcolumn (integer al_index, string as_text, alignment a_align)
+public function long addcolumn (string as_text, alignment a_align)
+public function long addcolumn (string as_text)
 end prototypes
 
 event wm_notify;if lparam > 0 then
 	nmhdr header
+	nmtreeview msgdata
+	nmheader columndata
 	CopyMemoryNMHDR( ref header, lparam, SIZEOF_NMHDR )
 	choose case header.code 
 		case TVN_CBSTATECHANGED
-			nmtreeview msgdata
+			
 			CopyMemorynmtreeview( ref msgdata, lparam, SIZEOF_NMTREEVIEW)
 			return event oncbstatechanged( &
 									msgdata.action, &
@@ -515,6 +627,15 @@ event wm_notify;if lparam > 0 then
 									msgdata.itemnew.state, &
 									msgdata.ptdrag.x, &
 									msgdata.ptdrag.y)
+		case TVN_COLUMNCLICK//, 4294967291
+			CopyMemorynmheader( ref columndata, lparam, SIZEOF_NMHEADER)
+			return event oncolumnclicked(        &
+									columndata.iitem,  &
+									columndata.ibutton,&
+									columndata.pitem   &
+									)
+/*
+		case TVN_COLUMNDBLCLICK
 		//TODO:
 		case TVN_DELETEITEM
 		case TVN_COLUMNCHANGED
@@ -542,55 +663,15 @@ event wm_notify;if lparam > 0 then
 //		case NM_RDBLCLK
 		case TVN_LAST
 		case TVN_FIRST
-		case TVN_COLUMNDBLCLICK
-		case TVN_COLUMNCLICK
 		case TVN_BEGINRDRAG
-		case else
+*/
+//		case else
+//			debug_message( classname(), "wm_notify hdr.code="+string(header.code ))
 	end choose	
 end if
 return 0
 
 end event
-
-public function long addcolumn (string as_text);
-/* 
-	Add a new column at the end of existing columns
-	
-	as_text : the title of the column
-	
-*/
-
-long l_ret
-
-l_ret = InsertColumn(il_curcol, as_text)
-//il_curcol++
-
-return l_ret
-
-end function
-
-public function long insertcolumn (long al_index, string as_text);
-/* 
-	Insert a new column
-
-	ai_index : 0 based index of the new column
-	as_text  : the column title
-*/
-
-TV_COLUMN col
-
-col.mask = 0;
-col.mask = TVCF_TEXT;
-col.pszText = as_text;
-col.cchTextMax = 256;
-
-long l_ret
-l_ret = SendMessageColumn(hwnd, TVM_INSERTCOLUMN, al_index, ref col);
-if l_ret >= 0 then il_curcol++
-
-return l_ret
-
-end function
 
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);
 tv_item itemdata
@@ -749,11 +830,6 @@ return l_ret
 
 end function
 
-public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image);
-return insertitem(aul_parent, TVI_LAST, TVIF_TEXT, as_text, al_image, al_image)
-
-end function
-
 protected function boolean getitem (unsignedlong handle, ref tv_item item);
 item.hitem = handle
 return getitem(item)
@@ -856,7 +932,7 @@ lf.lfFaceName = as_FaceName
 lf.lfWeight= ai_Weight
 lf.lfHeight= ai_Height
 
-lf.lfPitchAndFamily = '1'
+lf.lfPitchAndFamily = 1
 lf.lfClipPrecision = 2
 lf.lfOutPrecision = 1
 lf.lfQuality = 1
@@ -916,10 +992,7 @@ col.fmt = 0
 col.mask = TVCF_FIXED + TVCF_WIDTH
 col.cx = TVCF_LASTSIZE
 
-long l_ret
-l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
-
-return l_ret
+return setcolumn(al_column_id, col)
 
 end function
 
@@ -929,14 +1002,12 @@ col.fmt = TVCFMT_FIXED
 col.mask = TVCF_FIXED + TVCF_WIDTH
 col.cx = 0
 
-long l_ret
-l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref col)
-
-return l_ret
+return setcolumn(al_column_id, col)
 
 end function
 
-public function long setitembackcolor (long handle, long al_column_id, long al_color);return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
+public function long setitembackcolor (long handle, long al_column_id, long al_color);
+return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
 end function
 
 public function ulong getstyle ();
@@ -995,7 +1066,7 @@ end function
 public function unsignedlong updatestyles ();
 ulong lul_style = 0
 
-lul_style = ws_child
+lul_style = ws_child + ws_clipsiblings
 
 if IBS_HASBUTTONS then lul_style += tvs_hasbuttons
 if IBS_HASLINES then lul_style += tvs_haslines
@@ -1018,6 +1089,369 @@ if visible then lul_style += ws_visible
 //lul_style += ws_child
 
 return setstyle(lul_style)
+
+end function
+
+private function unsignedlong setcolor (long colitem, long color);
+//Set the color for a part of the TreeList
+
+return send(hwnd, TVM_SETBKCOLOR, colitem, color)
+
+end function
+
+public function unsignedlong setbackcolor (long color);
+// Set the background color
+
+return setcolor(TVC_BK, color)
+
+end function
+
+public function unsignedlong setoddcolor (long color);
+// Set the background color of odd lines
+
+return setcolor(TVC_ODD, color)
+
+end function
+
+public function unsignedlong setevencolor (long color);
+// Set the background color of even lines
+
+return setcolor(TVC_EVEN, color)
+
+end function
+
+public function unsignedlong settextcolor (long color);
+// Set the color of text
+
+return setcolor(TVC_TEXT, color)
+
+end function
+
+public function unsignedlong setframecolor (long color);
+return setcolor(TVC_FRAME, color)
+
+end function
+
+public function unsignedlong setbuttonextcolor (long color);
+// Set the exterior color of the buttons (the box)
+
+return setcolor(TVC_BOX, color)
+
+end function
+
+public function unsignedlong setbuttonincolor (long color);
+// Set the interior color of the buttons ( + / - )
+
+return setcolor(TVC_LINE, color)
+
+end function
+
+public function unsignedlong settrackcolor (long color);
+// Set the color of tracked lines
+
+return setcolor(TVC_TRACK, color)
+
+end function
+
+public function unsignedlong setmarkoddcolor (long color);
+// Set the color of odd marked lines
+
+return setcolor(TVC_MARKODD, color)
+
+end function
+
+public function unsignedlong setmarkevencolor (long color);
+// Set the color of even marked lines
+
+return setcolor(TVC_MARKEVEN, color)
+
+end function
+
+public function long collapseall (unsignedlong aul_parent);if aul_parent = TVI_ROOT then
+	ulong lul_handle
+	lul_handle = getchild( TVI_ROOT )
+	do while lul_handle > 0
+		collapseall( lul_handle )
+		lul_handle = getNextsiblingitem( lul_handle )
+	loop
+	return 0
+end if
+
+return Send(hwnd, TVM_EXPAND , TVE_ALLCHILDS + TVE_COLLAPSE , &
+	aul_parent)
+end function
+
+public function unsignedlong setinsertcolor (long color);
+// Set the color of insertion point
+
+return setcolor(TVC_INSERT, color)
+
+end function
+
+public function unsignedlong setbuttonbgcolor (long color);
+// Set the background color of buttons
+
+return setcolor(TVC_BOXBG, color)
+
+end function
+
+public function unsignedlong setmarkedcoloddcolor (long color);
+// Set the ODD line background color of marked column
+
+return setcolor(TVC_COLODD, color)
+
+end function
+
+public function unsignedlong setmarkedcolevencolor (long color);
+// Set the EVEN line background color of marked column
+
+return setcolor(TVC_COLEVEN, color)
+
+end function
+
+public function unsignedlong setmarkedcolbgcolor (long color);
+// Set the background color of marked column
+
+return setcolor(TVC_COLBK, color)
+
+end function
+
+public function unsignedlong setlinemarkcolor (long color);
+// Set the color of marked lines
+
+return setcolor(TVC_MARK, color)
+
+end function
+
+public function unsignedlong setgrayedcolor (long color);
+// Set the background color when disabled
+
+return setcolor(TVC_GRAYED, color)
+
+end function
+
+public function long setcolumn (long al_column_id, tv_column atv_col);
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_SETCOLUMN, al_column_id, ref atv_col)
+
+return l_ret
+
+end function
+
+public function long setcolumnmark (long al_col, boolean ab_mark);
+TV_COLUMN col
+
+if al_col > getcolumncount() then return -1
+
+if ab_mark then
+	col.fmt = TVCFMT_MARK
+end if
+col.mask = TVCF_MARK
+
+return setcolumn(al_col, col)
+
+end function
+
+public function long getcolumn (long al_column_id, ref tv_column atv_col);
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_GETCOLUMN, al_column_id, ref atv_col)
+
+return l_ret
+
+end function
+
+public function long getcolumnwidth (long al_col);
+TV_COLUMN col
+long r
+
+col.fmt = 0
+col.mask = TVCF_WIDTH
+
+r = getcolumn(al_col, col)
+
+return col.cx
+
+end function
+
+public function long getcolumncount ();
+//return the number of columns 
+
+return send(hwnd, TVM_GETCOLUMNCOUNT, 0, 0)
+
+end function
+
+public function long getrowcount ();
+//return the number of columns 
+
+return send(hwnd, TVM_GETROWCOUNT, 0, 0)
+
+end function
+
+public function boolean iscolumnmarked (long al_col);
+TV_COLUMN col
+long r
+
+if al_col > getcolumncount() then return false
+
+col.fmt = TVCFMT_MARK
+col.mask = TVCF_FMT
+
+r = getcolumn(al_col, col)
+
+n_cst_numerical ln_bitops
+r = ln_bitops.of_bitwiseand(col.fmt, TVCFMT_MARK)
+
+return r > 0
+
+end function
+
+public function boolean iscolumnhidden (long al_col);
+TV_COLUMN col
+long r
+
+if al_col > getcolumncount() then return false
+
+//col.fmt = TVCFMT_FIXED
+col.mask = TVCF_FMT /*TVCF_FIXED*/ + TVCF_WIDTH
+
+r = getcolumn(al_col, col)
+
+n_cst_numerical ln_bitops
+r = ln_bitops.of_bitwiseand(col.fmt, TVCFMT_FIXED)
+if col.cx = 0 and r > 0 then
+	return true
+end if
+
+return false
+
+end function
+
+public function long setcolumnvisible (long al_col, boolean ab_visible);
+long r
+if ab_visible then
+	r = showcolumn(al_col)
+else
+	r = hidecolumn(al_col)
+end if
+
+return r
+
+end function
+
+public function ulong getimagelist (integer ai_list);
+return send(hwnd, TVM_GETIMAGELIST, ai_list, 0)
+end function
+
+public function ulong setimagelist (integer ai_list, unsignedlong ah_list);
+return send(hwnd, TVM_SETIMAGELIST, ai_list, ah_list)
+
+end function
+
+public function long loadimagelistfromfile (integer ai_list, string as_file);
+ulong himg
+long r
+
+himg = ImageList_LoadImage(0, as_file, 16, 8, rgb(0, 255,255) , IMAGE_BITMAP, LR_LOADFROMFILE/*LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_SHARED | LR_LOADTRANSPARENT*/)
+if himg <> 0 then
+	r = setimagelist( ai_list, himg)
+end if
+
+return r
+
+end function
+
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image, long al_image_sel);
+ulong lul_flags = 0
+
+if as_text <> "" then lul_flags += TVIF_TEXT
+lul_flags += TVIF_IMAGE + TVIF_SELECTEDIMAGE
+
+return insertitem(aul_parent, TVI_LAST, lul_flags, as_text, al_image, al_image_sel)
+
+end function
+
+public function long insertitemlast (unsignedlong aul_parent, string as_text, long al_image);
+return insertitemlast(aul_parent, as_text, al_image, al_image)
+
+end function
+
+public function boolean getfont (ref logfont a_font);
+ulong hfont
+boolean b_ret = false
+
+hfont = Send(hwnd, WM_GETFONT, 0, 0)
+
+if hfont > 0 then
+	int t
+	t = GetFontObject(hfont, 92, a_font)
+	b_ret = t = 92
+end if
+
+return b_ret
+end function
+
+public function long insertcolumn (long al_index, string as_text, unsignedlong aul_mask, unsignedlong aul_fmt, long al_image);
+/* 
+	Insert a new column
+
+	ai_index : 0 based index of the new column
+	as_text  : the column title
+*/
+
+TV_COLUMN col
+
+col.mask = aul_mask;
+col.fmt = aul_fmt
+col.pszText = as_text;
+col.iimage = al_image
+col.cchTextMax = 256;
+
+long l_ret
+l_ret = SendMessageColumn(hwnd, TVM_INSERTCOLUMN, al_index, ref col);
+if l_ret >= 0 then il_curcol++
+
+return l_ret
+
+end function
+
+public function long insertcolumn (integer al_index, string as_text);
+return insertcolumn(al_index, as_text, TVCF_TEXT, 0, TV_NOIMAGE)
+
+end function
+
+public function long insertcolumn (integer al_index, string as_text, alignment a_align);
+long l_align
+
+choose case a_align
+	case left!;		l_align = TVCFMT_LEFT
+	case right!;	l_align = TVCFMT_RIGHT
+	case center!;	l_align = TVCFMT_CENTER
+end choose
+		
+
+return insertcolumn(al_index, as_text, TVCF_TEXT + TVCF_FMT, l_align, TV_NOIMAGE)
+
+end function
+
+public function long addcolumn (string as_text, alignment a_align);
+/* 
+	Add a new column at the end of existing columns
+	
+	as_text : the title of the column
+	a_align : the text alignment
+*/
+
+long l_ret
+
+l_ret = InsertColumn(il_curcol, as_text, a_align)
+
+return l_ret
+
+end function
+
+public function long addcolumn (string as_text);
+
+return addcolumn(as_text, left!)
 
 end function
 
