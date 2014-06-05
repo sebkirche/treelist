@@ -1613,7 +1613,7 @@ static int UpdateRow(TreeListData *pData, unsigned uItem) {
 //*		UpdateView
 //*
 //*****************************************************************************
-//	Zeichnet das ganze Fenster neu
+//	Redraw the whole window
 //	pData		: Zeiger auf die Fensterdaten
 //	Ergibt 1 wenn der Eintrag sichtbar war
 static void UpdateView(TreeListData *pData) {
@@ -1623,6 +1623,11 @@ static void UpdateView(TreeListData *pData) {
 	GetClientRect(pData->hWnd, &sRect);
 	sRect.top =    pData->uStartPixel;
 	InvalidateRect(pData->hWnd, &sRect, FALSE);
+
+	if(pData->hHeader && ((pData->uStyleEx & TVS_EX_HIDEHEADERS) == 0)){
+		GetClientRect(pData->hHeader, &sRect);
+		InvalidateRect(pData->hHeader, &sRect, FALSE);
+	}
 }
 
 //*****************************************************************************
@@ -5297,7 +5302,11 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 		UpdateHeight(pData);
 
 		InvalidateRect(pData->hWnd, &sRect, FALSE);
-		SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
+		if(pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST){
+			SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
+		} else {
+			SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
+		}
 		SendMessage(pData->hHeader, WM_SETFONT, (WPARAM)hDefaultFontN, 0);
 
 		if(pData->uSizeX <= pData->uStartPixel)
@@ -5327,8 +5336,7 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 			case HDF_RIGHT:
 				bAlign = DT_RIGHT;
 				break;
-			default
-					:
+			default:
 				bAlign = DT_LEFT;
 				break;
 		}
@@ -10103,7 +10111,8 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 					pData->hSubImg = 0;
 				}
 				if(pData->hHeadImg){
-					ImageList_Destroy(pData->hHeadImg); 
+					if(pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST)
+						ImageList_Destroy(pData->hHeadImg); 
 					pData->hHeadImg = 0;
 				}
 			}
@@ -11298,6 +11307,8 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 						ImageList_GetImageInfo(pData->hImages, 0, &sInfo);
 						pData->iImagesXsize = sInfo.rcImage.right - sInfo.rcImage.left;
 						pData->iImagesYsize = sInfo.rcImage.bottom - sInfo.rcImage.top;
+						if(pData->hHeader && ((pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST) == 0))
+							SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
 					}
 
 					if(!pData->iSubImgMode || pData->hSubImg == pData->hImages) {
@@ -11318,6 +11329,10 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 					break;
 
 				case TVSIL_HEADER:
+					lRet = pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST;
+					if(lRet == 0)
+						break;
+
 					lRet = (LPARAM)pData->hHeadImg;
 					if(lRet == lParam)
 						break;
@@ -11465,8 +11480,7 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 					break;
 
-				default
-						:
+				default:
 					lRet = 0;
 			}
 
@@ -11632,10 +11646,10 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			if(!wParam)
 				wParam = 0xFFFFFFFF;
 
-			uVal  = pData->uStyleEx &~U(wParam);
-			uVal |=	U(lParam)& U(wParam);
+			uVal  = pData->uStyleEx & ~U(wParam);
+			uVal |=	U(lParam) & U(wParam);
 
-			if(pData->uStyleEx != uVal) {						// Gab es Änderungen
+			if(pData->uStyleEx != uVal) {						// Has it changed?
 				LOCK(pData);
 				uChange = pData->uStyleEx ^ uVal;
 				pData->uStyleEx = uVal;
@@ -11657,14 +11671,23 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 					UpdateView(pData);
 				}
 
-				if((uChange&~U(lParam))&TVS_EX_SUBSELECT) {
+				if((uChange&~U(lParam)) & TVS_EX_SUBSELECT) {
 					TreeListSelectItem(pData, pData->uSelectedItem, 0, TVC_UNKNOWN);
 				}
 
-				if((uChange & TVS_EX_HIDEHEADERS) && pData->hHeader) {
-					pData->uStartPixel = (pData->uStyleEx & TVS_EX_HIDEHEADERS) ? 0 : GetSystemMetrics(SM_CYHSCROLL);
-					MoveWindow(pData->hHeader, -(int)pData->uScrollX, 0, pData->uSizeX + pData->uScrollX, pData->uStartPixel, TRUE);
-					UpdateView(pData);
+				if(pData->hHeader){
+					if((uChange & TVS_EX_HIDEHEADERS) || (uChange & TVS_EX_HEADEROWNIMGLIST)) {
+						pData->uStartPixel = (pData->uStyleEx & TVS_EX_HIDEHEADERS) ? 0 : bDrawWithTheme ? GetSystemMetrics(SM_CYHSCROLL) : 17;
+						MoveWindow(pData->hHeader, -(int)pData->uScrollX, 0, pData->uSizeX + pData->uScrollX, pData->uStartPixel, TRUE);
+						
+						if(pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST){
+							SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
+						} else {
+							SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
+						}
+
+						UpdateView(pData);
+					}
 				}
 
 				UNLOCK(pData);
