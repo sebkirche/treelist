@@ -1,18 +1,12 @@
 
 ; This script can reconstruct the project pbl after a git update
 
-;set targetname = "TreeList105" 
+;set targetname = "TreeList105"  (this is passed by the calling batch)
 set targetFile = targetname
 set targetFile += ".pbt" 
-set libraryFile = targetname
-set libraryFile += ".pbl" 
-set destLibFile = "..\..\"
-set destLibFile += libraryFile
 set logfilename = "rebuild_"
 set logfilename += targetname
 set logfilename += ".log"
-set destTargetFile = "..\..\"
-set destTargetFile += targetFile
 
 start session
 
@@ -37,8 +31,4 @@ scc set target targetFile refresh_all importonly
 scc refresh target migrate
 
 scc close
-
-file copy libraryFile destLibFile
-file copy targetFile destTargetFile
-
 end session
