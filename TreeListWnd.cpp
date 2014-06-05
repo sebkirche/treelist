@@ -218,6 +218,7 @@ typedef struct {
 	HIMAGELIST	hImages;									// Handle der Icon-Liste
 	HIMAGELIST	hChecks;									// Handle der Icon-Liste für die Checkboxen in den Spalten
 	HIMAGELIST	hSubImg;									// Handle der Icon-Liste für die Spalten
+	HIMAGELIST	hHeadImg;									// Handle for header images
 	HFONT		hFontN;										// Ist der normale Zeichensatz
 	HFONT		hFontB;										// Ist der fette Zeichensatz
 	HFONT		hFontL;										// Der letzte zugewiesene Font
@@ -1612,7 +1613,7 @@ static int UpdateRow(TreeListData *pData, unsigned uItem) {
 //*		UpdateView
 //*
 //*****************************************************************************
-//	Zeichnet das ganze Fenster neu
+//	Redraw the whole window
 //	pData		: Zeiger auf die Fensterdaten
 //	Ergibt 1 wenn der Eintrag sichtbar war
 static void UpdateView(TreeListData *pData) {
@@ -1622,6 +1623,11 @@ static void UpdateView(TreeListData *pData) {
 	GetClientRect(pData->hWnd, &sRect);
 	sRect.top =    pData->uStartPixel;
 	InvalidateRect(pData->hWnd, &sRect, FALSE);
+
+	if(pData->hHeader && ((pData->uStyleEx & TVS_EX_HIDEHEADERS) == 0)){
+		GetClientRect(pData->hHeader, &sRect);
+		InvalidateRect(pData->hHeader, &sRect, FALSE);
+	}
 }
 
 //*****************************************************************************
@@ -5296,7 +5302,11 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 		UpdateHeight(pData);
 
 		InvalidateRect(pData->hWnd, &sRect, FALSE);
-		SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
+		if(pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST){
+			SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
+		} else {
+			SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
+		}
 		SendMessage(pData->hHeader, WM_SETFONT, (WPARAM)hDefaultFontN, 0);
 
 		if(pData->uSizeX <= pData->uStartPixel)
@@ -5326,8 +5336,7 @@ static int TreeListInsertColumn(TreeListData *pData, unsigned uCol, TV_COLUMN *p
 			case HDF_RIGHT:
 				bAlign = DT_RIGHT;
 				break;
-			default
-					:
+			default:
 				bAlign = DT_LEFT;
 				break;
 		}
@@ -7056,10 +7065,14 @@ static void TreeListMouseClick(TreeListData *pData, UINT uMsg, WPARAM wParam, LP
 								}
 
 								if(pEntry) {
-									if(iAdd < 0)
-									{if(pEntry->uShowPos > uPos && uPos > uStop)uPos--;}
-									else
-									{if(pEntry->uShowPos < uPos && uPos < uStop)uPos++;}
+									if(iAdd < 0){
+										if(pEntry->uShowPos > uPos && uPos > uStop)
+											uPos--;
+									}
+									else {
+										if(pEntry->uShowPos < uPos && uPos < uStop)
+											uPos++;
+									}
 								}
 							}
 
@@ -7493,8 +7506,7 @@ static void TreeListChar(TreeListData *pData, UINT nChar, LPARAM lParam) {
 					break;
 
 				for(i = iNum + 1; i != iNum; i++) {				// Suche Übereinstimmung
-					if(i >= iMax)
-					{i = -1; continue;}
+					if(i >= iMax) {i = -1; continue;}
 					uItem = pData->pItemPos[i];
 
 					if(uSub) {
@@ -9721,8 +9733,9 @@ static int TreeListStartAutoEdit(TreeListData *pData, unsigned uColumn, WPARAM w
 			}
 
 			for(uPos = 0;; uPos++) {
-				if(uPos >= uMax || !pList[uPos])
-				{uPos = 0; break;}
+				if(uPos >= uMax || !pList[uPos]){
+					uPos = 0; break;
+				}
 				if(str_cmp(sItem.pszText, pList[uPos]))
 					continue;
 				uPos++;
@@ -9901,10 +9914,14 @@ EditField:
 					}
 
 				if(cChar) {
-					if(uLen < 256)
-					{memcpy(cBuffer, pText, sizeof(TCHAR)*uLen); cBuffer[uLen] = 0;}
-					else
-					{memcpy(cBuffer, pText, sizeof(TCHAR) * 255); cBuffer[255 ] = 0;}
+					if(uLen < 256){
+						memcpy(cBuffer, pText, sizeof(TCHAR)*uLen); 
+						cBuffer[uLen] = 0;
+					}
+					else {
+						memcpy(cBuffer, pText, sizeof(TCHAR) * 255); 
+						cBuffer[255 ] = 0;
+					}
 					SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)cBuffer);
 				} else {
 					SendMessage(hWnd, CB_ADDSTRING, 0, (LPARAM)pText);
@@ -10047,37 +10064,67 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 				pData->hStates = 0;
 			if(pData->hChecks == THEMEIMGLIST)
 				pData->hChecks = 0;
-			if(pData->hEdit)
-			{DestroyWindow(pData->hEdit); pData->hEdit   = 0;}
-			if(pData->hHeader)
-			{DestroyWindow(pData->hHeader); pData->hHeader = 0;}
-			if(pData->hToolTip)
-			{DestroyWindow(pData->hToolTip); pData->hToolTip = 0;}
-			if(pData->hStates)
-			{ImageList_Destroy(pData->hStates); pData->hStates = 0;}
-
-			if(pData->uStyleEx & TVS_EX_SHAREIMAGELISTS) {
-				if(pData->hStates && pData->iStatesMode)
-				{ImageList_Destroy(pData->hStates); pData->hStates = 0;}
-				if(pData->hChecks && pData->iChecksMode)
-				{ImageList_Destroy(pData->hChecks); pData->hChecks = 0;}
-				pData->hImages = 0;
-				pData->hSubImg = 0;
-			} else {
-				if(pData->hStates)
-				{ImageList_Destroy(pData->hStates); pData->hStates = 0;}
-				if(pData->hChecks)
-				{ImageList_Destroy(pData->hChecks); pData->hChecks = 0;}
-				if(pData->hImages)
-				{ImageList_Destroy(pData->hImages); pData->hImages = 0;}
-				if(pData->hSubImg)
-				{ImageList_Destroy(pData->hSubImg); pData->hSubImg = 0;}
+			if(pData->hEdit){
+				DestroyWindow(pData->hEdit); 
+				pData->hEdit   = 0;
+			}
+			if(pData->hHeader){
+				DestroyWindow(pData->hHeader); 
+				pData->hHeader = 0;
+			}
+			if(pData->hToolTip){
+				DestroyWindow(pData->hToolTip); 
+				pData->hToolTip = 0;
+			}
+			if(pData->hStates){
+				ImageList_Destroy(pData->hStates); 
+				pData->hStates = 0;
 			}
 
-			if(pData->hThemeBt)
-			{pCloseThemeData(pData->hThemeBt); pData->hThemeBt = 0;}
-			if(pData->hTheme)
-			{pCloseThemeData(pData->hTheme); pData->hTheme  = 0;}
+			if(pData->uStyleEx & TVS_EX_SHAREIMAGELISTS) {
+				if(pData->hStates && pData->iStatesMode) {
+					ImageList_Destroy(pData->hStates); 
+					pData->hStates = 0;
+				}
+				if(pData->hChecks && pData->iChecksMode) {
+					ImageList_Destroy(pData->hChecks); 
+					pData->hChecks = 0;
+				}
+				pData->hImages = 0;
+				pData->hSubImg = 0;
+				pData->hHeadImg = 0;
+			} else {
+				if(pData->hStates){
+					ImageList_Destroy(pData->hStates); 
+					pData->hStates = 0;
+				}
+				if(pData->hChecks){
+					ImageList_Destroy(pData->hChecks); 
+					pData->hChecks = 0;
+				}
+				if(pData->hImages){
+					ImageList_Destroy(pData->hImages); 
+					pData->hImages = 0;
+				}
+				if(pData->hSubImg){
+					ImageList_Destroy(pData->hSubImg); 
+					pData->hSubImg = 0;
+				}
+				if(pData->hHeadImg){
+					if(pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST)
+						ImageList_Destroy(pData->hHeadImg); 
+					pData->hHeadImg = 0;
+				}
+			}
+
+			if(pData->hThemeBt){
+				pCloseThemeData(pData->hThemeBt);
+				pData->hThemeBt = 0;
+			}
+			if(pData->hTheme){
+				pCloseThemeData(pData->hTheme); 
+				pData->hTheme  = 0;
+			}
 
 			for(uVal = 1; uVal < pData->uColumnCount; uVal++) {
 				delete pData->pExtraItems[uVal - 1];
@@ -11260,7 +11307,7 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 						ImageList_GetImageInfo(pData->hImages, 0, &sInfo);
 						pData->iImagesXsize = sInfo.rcImage.right - sInfo.rcImage.left;
 						pData->iImagesYsize = sInfo.rcImage.bottom - sInfo.rcImage.top;
-						if(pData->hHeader)
+						if(pData->hHeader && ((pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST) == 0))
 							SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
 					}
 
@@ -11279,6 +11326,29 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 						UpdateView(pData);
 					}
 
+					break;
+
+				case TVSIL_HEADER:
+					lRet = pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST;
+					if(lRet == 0)
+						break;
+
+					lRet = (LPARAM)pData->hHeadImg;
+					if(lRet == lParam)
+						break;
+
+					pData->hHeadImg = (HIMAGELIST)lParam;
+
+					if(pData->hHeader) 
+						SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
+
+					if(!pData->cFixedHeight) {
+						pData->iRowHeight = 1;
+						UpdateHeight(pData);
+						UpdateScrollY(pData);
+					} else {
+						UpdateView(pData);
+					}
 					break;
 
 				case TVSIL_STATE:
@@ -11410,8 +11480,7 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 					break;
 
-				default
-						:
+				default:
 					lRet = 0;
 			}
 
@@ -11434,6 +11503,9 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 					break;
 				case TVSIL_CHECK:
 					lRet = (LPARAM)pData->hChecks;
+					break;
+				case TVSIL_HEADER:
+					lRet = (LPARAM)pData->hHeadImg;
 					break;
 				default
 						:
@@ -11574,10 +11646,10 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			if(!wParam)
 				wParam = 0xFFFFFFFF;
 
-			uVal  = pData->uStyleEx &~U(wParam);
-			uVal |=	U(lParam)& U(wParam);
+			uVal  = pData->uStyleEx & ~U(wParam);
+			uVal |=	U(lParam) & U(wParam);
 
-			if(pData->uStyleEx != uVal) {						// Gab es Änderungen
+			if(pData->uStyleEx != uVal) {						// Has it changed?
 				LOCK(pData);
 				uChange = pData->uStyleEx ^ uVal;
 				pData->uStyleEx = uVal;
@@ -11599,14 +11671,23 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 					UpdateView(pData);
 				}
 
-				if((uChange&~U(lParam))&TVS_EX_SUBSELECT) {
+				if((uChange&~U(lParam)) & TVS_EX_SUBSELECT) {
 					TreeListSelectItem(pData, pData->uSelectedItem, 0, TVC_UNKNOWN);
 				}
 
-				if((uChange & TVS_EX_HIDEHEADERS) && pData->hHeader) {
-					pData->uStartPixel = (pData->uStyleEx & TVS_EX_HIDEHEADERS) ? 0 : GetSystemMetrics(SM_CYHSCROLL);
-					MoveWindow(pData->hHeader, -(int)pData->uScrollX, 0, pData->uSizeX + pData->uScrollX, pData->uStartPixel, TRUE);
-					UpdateView(pData);
+				if(pData->hHeader){
+					if((uChange & TVS_EX_HIDEHEADERS) || (uChange & TVS_EX_HEADEROWNIMGLIST)) {
+						pData->uStartPixel = (pData->uStyleEx & TVS_EX_HIDEHEADERS) ? 0 : bDrawWithTheme ? GetSystemMetrics(SM_CYHSCROLL) : 17;
+						MoveWindow(pData->hHeader, -(int)pData->uScrollX, 0, pData->uSizeX + pData->uScrollX, pData->uStartPixel, TRUE);
+						
+						if(pData->uStyleEx & TVS_EX_HEADEROWNIMGLIST){
+							SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hHeadImg);
+						} else {
+							SendMessage(pData->hHeader, HDM_SETIMAGELIST, 0, (LPARAM)pData->hImages);
+						}
+
+						UpdateView(pData);
+					}
 				}
 
 				UNLOCK(pData);
@@ -12232,10 +12313,24 @@ NextExp:
 				}
 
 				sItem.mask = 0;
-				if(pCol->mask & TVCF_FMT)   {sItem.mask |= HDI_FORMAT; sItem.fmt    = pCol->fmt | HDF_STRING;}
-				if(pCol->mask & TVCF_IMAGE) {sItem.mask |= HDI_IMAGE;  sItem.iImage = pCol->iImage;        }
-				if(pCol->mask & TVCF_WIDTH) {sItem.mask |= HDI_WIDTH;  sItem.cxy    = uVal; pData->aColumn[uCol].sSize = (short)sItem.cxy;}
-				if(pCol->mask & TVCF_TEXT) 	{sItem.mask |= HDI_TEXT;  sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
+				if(pCol->mask & TVCF_FMT){
+					sItem.mask |= HDI_FORMAT; 
+					sItem.fmt    = pCol->fmt | HDF_STRING;
+				}
+				if(pCol->mask & TVCF_IMAGE){
+					sItem.mask |= HDI_IMAGE;  
+					sItem.iImage = pCol->iImage;        
+				}
+				if(pCol->mask & TVCF_WIDTH){
+					sItem.mask |= HDI_WIDTH;  
+					sItem.cxy    = uVal; 
+					pData->aColumn[uCol].sSize = (short)sItem.cxy;
+				}
+				if(pCol->mask & TVCF_TEXT){
+					sItem.mask |= HDI_TEXT;  
+					sItem.pszText = pCol->pszText;  
+					sItem.cchTextMax = pCol->cchTextMax;
+				}
 
 				if(sItem.mask) {
 					lRet = SendMessage(pData->hHeader, HDM_SETITEM, uCol, (LPARAM)&sItem);
@@ -12296,9 +12391,17 @@ NextExp:
 					sItem.mask |= HDI_FORMAT;
 					bWantMark = pCol->fmt & TVCFMT_MARK;	//memorize if we want the marked state
 				}
-				if(pCol->mask & TVCF_IMAGE) {sItem.mask |= HDI_IMAGE; }
-				if(pCol->mask & TVCF_WIDTH) {sItem.mask |= HDI_WIDTH; }
-				if(pCol->mask & TVCF_TEXT)  {sItem.mask |= HDI_TEXT ; sItem.pszText = pCol->pszText;  sItem.cchTextMax = pCol->cchTextMax;}
+				if(pCol->mask & TVCF_IMAGE){
+					sItem.mask |= HDI_IMAGE; 
+				}
+				if(pCol->mask & TVCF_WIDTH){
+					sItem.mask |= HDI_WIDTH;
+				}
+				if(pCol->mask & TVCF_TEXT){
+					sItem.mask |= HDI_TEXT; 
+					sItem.pszText = pCol->pszText;  
+					sItem.cchTextMax = pCol->cchTextMax;
+				}
 
 				lRet = SendMessage(pData->hHeader, HDM_GETITEM, wParam, (LPARAM)&sItem);
 
@@ -12313,9 +12416,19 @@ NextExp:
 					if(!pData->aColumn[uCol].sReal && pData->aColumn[uCol].sFixed)
 						pCol->fmt |= TVCFMT_FIXED;
 				}
-				if(sItem.mask & HDI_IMAGE)  {pCol->mask |= TVCF_IMAGE; pCol->iImage = sItem.iImage; }
-				if(sItem.mask & HDI_WIDTH)  {pCol->mask |= TVCF_WIDTH; pCol->cx     = sItem.cxy;    }
-				if(sItem.mask & HDI_TEXT)   {pCol->mask |= TVCF_TEXT ; pCol->pszText = sItem.pszText;  pCol->cchTextMax = sItem.cchTextMax;}
+				if(sItem.mask & HDI_IMAGE){
+					pCol->mask |= TVCF_IMAGE; 
+					pCol->iImage = sItem.iImage; 
+				}
+				if(sItem.mask & HDI_WIDTH){
+					pCol->mask |= TVCF_WIDTH; 
+					pCol->cx = sItem.cxy;    
+				}
+				if(sItem.mask & HDI_TEXT){
+					pCol->mask |= TVCF_TEXT;
+					pCol->pszText = sItem.pszText;  
+					pCol->cchTextMax = sItem.cchTextMax;
+				}
 
 			} else {
 				lRet = 0;

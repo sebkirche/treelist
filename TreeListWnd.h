@@ -84,6 +84,7 @@ typedef		TVSORTEX				TV_SORTEX;
 #define 	TVIS_UNTERLINE			0x0001
 #define 	TVSIL_CHECK				0x0003
 #define 	TVSIL_SUBIMAGES			0x0004
+#define		TVSIL_HEADER			0x0005
 #define		TVN_COLUMNCLICK			HDN_ITEMCLICK
 #define 	TVN_COLUMNDBLCLICK		HDN_ITEMDBLCLICK
 #define 	TVE_EXPANDRECURSIVE		(0x80000000)
@@ -234,7 +235,8 @@ typedef		TVSORTEX				TV_SORTEX;
 
 
 // constants for uStyleEx
-#define 	TVS_EX_HEADERCHGNOTIFY	0x00000800			// notify when a colimn has been resized
+#define		TVS_EX_HEADEROWNIMGLIST 0x00000400			// the header has its own TVSIL_HEADER image list (else it is shared with TVSIL_NORMAL)
+#define 	TVS_EX_HEADERCHGNOTIFY	0x00000800			// notify when a column has been resized
 #define 	TVS_EX_HEADERDRAGDROP	0x00001000			// columns over 1 can be sorted using drag and drop
 #define 	TVS_EX_SINGLECHECKBOX	0x00002000			// checkboxes with single selection
 #define 	TVS_EX_STEPOUT			0x00004000			// can leave an edit control with the cursor buttons

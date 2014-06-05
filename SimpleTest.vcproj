@@ -43,7 +43,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
@@ -178,7 +178,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\tests\simple_static.cpp"
+				RelativePath=".\tests\simple.cpp"
 				>
 			</File>
 		</Filter>
@@ -199,6 +199,10 @@
 			>
 			<File
 				RelativePath=".\tests\flags.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\tests\header.bmp"
 				>
 			</File>
 			<File

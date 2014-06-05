@@ -2,6 +2,8 @@ HA$PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
+type cbx_ex_headerownimglist from checkbox within w_test
+end type
 type cb_choosefont from commandbutton within w_test
 end type
 type cbx_colvisible from checkbox within w_test
@@ -218,6 +220,7 @@ long backcolor = 67108864
 string icon = ".\res\TreeList.ico"
 boolean center = true
 event onnotify pbm_notify
+cbx_ex_headerownimglist cbx_ex_headerownimglist
 cb_choosefont cb_choosefont
 cbx_colvisible cbx_colvisible
 cb_getcounts cb_getcounts
@@ -375,7 +378,9 @@ uo_tree.ibs_ex_fixedcolsize = cbx_ex_fixedcolsize.checked
 uo_tree.ibs_ex_editclick = cbx_ex_editclick.checked
 uo_tree.ibs_ex_stepout = cbx_ex_stepout.checked
 uo_tree.ibs_ex_headerdragdrop = cbx_ex_headerdragdrop.checked
+uo_tree.ibs_ex_headerownimglist = cbx_ex_headerownimglist.checked
 uo_tree.updateexstyles()
+
 end subroutine
 
 public subroutine currentcolinfos ();
@@ -394,6 +399,7 @@ st_width.text = string(l_w) + " px"
 end subroutine
 
 on w_test.create
+this.cbx_ex_headerownimglist=create cbx_ex_headerownimglist
 this.cb_choosefont=create cb_choosefont
 this.cbx_colvisible=create cbx_colvisible
 this.cb_getcounts=create cb_getcounts
@@ -496,7 +502,8 @@ this.r_colmark=create r_colmark
 this.r_colmarkodd=create r_colmarkodd
 this.r_colmarkeven=create r_colmarkeven
 this.r_grayed=create r_grayed
-this.Control[]={this.cb_choosefont,&
+this.Control[]={this.cbx_ex_headerownimglist,&
+this.cb_choosefont,&
 this.cbx_colvisible,&
 this.cb_getcounts,&
 this.st_cols,&
@@ -601,6 +608,7 @@ this.r_grayed}
 end on
 
 on w_test.destroy
+destroy(this.cbx_ex_headerownimglist)
 destroy(this.cb_choosefont)
 destroy(this.cbx_colvisible)
 destroy(this.cb_getcounts)
@@ -710,17 +718,21 @@ il_deltawidth = width - uo_tree.width //+ pixelstounits(100, XPixelsToUnits!)
 
 updatestyle()
 
+ulong r
 uo_tree.insertcolumn(0, "col 0")
 //uo_tree.insertcolumn(1,"col 1", center!)
-uo_tree.insertcolumn(1, "col 1", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 11)
-uo_tree.addcolumn("col 2", right!)
+uo_tree.insertcolumn(1, "col 1", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 0)
+uo_tree.insertcolumn(2, "col 2", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 1)
+uo_tree.insertcolumn(3, "col 3", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 2)
+//uo_tree.addcolumn("col 4", right!)
 
 il_maxcol = uo_tree.getcolumncount() - 1
 em_col.minmax = "0~~" + string(il_maxcol)
 
 
-ulong r, i1, i2, i3, i4, i5
-r = uo_tree.loadimagelistfromfile( 0 /*TVSIL_NORMAL*/, "res\flags.bmp")
+ulong i1, i2, i3, i4, i5
+r = uo_tree.loadimagelistfromfile( vo_treelist.TVSIL_NORMAL, "res\flags.bmp")
+r = uo_tree.loadimagelistfromfile( vo_treelist.TVSIL_HEADER, "res\header.bmp")
 i1 = uo_tree.insertitemlast(0,"foo", 0)
 r = uo_tree.setitemtext(i1, 1, string(i1))
 r = uo_tree.setitemtext(i1, 2, "data3")
@@ -758,6 +770,29 @@ event resize;
 //uo_tree.width = newwidth - uo_tree.x - pixelstounits(8, XPixelsToUnits!)
 uo_tree.width = max(newwidth - il_deltawidth, pixelstounits(50, XPixelsToUnits!))
 uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50, YPixelsToUnits!))
+
+end event
+
+type cbx_ex_headerownimglist from checkbox within w_test
+integer x = 69
+integer y = 2272
+integer width = 773
+integer height = 64
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "TVS_EX_HEADEROWNIMGLIST"
+boolean checked = true
+end type
+
+event clicked;
+uo_tree.ibs_ex_headerownimglist = checked
+uo_tree.updateexstyles( )
 
 end event
 
@@ -925,7 +960,7 @@ em_col.getdata(ld_col)
 
 l_width = uo_tree.getcolumnwidth(ld_col)
 
-st_width.text = string(l_width)
+st_width.text = string(l_width) + " px"
 
 
 end event
@@ -2791,7 +2826,7 @@ type gb_exstyles from groupbox within w_test
 integer x = 37
 integer y = 1112
 integer width = 814
-integer height = 1184
+integer height = 1256
 integer taborder = 20
 integer textsize = -8
 integer weight = 400

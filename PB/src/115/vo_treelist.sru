@@ -210,6 +210,7 @@ boolean IBS_EX_FULLROWMARK
 boolean IBS_EX_GRAYEDDISABLE
 boolean IBS_EX_HEADERCHGNOTIFY
 boolean IBS_EX_HEADERDRAGDROP
+boolean IBS_EX_HEADEROWNIMGLIST
 boolean IBS_EX_HIDEHEADERS
 boolean IBS_EX_HOMEENDSELECT
 boolean IBS_EX_ITEMLINES
@@ -500,6 +501,7 @@ constant ulong TVS_EX_FULLROWMARK = 524288
 constant ulong TVS_EX_GRAYEDDISABLE = 33554432
 constant ulong TVS_EX_HEADERCHGNOTIFY = 2048
 constant ulong TVS_EX_HEADERDRAGDROP = 4096
+constant ulong TVS_EX_HEADEROWNIMGLIST = 1024
 constant ulong TVS_EX_HIDEHEADERS = 16777216
 constant ulong TVS_EX_HOMEENDSELECT = 268435456
 constant ulong TVS_EX_ITEMLINES = 65536
@@ -525,12 +527,17 @@ constant ulong TVS_RTLREADING = 64
 constant ulong TVS_SHOWSELALWAYS = 32
 constant ulong TVS_SINGLEEXPAND = 1024
 constant ulong TVS_TRACKSELECT = 512
+constant ulong TVSIL_NORMAL = 0
+constant ulong TVSIL_STATE = 2
+constant ulong TVSIL_CHECK = 3
+constant ulong TVSIL_SUBIMAGES = 4
+constant ulong TVSIL_HEADER = 5
+
 constant ulong TV_FIRST = 4352
 constant long TV_NOIMAGE = -2
 constant ulong TV_NOCOLOR = -1
 
 end variables
-
 forward prototypes
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
@@ -1041,6 +1048,7 @@ if IBS_EX_FULLROWMARK then lul_exstyle += TVS_EX_FULLROWMARK
 if IBS_EX_GRAYEDDISABLE then lul_exstyle += TVS_EX_GRAYEDDISABLE
 if IBS_EX_HEADERCHGNOTIFY then lul_exstyle += TVS_EX_HEADERCHGNOTIFY
 if IBS_EX_HEADERDRAGDROP then lul_exstyle += TVS_EX_HEADERDRAGDROP
+if IBS_EX_HEADEROWNIMGLIST then lul_exstyle += TVS_EX_HEADEROWNIMGLIST
 if IBS_EX_HIDEHEADERS then lul_exstyle += TVS_EX_HIDEHEADERS
 if IBS_EX_HOMEENDSELECT then lul_exstyle += TVS_EX_HOMEENDSELECT
 if IBS_EX_ITEMLINES then lul_exstyle += TVS_EX_ITEMLINES
