@@ -19,6 +19,7 @@ echo Process failed ?
 goto end:
 
 :ok
+attrib -R ..\..\%target%.pbt
 copy /Y %target%.pbt ..\..\
 move /Y %target%.pbl ..\..\
 cd "%~dp0"
