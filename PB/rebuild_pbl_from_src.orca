@@ -1,5 +1,10 @@
 
 ; This script can reconstruct the project pbl after a git update
+;
+; IMPORTANT WARNING : to work successfully in offline mode, 
+;                     the .pbt, .pbg(s) and all other .srx files MUST be in the SAME directory...
+;                     otherwise you will have weird errors like "library list (or application) not defined"
+;                     or "cannot find the application" :^S
 
 ;set targetname = "TreeList105"  (this is passed by the calling batch)
 set targetFile = targetname
