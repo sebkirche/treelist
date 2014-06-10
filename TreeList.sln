@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TreeList", "TreeList.vcproj", "{2BB726AC-03CD-41AA-885C-043AFA8BAE92}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleTest", "SimpleTest.vcproj", "{AE688866-22EC-4FAD-8C1F-F1BC0159910A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2BB726AC-03CD-41AA-885C-043AFA8BAE92} = {2BB726AC-03CD-41AA-885C-043AFA8BAE92}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

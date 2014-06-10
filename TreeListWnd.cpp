@@ -11291,7 +11291,11 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			pData	= GetHandle(hWnd);
 
 			LOCK(pData);
-
+#ifdef _DEBUG
+			char dbg[255];
+			sprintf(dbg, "TVM_SETIMAGELIST %d", (int)wParam);
+			OutputDebugStringA(dbg);
+#endif
 			switch((int)wParam) {
 				case TVSIL_NORMAL:
 					lRet = (LPARAM)pData->hImages;

@@ -48,13 +48,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	static HWND hWndTL;
 	switch(message) {
 		case WM_CREATE: {
-			BOOL bRet;
 
-			//~ typedef int (* PTLR)(HINSTANCE hInstance);
 			HINSTANCE hInst;
 			HMODULE hLib;
-			//~ PTLR pTLR;
-			//~ int initRet = 0;
+
 			hInst = GetModuleHandle(NULL);
 			if (bUseDll){
 				hLib = LoadLibrary(TEXT("..\\PB\\TreeList.dll"));
@@ -62,17 +59,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			}
 			else
 				TreeListRegister(hInst);
-			//~ if(hLib){
-			//~ pTLR = (PTLR)GetProcAddress(hLib, "TreeListRegister");
-			//~ if(pTLR)
-			//~ initRet = pTLR(hInst);
-			//~ }
-			//~ printf("class registration: hInst=%08lx, hLib=%08lx, TreeListRegister=%08lx returned %d\n", hInst, hLib, pTLR, initRet);
 
-			//~ hWndTL = CreateWindow( TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hLib, NULL );
-			hWndTL = CreateWindow(TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE | WS_CHILD | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL);
-			//~ hWndTL = CreateWindow(TEXT(TVC_CLASSNAME),  TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
-			//hWndTL = CreateWindowEx( TVS_EX_ITEMLINES, TEXT(TVC_CLASSNAME), TEXT("blah"), WS_VISIBLE |WS_CHILD|TVS_HASLINES|TVS_LINESATROOT|TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL );
+			hWndTL = CreateWindow(TEXT(TVC_CLASSNAME),  TEXT("TreeList"), WS_VISIBLE | WS_CHILD | TVS_HASLINES | TVS_LINESATROOT | TVS_HASBUTTONS, 0, 0, 430, 300, hWnd, 0, hInst, NULL);
 			printf("created windows is %08lx\n", hWndTL);
 
 			SendMessage(hWndTL, TVM_SETEXTENDEDSTYLE, 0, TVS_EX_ITEMLINES | TVS_EX_ALTERNATECOLOR | TVS_EX_FULLROWMARK);
@@ -96,14 +84,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 			//------------------------COLUMNS----------------------------------------------------------------
 			int colIdx = 0;
-			int lret;
 			TV_COLUMN col;
 			memset(&col, 0, sizeof(TV_COLUMN));
 			col.mask = TVCF_TEXT;
 			col.pszText = TEXT("Tree (col 0)");
 			col.cchTextMax = 256;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			int col1 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			LRESULT col1 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col1);
 
 			col.mask = TVCF_TEXT | TVCF_IMAGE | TVCF_FMT;
@@ -111,7 +98,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			col.pszText = TEXT("col 1");
 			col.iImage = 0;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			int col2 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			LRESULT col2 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col2);
 
 			col.mask = TVCF_TEXT | TVCF_IMAGE | TVCF_FMT;
@@ -120,7 +107,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			col.iImage = 1;
 			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			int col3 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			LRESULT col3 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col3);
 
 			col.mask = TVCF_TEXT | TVCF_IMAGE | TVCF_FMT;
@@ -129,7 +116,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			col.iImage = 2;
 			col.fmt = /*LVCFMT_CENTER | */ LVCFMT_BITMAP_ON_RIGHT;
 			//TreeList_InsertColumn(hWndTL, colIdx++, &col);
-			int col4 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
+			LRESULT col4 = SendMessage(hWndTL, TVM_INSERTCOLUMN, (WPARAM)colIdx++, (LPARAM)&col);
 			printf("TVM_INSERTCOLUMN returned %08lx\n", col4);
 
 			//------------------------LINES----------------------------------------------------------------
