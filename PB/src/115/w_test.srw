@@ -326,6 +326,16 @@ r_grayed r_grayed
 end type
 global w_test w_test
 
+type prototypes
+
+Function ULong GetDC(ULong hWnd) Library "User32.DLL"
+Function ULong ReleaseDC(ULong hWnd, ULong hDC) Library "User32.DLL"
+function ulong GetDeviceCaps(ulong hdc,ulong nIndex) library "gdi32.dll"
+function long MulDiv(long nNumber, long nNumerator, int nDenominator) library "kernel32.dll"
+function long GetDesktopWindow( ) library "user32.dll"
+
+end prototypes
+
 type variables
 
 long il_deltaheight, il_deltawidth
@@ -821,7 +831,7 @@ if uo_tree.getfont(lf) then
 end if
 
 if f.of_choosefont(parent, ls_facename) then
-	uo_tree.setfont( f.ifacename , f.itextsize, f.iweight, f.iitalic, f.iunderline , f.istrikeout)
+	uo_tree.setfont( f.ifacename, -f.itextsize, f.iweight, f.iitalic, f.iunderline , f.istrikeout)
 end if
 
 end event

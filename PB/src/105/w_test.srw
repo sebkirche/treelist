@@ -2,6 +2,8 @@ HA$PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
+type cbx_ex_headerownimglist from checkbox within w_test
+end type
 type cb_choosefont from commandbutton within w_test
 end type
 type cbx_colvisible from checkbox within w_test
@@ -218,6 +220,7 @@ long backcolor = 67108864
 string icon = ".\res\TreeList.ico"
 boolean center = true
 event onnotify pbm_notify
+cbx_ex_headerownimglist cbx_ex_headerownimglist
 cb_choosefont cb_choosefont
 cbx_colvisible cbx_colvisible
 cb_getcounts cb_getcounts
@@ -323,6 +326,16 @@ r_grayed r_grayed
 end type
 global w_test w_test
 
+type prototypes
+
+Function ULong GetDC(ULong hWnd) Library "User32.DLL"
+Function ULong ReleaseDC(ULong hWnd, ULong hDC) Library "User32.DLL"
+function ulong GetDeviceCaps(ulong hdc,ulong nIndex) library "gdi32.dll"
+function long MulDiv(long nNumber, long nNumerator, int nDenominator) library "kernel32.dll"
+function long GetDesktopWindow( ) library "user32.dll"
+
+end prototypes
+
 type variables
 
 long il_deltaheight, il_deltawidth
@@ -375,7 +388,9 @@ uo_tree.ibs_ex_fixedcolsize = cbx_ex_fixedcolsize.checked
 uo_tree.ibs_ex_editclick = cbx_ex_editclick.checked
 uo_tree.ibs_ex_stepout = cbx_ex_stepout.checked
 uo_tree.ibs_ex_headerdragdrop = cbx_ex_headerdragdrop.checked
+uo_tree.ibs_ex_headerownimglist = cbx_ex_headerownimglist.checked
 uo_tree.updateexstyles()
+
 end subroutine
 
 public subroutine currentcolinfos ();
@@ -394,6 +409,7 @@ st_width.text = string(l_w) + " px"
 end subroutine
 
 on w_test.create
+this.cbx_ex_headerownimglist=create cbx_ex_headerownimglist
 this.cb_choosefont=create cb_choosefont
 this.cbx_colvisible=create cbx_colvisible
 this.cb_getcounts=create cb_getcounts
@@ -496,7 +512,8 @@ this.r_colmark=create r_colmark
 this.r_colmarkodd=create r_colmarkodd
 this.r_colmarkeven=create r_colmarkeven
 this.r_grayed=create r_grayed
-this.Control[]={this.cb_choosefont,&
+this.Control[]={this.cbx_ex_headerownimglist,&
+this.cb_choosefont,&
 this.cbx_colvisible,&
 this.cb_getcounts,&
 this.st_cols,&
@@ -601,6 +618,7 @@ this.r_grayed}
 end on
 
 on w_test.destroy
+destroy(this.cbx_ex_headerownimglist)
 destroy(this.cb_choosefont)
 destroy(this.cbx_colvisible)
 destroy(this.cb_getcounts)
@@ -716,7 +734,7 @@ uo_tree.insertcolumn(0, "col 0")
 uo_tree.insertcolumn(1, "col 1", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 0)
 uo_tree.insertcolumn(2, "col 2", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 1)
 uo_tree.insertcolumn(3, "col 3", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 2)
-//uo_tree.addcolumn("col 4", right!)
+//uo_tree.addcolumn("col 4", right!, 1)
 
 il_maxcol = uo_tree.getcolumncount() - 1
 em_col.minmax = "0~~" + string(il_maxcol)
@@ -765,6 +783,29 @@ uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50, YPixelsToUnit
 
 end event
 
+type cbx_ex_headerownimglist from checkbox within w_test
+integer x = 69
+integer y = 2272
+integer width = 773
+integer height = 64
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "TVS_EX_HEADEROWNIMGLIST"
+boolean checked = true
+end type
+
+event clicked;
+uo_tree.ibs_ex_headerownimglist = checked
+uo_tree.updateexstyles( )
+
+end event
+
 type cb_choosefont from commandbutton within w_test
 integer x = 2926
 integer y = 1952
@@ -790,7 +831,7 @@ if uo_tree.getfont(lf) then
 end if
 
 if f.of_choosefont(parent, ls_facename) then
-	uo_tree.setfont( f.ifacename , f.itextsize, f.iweight, f.iitalic, f.iunderline , f.istrikeout)
+	uo_tree.setfont( f.ifacename, -f.itextsize, f.iweight, f.iitalic, f.iunderline , f.istrikeout)
 end if
 
 end event
@@ -2774,6 +2815,27 @@ event oncbstatechanged;call super::oncbstatechanged;messagebox(classname(), "TVN
 return 0
 end event
 
+event oncolumnclicked;call super::oncolumnclicked;
+vo_treelist`tv_column col
+
+col.mask = TVCF_IMAGE
+
+getcolumn(item, col)
+
+choose case col.iimage
+	case vo_treelist.TV_NOIMAGE
+		col.iimage = 0
+	case 0
+		col.iimage = TV_NOIMAGE
+	case 1
+		col.iimage = 2
+	case 2
+		col.iimage = 1
+end choose
+return setcolumn(item, col)
+
+end event
+
 type gb_styles from groupbox within w_test
 integer x = 37
 integer y = 32
@@ -2795,7 +2857,7 @@ type gb_exstyles from groupbox within w_test
 integer x = 37
 integer y = 1112
 integer width = 814
-integer height = 1184
+integer height = 1256
 integer taborder = 20
 integer textsize = -8
 integer weight = 400
