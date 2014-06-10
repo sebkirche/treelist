@@ -552,7 +552,7 @@
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough="stdafx.h"
+				PrecompiledHeaderThrough="TreelistWnd.h"
 				PrecompiledHeaderFile="$(IntDir)/TreeList.pch"
 				AssemblerListingLocation="$(IntDir)\"
 				ObjectFile="$(IntDir)\"
@@ -575,11 +575,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="user32.lib kernel32.lib gdi32.lib comctl32.lib msvcrt.lib uafxcwd.lib"
+				AdditionalDependencies="user32.lib kernel32.lib gdi32.lib comctl32.lib"
 				OutputFile="$(OutDir)/TreeList.dll"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				IgnoreAllDefaultLibraries="true"
+				IgnoreAllDefaultLibraries="false"
 				ModuleDefinitionFile="TreeList.def"
 				GenerateDebugInformation="false"
 				ProgramDatabaseFile="$(IntDir)/TreeList.pdb"
