@@ -538,6 +538,7 @@ constant long TV_NOIMAGE = -2
 constant ulong TV_NOCOLOR = -1
 
 end variables
+
 forward prototypes
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
@@ -611,6 +612,9 @@ public function long insertcolumn (integer al_index, string as_text)
 public function long insertcolumn (integer al_index, string as_text, alignment a_align)
 public function long addcolumn (string as_text, alignment a_align)
 public function long addcolumn (string as_text)
+public function long addcolumn (string as_text, alignment a_align, long al_image)
+public function long setcolumn (long al_col, string as_text, alignment a_align, long al_image)
+public function long setcolumn (long al_col, string as_text)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -1455,6 +1459,77 @@ end function
 public function long addcolumn (string as_text);
 
 return addcolumn(as_text, left!)
+
+end function
+
+public function long addcolumn (string as_text, alignment a_align, long al_image);
+/* 
+	Add a new column at the end of existing columns
+	
+	as_text : the title of the column
+	a_align : the text alignment
+*/
+
+long l_ret
+long l_align
+
+choose case a_align
+	case left!;		l_align = TVCFMT_LEFT
+	case right!;	l_align = TVCFMT_RIGHT
+	case center!;	l_align = TVCFMT_CENTER
+end choose
+
+l_ret = insertcolumn(il_curcol, as_text, TVCF_TEXT + TVCF_FMT, l_align, al_image)
+
+return l_ret
+
+end function
+
+public function long setcolumn (long al_col, string as_text, alignment a_align, long al_image);
+/* 
+	Add a new column at the end of existing columns
+	
+	as_text : the title of the column
+	a_align : the text alignment
+*/
+
+long l_ret
+long l_fmt
+tv_column col
+
+choose case a_align
+	case left!;		l_fmt = TVCFMT_LEFT
+	case right!;	l_fmt = TVCFMT_RIGHT
+	case center!;	l_fmt = TVCFMT_CENTER
+end choose
+
+if al_image <> TV_NOIMAGE then l_fmt += TVCFMT_BITMAP_ON_RIGHT
+
+col.mask = TVCF_TEXT + TVCF_FMT + TVCF_IMAGE;
+col.fmt = l_fmt
+col.pszText = as_text;
+col.iimage = al_image
+col.cchTextMax = 256;
+
+l_ret = setcolumn(al_col, col)
+
+return l_ret
+
+end function
+
+public function long setcolumn (long al_col, string as_text);
+/* 
+	Add a new column at the end of existing columns
+	
+	as_text : the title of the column
+	a_align : the text alignment
+*/
+
+long l_ret
+
+l_ret = setcolumn(al_col, as_text, left!, TV_NOIMAGE)
+
+return l_ret
 
 end function
 

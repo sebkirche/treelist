@@ -724,7 +724,7 @@ uo_tree.insertcolumn(0, "col 0")
 uo_tree.insertcolumn(1, "col 1", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 0)
 uo_tree.insertcolumn(2, "col 2", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 1)
 uo_tree.insertcolumn(3, "col 3", vo_treelist.TVCF_TEXT + vo_treelist.TVCF_IMAGE + vo_treelist.TVCF_FMT, vo_treelist.TVCFMT_CENTER+vo_treelist.TVCFMT_BITMAP_ON_RIGHT , 2)
-//uo_tree.addcolumn("col 4", right!)
+//uo_tree.addcolumn("col 4", right!, 1)
 
 il_maxcol = uo_tree.getcolumncount() - 1
 em_col.minmax = "0~~" + string(il_maxcol)
@@ -2803,6 +2803,27 @@ event oncbstatechanged;call super::oncbstatechanged;messagebox(classname(), "TVN
 	"~r~nCheckbox:"+string(getitemcheckbox(itemhandle)))
 
 return 0
+end event
+
+event oncolumnclicked;call super::oncolumnclicked;
+vo_treelist`tv_column col
+
+col.mask = TVCF_IMAGE
+
+getcolumn(item, col)
+
+choose case col.iimage
+	case vo_treelist.TV_NOIMAGE
+		col.iimage = 0
+	case 0
+		col.iimage = TV_NOIMAGE
+	case 1
+		col.iimage = 2
+	case 2
+		col.iimage = 1
+end choose
+return setcolumn(item, col)
+
 end event
 
 type gb_styles from groupbox within w_test
