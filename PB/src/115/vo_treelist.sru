@@ -235,7 +235,9 @@ constant long WM_SETFONT = 48
 constant long WM_GETFONT = 49
 constant integer FW_NORMAL     = 400
 constant integer FW_BOLD       = 700
-constant ulong LOGPIXELSX = 88  //Number of pixels per logical inch along the screen width.
+constant long HWND_DESKTOP = 0	//to ask for desktop caps its the handle to give to GetDC
+constant long LOGPIXELSX = 88	//Number of pixels per logical inch along the screen width.
+constant long LOGPIXELSY = 90
 constant ulong DEFAULT_CHARSET     = 1   //(x01)
 constant long IMAGE_BITMAP = 0
 constant long LR_LOADFROMFILE = 16
@@ -538,7 +540,6 @@ constant long TV_NOIMAGE = -2
 constant ulong TV_NOCOLOR = -1
 
 end variables
-
 forward prototypes
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
@@ -958,7 +959,7 @@ ulong ll_hdc
 integer li_height
 
 ll_hdc = GetDC(hwnd)
-li_height = -MulDiv(ai_height, GetDeviceCaps(ll_hdc, LOGPIXELSX), 72)
+li_height = -MulDiv(ai_height, GetDeviceCaps(ll_hdc, LOGPIXELSY), 72)
 if il_custom_font <> 0 then DeleteObject(il_custom_font)
 //il_custom_font = _CreateFont( as_FaceName, li_height, ai_Weight, ab_Italic, ab_Underline, ab_StrikeOut )
 il_custom_font = CreateFont(li_height, 0, 0, 0, ai_Weight, ab_italic, ab_underline, ab_strikeout, 0, DEFAULT_CHARSET, 0, 0, 0, as_facename)
