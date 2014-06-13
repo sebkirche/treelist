@@ -14,6 +14,7 @@ Global
 		Debug|Win32 = Debug|Win32
 		Dll Debug Unicode mini test|Win32 = Dll Debug Unicode mini test|Win32
 		Dll Debug Unicode|Win32 = Dll Debug Unicode|Win32
+		Dll Debug|Win32 = Dll Debug|Win32
 		Dll Release Unicode|Win32 = Dll Release Unicode|Win32
 		mini test unicode|Win32 = mini test unicode|Win32
 		Release Unicode|Win32 = Release Unicode|Win32
@@ -28,6 +29,8 @@ Global
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Debug Unicode mini test|Win32.Build.0 = Dll Debug Unicode mini test|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Debug Unicode|Win32.ActiveCfg = Dll Debug Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Debug Unicode|Win32.Build.0 = Dll Debug Unicode|Win32
+		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Debug|Win32.ActiveCfg = Dll Debug|Win32
+		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Debug|Win32.Build.0 = Dll Debug|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Release Unicode|Win32.ActiveCfg = Dll Release Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.Dll Release Unicode|Win32.Build.0 = Dll Release Unicode|Win32
 		{2BB726AC-03CD-41AA-885C-043AFA8BAE92}.mini test unicode|Win32.ActiveCfg = mini test unicode|Win32
@@ -44,6 +47,8 @@ Global
 		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug Unicode mini test|Win32.Build.0 = Debug|Win32
 		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug Unicode|Win32.ActiveCfg = Debug|Win32
 		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug Unicode|Win32.Build.0 = Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug|Win32.ActiveCfg = Dll Debug|Win32
+		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Debug|Win32.Build.0 = Dll Debug|Win32
 		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Release Unicode|Win32.ActiveCfg = Release|Win32
 		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.Dll Release Unicode|Win32.Build.0 = Release|Win32
 		{AE688866-22EC-4FAD-8C1F-F1BC0159910A}.mini test unicode|Win32.ActiveCfg = Release|Win32

@@ -110,7 +110,7 @@ integer height = 144
 userobjects objecttype = externalvisual!
 long backcolor = 67108864
 string classname = "TreeList"
-string libraryname = "treelist.dll"
+string libraryname = "treelista.dll"
 string text = "PBTreeList"
 event type long oncbstatechanged ( unsignedlong action,  unsignedlong itemhandle,  unsignedlong olditemstate,  unsignedlong newitemstate,  long ptdrag_x,  long ptdrag_y )
 event post_constructor ( )
@@ -119,22 +119,22 @@ end type
 global vo_treelist vo_treelist
 
 type prototypes
-Function uLong SendMessageColumn( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_COLUMN lvcolstruct ) Library "user32.dll" Alias For "SendMessageW"
-Function uLong SendMessageInsertItem( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_INSERTSTRUCT data ) Library "user32.dll" Alias For "SendMessageW"
-Function uLong SendMessageItem( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_item data ) Library "user32.dll" Alias For "SendMessageW"
-Function uLong SendMessageFind( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_FIND data ) Library "user32.dll" Alias For "SendMessageW"
+Function uLong SendMessageColumn( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_COLUMN lvcolstruct ) Library "user32.dll" Alias For "SendMessageA"
+Function uLong SendMessageInsertItem( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_INSERTSTRUCT data ) Library "user32.dll" Alias For "SendMessageA"
+Function uLong SendMessageItem( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_item data ) Library "user32.dll" Alias For "SendMessageA"
+Function uLong SendMessageFind( uLong _hwnd, uLong Msg, uLong wParam, Ref TV_FIND data ) Library "user32.dll" Alias For "SendMessageA"
 
 subroutine CopyMemory(ulong Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemoryNMHDR(ref nmhdr Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemoryNMHEADER(ref nmheader Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 subroutine CopyMemorynmtreeview(ref nmtreeview Destination,ulong Source,ulong Length ) library "kernel32.dll" alias for "RtlMoveMemory"
 
-Function ULONG GetWindowLong(Ulong hWn, long nIndex) library "user32.dll" alias for "GetWindowLongW"
-Function ULONG SetWindowLong(Ulong hWn, long nIndex, ULONG dwNewLong) library "user32.dll" alias for "SetWindowLongW"
+Function ULONG GetWindowLong(Ulong hWn, long nIndex) library "user32.dll" alias for "GetWindowLongA"
+Function ULONG SetWindowLong(Ulong hWn, long nIndex, ULONG dwNewLong) library "user32.dll" alias for "SetWindowLongA"
 
-Function ulong CreateFont(long nHeight,ulong nWidth,ulong nEscapement,ulong nOrientation,ulong fnWeight,boolean fdwItalic,boolean fdwUnderline,boolean fdwStrikeOut,ulong fdwCharSet,ulong fdwOutputPrecision,ulong fdwClipPrecision,ulong fdwQuality,ulong dwPitchAndFamily,ref string lpszFace) LIBRARY "gdi32.dll" ALIAS FOR "CreateFontW"  
-Function uLong CreateFontIndirect( Ref Logfont lplf ) Library 'gdi32' alias for "CreateFontIndirectW"
-Function ulong GetFontObject(ulong hfont, long cbBuffer, ref logfont lpvObject) library "gdi32.dll" alias for "GetObjectW"
+Function ulong CreateFont(long nHeight,ulong nWidth,ulong nEscapement,ulong nOrientation,ulong fnWeight,boolean fdwItalic,boolean fdwUnderline,boolean fdwStrikeOut,ulong fdwCharSet,ulong fdwOutputPrecision,ulong fdwClipPrecision,ulong fdwQuality,ulong dwPitchAndFamily,ref string lpszFace) LIBRARY "gdi32.dll" ALIAS FOR "CreateFontA"  
+Function uLong CreateFontIndirect( Ref Logfont lplf ) Library 'gdi32' alias for "CreateFontIndirectA"
+Function ulong GetFontObject(ulong hfont, long cbBuffer, ref logfont lpvObject) library "gdi32.dll" alias for "GetObjectA"
 Function Boolean DeleteObject( uLong hObject ) Library "gdi32"
 function long MulDiv(long nNumber, long nNumerator, int nDenominator) library "kernel32.dll"
 Function ulong GetDeviceCaps(ulong hdc,ulong nIndex) library "gdi32.dll"
@@ -147,7 +147,7 @@ Function long ImageList_Add(ulong himl, long hbmImage, long hbmMask) Library "co
 Function long ImageList_ReplaceIcon(ulong himl, long i, long hicon) Library "comctl32.dll"
 Function long ImageList_AddMasked(ulong himl, long hbmImage, ulong crMask) Library "comctl32.dll"
 Function long ImageList_GetIcon(ulong himl, long i, ulong flags) Library "comctl32.dll"
-Function long ImageList_LoadImage(ulong hInstance, String lpbmp, long cx, long cGrow, ulong crMask, ulong uType, ulong uFlags) Library "comctl32.dll" ALIAS FOR "ImageList_LoadImageW"
+Function long ImageList_LoadImage(ulong hInstance, String lpbmp, long cx, long cGrow, ulong crMask, ulong uType, ulong uFlags) Library "comctl32.dll" ALIAS FOR "ImageList_LoadImageA"
 Function long ImageList_Merge(ulong himl1, long i1, long himl2, long i2, long dx, long dy) Library "comctl32.dll"
 Function ulong ImageList_SetBkColor(long himl, ulong clrBk) Library "comctl32.dll"
 Function ulong ImageList_GetBkColor(long himl) Library "comctl32.dll"
@@ -287,7 +287,6 @@ constant ulong TVCFMT_IMAGE = 2048
 constant ulong TVCFMT_LEFT = 0
 constant ulong TVCFMT_MARK = 268435456
 constant ulong TVCFMT_RIGHT = 1
-
 constant ulong TVCF_FIXED = 1073741824
 constant ulong TVCF_FMT = 1
 constant ulong TVCF_IMAGE = 16
@@ -353,7 +352,7 @@ constant long TVI_LAST = -65534
 constant long TVI_ROOT = -65536
 constant long TVI_SORT = -65533
 constant ulong TVI_SORTEX = 4294901767
-constant long TVM_COLUMNAUTOEDIT = 4454
+constant long TVM_COLUMNAUTOEDIT = 4455
 constant long TVM_COLUMNAUTOICON = 4453
 constant ulong TVM_CREATEDRAGIMAGE = 4370
 constant long TVM_DELETECOLUMN = 4477
@@ -364,9 +363,9 @@ constant ulong TVM_EDITLABELW = 4417
 constant ulong TVM_ENDEDITLABELNOW = 4374
 constant ulong TVM_ENSUREVISIBLE = 4372
 constant ulong TVM_EXPAND = 4354
-constant long TVM_FINDITEM = 4450
+constant long TVM_FINDITEM = 4451
 constant ulong TVM_GETBKCOLOR = 4383
-constant long TVM_GETCOLUMN = 4462
+constant long TVM_GETCOLUMN = 4393
 constant long TVM_GETCOLUMNCOUNT = 4478
 constant long TVM_GETCOLUMNORDERARRAY = 4445
 constant long TVM_GETCOLUMNWIDTH = 4460
@@ -403,7 +402,7 @@ constant long TVM_GETUSERDATA = 4457
 constant long TVM_GETUSERDATASIZE = 4458
 constant ulong TVM_GETVISIBLECOUNT = 4368
 constant ulong TVM_HITTEST = 4369
-constant long TVM_INSERTCOLUMN = 4475
+constant long TVM_INSERTCOLUMN = 4406
 constant ulong TVM_INSERTITEM = 4402
 constant ulong TVM_INSERTITEMA = 4352
 constant ulong TVM_INSERTITEMW = 4402
@@ -415,7 +414,7 @@ constant long TVM_SELECTDROP = 4473
 constant ulong TVM_SELECTITEM = 4363
 constant long TVM_SELECTSUBITEM = 4474
 constant ulong TVM_SETBKCOLOR = 4381
-constant long TVM_SETCOLUMN = 4464
+constant long TVM_SETCOLUMN = 4395
 constant long TVM_SETCOLUMNORDERARRAY = 4444
 constant long TVM_SETCOLUMNWIDTH = 4461
 constant ulong TVM_SETEXTENDEDSTYLE = 4396
