@@ -1076,6 +1076,14 @@
 				RelativePath=".\TreeListDll.cpp"
 				>
 				<FileConfiguration
+					Name="Release Unicode|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="mini test unicode|Win32"
 					ExcludedFromBuild="true"
 					>
