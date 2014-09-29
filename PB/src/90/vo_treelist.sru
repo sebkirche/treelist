@@ -53,12 +53,12 @@ type tv_insertstruct from structure
 end type
 
 type tv_find from structure
-	ulong		uFlags
-	ulong		uColumn
-	ulong		uState
-	ulong		uStateMask
-	ulong		lParam
-	string		pText
+	unsignedlong		uflags
+	unsignedlong		ucolumn
+	unsignedlong		ustate
+	unsignedlong		ustatemask
+	unsignedlong		lparam
+	string		ptext
 end type
 
 type NMTREEVIEW from structure
@@ -256,8 +256,8 @@ constant long SIZEOF_TVITEM=40
 constant long SIZEOF_POINT=8
 constant long SIZEOF_NMTREEVIEW=104
 constant long SIZEOF_TVFIND=24
-constant long SIZEOF_TVCOLUMN=44
-constant long SIZEOF_TVINSERTSTRUCT=64
+constant long SIZEOF_TVCOLUMN=32
+constant long SIZEOF_TVINSERTSTRUCT=52
 constant long SIZEOF_NMHEADER=SIZEOF_NMHDR+3*4
 
 //Constants generated from conv_defs.pl ( TreeListWnd.h + commctrl.h )
@@ -291,7 +291,7 @@ constant ulong TVCF_FIXED = 1073741824
 constant ulong TVCF_FMT = 1
 constant ulong TVCF_IMAGE = 16
 constant ulong TVCF_LASTSIZE = 1144201745
-constant ulong TVCF_MARK = 2147483648
+constant ulong TVCF_MARK = -2147483648
 constant ulong TVCF_MIN = 32
 constant ulong TVCF_TEXT = 4
 constant ulong TVCF_VWIDTH = 8
@@ -303,7 +303,7 @@ constant ulong TVE_EXPAND = 2
 constant ulong TVE_EXPANDFORCE = 1073741824
 constant ulong TVE_EXPANDNEXT = 536870912
 constant ulong TVE_EXPANDPARTIAL = 16384
-constant ulong TVE_EXPANDRECURSIVE = 2147483648
+constant ulong TVE_EXPANDRECURSIVE = -2147483648
 constant ulong TVE_ONLYCHILDS = 8
 constant ulong TVE_TOGGLE = 3
 constant ulong TVGN_CARET = 9
@@ -343,150 +343,152 @@ constant ulong TVIF_SUBITEM = 32768
 constant ulong TVIF_SUBNUMBER = 16384
 constant ulong TVIF_TEXT = 1
 constant ulong TVIF_TEXTCHANGED = 536870912
-constant ulong TVIF_TEXTPTR = 2147483648
+constant ulong TVIF_TEXTPTR = -2147483648
 constant ulong TVIF_TOOLTIPTIME = 1073741824
-constant ulong TVI_AFTER = 4294901765
-constant ulong TVI_BEFORE = 4294901766
-constant long TVI_FIRST = -65535
-constant long TVI_LAST = -65534
-constant long TVI_ROOT = -65536
-constant long TVI_SORT = -65533
-constant ulong TVI_SORTEX = 4294901767
-constant long TVM_COLUMNAUTOEDIT = 4455
-constant long TVM_COLUMNAUTOICON = 4453
+constant ulong TVI_AFTER = -65531
+constant ulong TVI_BEFORE = -65530
+constant ulong TVI_FIRST = -65535
+constant ulong TVI_LAST = -65534
+constant ulong TVI_ROOT = -65536
+constant ulong TVI_SORT = -65533
+constant ulong TVI_SORTEX = -65529
+constant ulong TVIS_UNDERLINE = 1
+constant ulong TVIS_BOLD = 16
+constant ulong TVM_COLUMNAUTOEDIT = 4455
+constant ulong TVM_COLUMNAUTOICON = 4453
 constant ulong TVM_CREATEDRAGIMAGE = 4370
-constant long TVM_DELETECOLUMN = 4477
+constant ulong TVM_DELETECOLUMN = 4477
 constant ulong TVM_DELETEITEM = 4353
-constant ulong TVM_EDITLABEL = 4417
+constant ulong TVM_EDITLABEL = 4366
 constant ulong TVM_EDITLABELA = 4366
 constant ulong TVM_EDITLABELW = 4417
 constant ulong TVM_ENDEDITLABELNOW = 4374
 constant ulong TVM_ENSUREVISIBLE = 4372
 constant ulong TVM_EXPAND = 4354
-constant long TVM_FINDITEM = 4451
+constant ulong TVM_FINDITEM = 4451
 constant ulong TVM_GETBKCOLOR = 4383
-constant long TVM_GETCOLUMN = 4393
-constant long TVM_GETCOLUMNCOUNT = 4478
-constant long TVM_GETCOLUMNORDERARRAY = 4445
-constant long TVM_GETCOLUMNWIDTH = 4460
+constant ulong TVM_GETCOLUMN = 4463
+constant ulong TVM_GETCOLUMNCOUNT = 4478
+constant ulong TVM_GETCOLUMNORDERARRAY = 4445
+constant ulong TVM_GETCOLUMNWIDTH = 4460
 constant ulong TVM_GETCOUNT = 4357
-constant long TVM_GETCOUNTPERPAGE = 4452
+constant ulong TVM_GETCOUNTPERPAGE = 4452
 constant ulong TVM_GETEDITCONTROL = 4367
 constant ulong TVM_GETEXTENDEDSTYLE = 4397
-constant long TVM_GETHEADER = 4479
+constant ulong TVM_GETHEADER = 4479
 constant ulong TVM_GETIMAGELIST = 4360
 constant ulong TVM_GETINDENT = 4358
 constant ulong TVM_GETINSERTMARKCOLOR = 4390
-constant ulong TVM_GETISEARCHSTRING = 4416
+constant ulong TVM_GETISEARCHSTRING = 4375
 constant ulong TVM_GETISEARCHSTRINGA = 4375
 constant ulong TVM_GETISEARCHSTRINGW = 4416
-constant ulong TVM_GETITEM = 4414
+constant ulong TVM_GETITEM = 4364
 constant ulong TVM_GETITEMA = 4364
-constant long TVM_GETITEMBKCOLOR = 4471
+constant ulong TVM_GETITEMBKCOLOR = 4471
 constant ulong TVM_GETITEMHEIGHT = 4380
-constant long TVM_GETITEMOFROW = 4468
+constant ulong TVM_GETITEMOFROW = 4468
 constant ulong TVM_GETITEMRECT = 4356
 constant ulong TVM_GETITEMSTATE = 4391
-constant long TVM_GETITEMTEXTCOLOR = 4469
+constant ulong TVM_GETITEMTEXTCOLOR = 4469
 constant ulong TVM_GETITEMW = 4414
 constant ulong TVM_GETLINECOLOR = 4393
 constant ulong TVM_GETNEXTITEM = 4362
-constant long TVM_GETROWCOUNT = 4467
-constant long TVM_GETROWOFITEM = 4466
+constant ulong TVM_GETROWCOUNT = 4467
+constant ulong TVM_GETROWOFITEM = 4466
 constant ulong TVM_GETSCROLLTIME = 4386
-constant long TVM_GETSETOPTION = 4448
+constant ulong TVM_GETSETOPTION = 4448
 constant ulong TVM_GETTEXTCOLOR = 4384
 constant ulong TVM_GETTOOLTIPS = 4377
 constant ulong TVM_GETUNICODEFORMAT = 8198
-constant long TVM_GETUSERDATA = 4457
-constant long TVM_GETUSERDATASIZE = 4458
+constant ulong TVM_GETUSERDATA = 4457
+constant ulong TVM_GETUSERDATASIZE = 4458
 constant ulong TVM_GETVISIBLECOUNT = 4368
 constant ulong TVM_HITTEST = 4369
-constant long TVM_INSERTCOLUMN = 4406
-constant ulong TVM_INSERTITEM = 4402
+constant ulong TVM_INSERTCOLUMN = 4476
+constant ulong TVM_INSERTITEM = 4352
 constant ulong TVM_INSERTITEMA = 4352
 constant ulong TVM_INSERTITEMW = 4402
-constant long TVM_ISITEMVISIBLE = 4447
+constant ulong TVM_ISITEMVISIBLE = 4447
 constant ulong TVM_MAPACCIDTOHTREEITEM = 4394
 constant ulong TVM_MAPHTREEITEMTOACCID = 4395
-constant long TVM_SELECTCHILDS = 4449
-constant long TVM_SELECTDROP = 4473
+constant ulong TVM_SELECTCHILDS = 4449
+constant ulong TVM_SELECTDROP = 4473
 constant ulong TVM_SELECTITEM = 4363
-constant long TVM_SELECTSUBITEM = 4474
+constant ulong TVM_SELECTSUBITEM = 4474
 constant ulong TVM_SETBKCOLOR = 4381
-constant long TVM_SETCOLUMN = 4395
-constant long TVM_SETCOLUMNORDERARRAY = 4444
-constant long TVM_SETCOLUMNWIDTH = 4461
+constant ulong TVM_SETCOLUMN = 4465
+constant ulong TVM_SETCOLUMNORDERARRAY = 4444
+constant ulong TVM_SETCOLUMNWIDTH = 4461
 constant ulong TVM_SETEXTENDEDSTYLE = 4396
-constant long TVM_SETFOCUSITEM = 4446
+constant ulong TVM_SETFOCUSITEM = 4446
 constant ulong TVM_SETIMAGELIST = 4361
 constant ulong TVM_SETINDENT = 4359
 constant ulong TVM_SETINSERTMARK = 4378
 constant ulong TVM_SETINSERTMARKCOLOR = 4389
-constant ulong TVM_SETITEM = 4415
+constant ulong TVM_SETITEM = 4365
 constant ulong TVM_SETITEMA = 4365
-constant long TVM_SETITEMBKCOLOR = 4472
+constant ulong TVM_SETITEMBKCOLOR = 4472
 constant ulong TVM_SETITEMHEIGHT = 4379
-constant long TVM_SETITEMTEXTCOLOR = 4470
+constant ulong TVM_SETITEMTEXTCOLOR = 4470
 constant ulong TVM_SETITEMW = 4415
 constant ulong TVM_SETLINECOLOR = 4392
 constant ulong TVM_SETSCROLLTIME = 4385
 constant ulong TVM_SETTEXTCOLOR = 4382
 constant ulong TVM_SETTOOLTIPS = 4376
 constant ulong TVM_SETUNICODEFORMAT = 8197
-constant long TVM_SETUSERDATASIZE = 4459
+constant ulong TVM_SETUSERDATASIZE = 4459
 constant ulong TVM_SORTCHILDREN = 4371
 constant ulong TVM_SORTCHILDRENCB = 4373
-constant long TVM_SORTCHILDRENEX = 4456
-constant ulong TVN_BEGINDRAG = -456
-constant long TVN_BEGINDRAGA = -407
-constant long TVN_BEGINDRAGW = -456
-constant ulong TVN_BEGINLABELEDIT = -459
-constant long TVN_BEGINLABELEDITA = -410
-constant long TVN_BEGINLABELEDITW = -459
-constant ulong TVN_BEGINRDRAG = -457
-constant long TVN_BEGINRDRAGA = -408
-constant long TVN_BEGINRDRAGW = -457
-constant long TVN_CBSTATECHANGED = -433
-constant long TVN_COLUMNCHANGED = -438
-constant ulong TVN_COLUMNCLICK = -322
-constant ulong TVN_COLUMNDBLCLICK = -323
-constant ulong TVN_DELETEITEM = -458
-constant long TVN_DELETEITEMA = -409
-constant long TVN_DELETEITEMW = -458
-constant ulong TVN_ENDLABELEDIT = -460
-constant long TVN_ENDLABELEDITA = -411
-constant long TVN_ENDLABELEDITW = -460
-constant long TVN_FIRST = -400
-constant ulong TVN_GETDISPINFO = -452
-constant long TVN_GETDISPINFOA = -403
-constant long TVN_GETDISPINFOW = -452
-constant ulong TVN_GETINFOTIP = -414
-constant long TVN_GETINFOTIPA = -413
-constant long TVN_GETINFOTIPW = -414
-constant ulong TVN_ITEMEXPANDED = -455
-constant long TVN_ITEMEXPANDEDA = -406
-constant long TVN_ITEMEXPANDEDW = -455
-constant ulong TVN_ITEMEXPANDING = -454
-constant long TVN_ITEMEXPANDINGA = -405
-constant long TVN_ITEMEXPANDINGW = -454
-constant long TVN_ITEMTOOLTIP = -432
-constant long TVN_KEYDOWN = -412
-constant long TVN_LAST = -499
-constant long TVN_LBUTTONUP = -436
-constant long TVN_RBUTTONUP = -437
-constant ulong TVN_SELCHANGED = -451
-constant long TVN_SELCHANGEDA = -402
-constant long TVN_SELCHANGEDW = -451
-constant ulong TVN_SELCHANGING = -450
-constant long TVN_SELCHANGINGA = -401
-constant long TVN_SELCHANGINGW = -450
-constant ulong TVN_SETDISPINFO = -453
-constant long TVN_SETDISPINFOA = -404
-constant long TVN_SETDISPINFOW = -453
-constant long TVN_SINGLEEXPAND = -415
-constant long TVN_STARTEDIT = -435
-constant long TVN_STEPSTATECHANGED = -434
+constant ulong TVM_SORTCHILDRENEX = 4456
+constant ulong TVN_BEGINDRAG = -407
+constant ulong TVN_BEGINDRAGA = -407
+constant ulong TVN_BEGINDRAGW = -456
+constant ulong TVN_BEGINLABELEDIT = -410
+constant ulong TVN_BEGINLABELEDITA = -410
+constant ulong TVN_BEGINLABELEDITW = -459
+constant ulong TVN_BEGINRDRAG = -408
+constant ulong TVN_BEGINRDRAGA = -408
+constant ulong TVN_BEGINRDRAGW = -457
+constant ulong TVN_CBSTATECHANGED = -433
+constant ulong TVN_COLUMNCHANGED = -438
+constant ulong TVN_COLUMNCLICK = -302
+constant ulong TVN_COLUMNDBLCLICK = -303
+constant ulong TVN_DELETEITEM = -409
+constant ulong TVN_DELETEITEMA = -409
+constant ulong TVN_DELETEITEMW = -458
+constant ulong TVN_ENDLABELEDIT = -411
+constant ulong TVN_ENDLABELEDITA = -411
+constant ulong TVN_ENDLABELEDITW = -460
+constant ulong TVN_FIRST = -400
+constant ulong TVN_GETDISPINFO = -403
+constant ulong TVN_GETDISPINFOA = -403
+constant ulong TVN_GETDISPINFOW = -452
+constant ulong TVN_GETINFOTIP = -413
+constant ulong TVN_GETINFOTIPA = -413
+constant ulong TVN_GETINFOTIPW = -414
+constant ulong TVN_ITEMEXPANDED = -406
+constant ulong TVN_ITEMEXPANDEDA = -406
+constant ulong TVN_ITEMEXPANDEDW = -455
+constant ulong TVN_ITEMEXPANDING = -405
+constant ulong TVN_ITEMEXPANDINGA = -405
+constant ulong TVN_ITEMEXPANDINGW = -454
+constant ulong TVN_ITEMTOOLTIP = -432
+constant ulong TVN_KEYDOWN = -412
+constant ulong TVN_LAST = -499
+constant ulong TVN_LBUTTONUP = -436
+constant ulong TVN_RBUTTONUP = -437
+constant ulong TVN_SELCHANGED = -402
+constant ulong TVN_SELCHANGEDA = -402
+constant ulong TVN_SELCHANGEDW = -451
+constant ulong TVN_SELCHANGING = -401
+constant ulong TVN_SELCHANGINGA = -401
+constant ulong TVN_SELCHANGINGW = -450
+constant ulong TVN_SETDISPINFO = -404
+constant ulong TVN_SETDISPINFOA = -404
+constant ulong TVN_SETDISPINFOW = -453
+constant ulong TVN_SINGLEEXPAND = -415
+constant ulong TVN_STARTEDIT = -435
+constant ulong TVN_STEPSTATECHANGED = -434
 constant ulong TVS_CHECKBOXES = 256
 constant ulong TVS_DISABLEDRAGDROP = 16
 constant ulong TVS_EDITLABELS = 8
@@ -508,7 +510,7 @@ constant ulong TVS_EX_ITEMLINES = 65536
 constant ulong TVS_EX_MULTISELECT = 2
 constant ulong TVS_EX_NOCHARSELCET = 4194304
 constant ulong TVS_EX_NOCOLUMNRESIZE = 8388608
-constant ulong TVS_EX_NOCURSORSET = 2147483648
+constant ulong TVS_EX_NOCURSORSET = -2147483648
 constant ulong TVS_EX_SHAREIMAGELISTS = 536870912
 constant ulong TVS_EX_SINGLECHECKBOX = 8192
 constant ulong TVS_EX_STEPOUT = 16384
@@ -534,13 +536,12 @@ constant ulong TVSIL_SUBIMAGES = 4
 constant ulong TVSIL_HEADER = 5
 
 constant ulong TV_FIRST = 4352
-constant long TV_NOIMAGE = -2
+constant ulong TV_NOIMAGE = -2
 constant ulong TV_NOCOLOR = -1
 
-end variables
 
+end variables
 forward prototypes
-//public event wm_notify(ulong wparam, ulong lparam)
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
 public function long expandall (unsignedlong aul_parent)
@@ -616,6 +617,12 @@ public function long addcolumn (string as_text)
 public function long addcolumn (string as_text, alignment a_align, long al_image)
 public function long setcolumn (long al_col, string as_text, alignment a_align, long al_image)
 public function long setcolumn (long al_col, string as_text)
+public function integer post ()
+public function long setitemtextcolor (long handle, long al_column_id, long al_color)
+public function long setitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_state, unsignedlong aul_statemask)
+public function long setitembold (unsignedlong aul_parent, long al_column, boolean ab_bold)
+public function long getitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_statemask)
+public function boolean isitembold (unsignedlong aul_parent, long al_column)
 end prototypes
 
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);
@@ -695,6 +702,7 @@ r = send( hwnd, TVM_GETITEMSTATE, handle, 0)
 n_cst_numerical ln_bitops
 r = ln_bitops.of_bitwiseand( r, 8192)
 return r>0 //= 0x2000
+
 end function
 
 public subroutine setitemcheckbox (unsignedlong handle, boolean ab_state);ulong r
@@ -953,6 +961,7 @@ end function
 
 public function long setitembackcolor (long handle, long al_column_id, long al_color);
 return send(hwnd,TVM_SETITEMBKCOLOR, handle + al_column_id * 16777216,al_color)
+
 end function
 
 public function ulong getstyle ();
@@ -1213,7 +1222,7 @@ long r
 col.fmt = 0
 col.mask = TVCF_WIDTH
 
-r = getcolumn(al_col, col)
+r = getcolumn(al_col, ref col)
 
 return col.cx
 
@@ -1469,6 +1478,72 @@ long l_ret
 l_ret = setcolumn(al_col, as_text, left!, TV_NOIMAGE)
 
 return l_ret
+
+end function
+
+public function integer post ();
+return 42
+
+end function
+
+public function long setitemtextcolor (long handle, long al_column_id, long al_color);
+return send(hwnd,TVM_SETITEMTEXTCOLOR, handle + al_column_id * 16777216,al_color)
+
+end function
+
+public function long setitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_state, unsignedlong aul_statemask);
+tv_item itemdata
+
+itemdata.mask = TVIF_STATE + TVIF_HANDLE
+if al_column > 0 then 
+	itemdata.mask += TVIF_SUBITEM 
+	itemdata.cChildren = al_column
+end if
+itemdata.hitem = aul_parent
+itemdata.stateMask = aul_statemask
+itemdata.state = aul_state
+
+return SendMessageItem( hwnd , TVM_SETITEM, 0, itemdata)
+
+end function
+
+public function long setitembold (unsignedlong aul_parent, long al_column, boolean ab_bold);
+ulong s
+
+if ab_bold then
+	s = TVIS_BOLD
+else
+	s = 0
+end if
+return setitemstate(aul_parent, al_column, s, TVIS_BOLD)
+
+end function
+
+public function long getitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_statemask);
+tv_item itemdata
+
+itemdata.mask = TVIF_STATE + TVIF_HANDLE
+if al_column > 0 then itemdata.mask += TVIF_SUBITEM 
+
+itemdata.hitem = aul_parent
+itemdata.cChildren = al_column
+itemdata.stateMask = aul_statemask
+itemdata.state = 0
+
+if SendMessageItem( hwnd , TVM_GETITEM, 0, itemdata) > 0 then
+	return itemdata.state
+else
+	return 0
+end if
+
+end function
+
+public function boolean isitembold (unsignedlong aul_parent, long al_column);
+ulong state
+
+state = getitemstate(aul_parent, al_column, TVIS_BOLD)
+
+return state > 0
 
 end function
 

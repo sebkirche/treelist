@@ -2,6 +2,12 @@ $PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
+type cbx_itembold from checkbox within w_test
+end type
+type cb_itemcol from commandbutton within w_test
+end type
+type cb_itemback from commandbutton within w_test
+end type
 type cbx_ex_headerownimglist from checkbox within w_test
 end type
 type cb_choosefont from commandbutton within w_test
@@ -17,8 +23,6 @@ end type
 type cbx_colmarked from checkbox within w_test
 end type
 type cb_getwidth from commandbutton within w_test
-end type
-type st_width from statictext within w_test
 end type
 type cb_showcol from commandbutton within w_test
 end type
@@ -174,8 +178,6 @@ type gb_styles from groupbox within w_test
 end type
 type gb_exstyles from groupbox within w_test
 end type
-type gb_col from groupbox within w_test
-end type
 type r_back from rectangle within w_test
 end type
 type r_odd from rectangle within w_test
@@ -208,6 +210,12 @@ type r_colmarkeven from rectangle within w_test
 end type
 type r_grayed from rectangle within w_test
 end type
+type st_width from statictext within w_test
+end type
+type gb_col from groupbox within w_test
+end type
+type gb_item from groupbox within w_test
+end type
 end forward
 
 global type w_test from window
@@ -219,6 +227,9 @@ boolean controlmenu = true
 long backcolor = 67108864
 string icon = ".\res\TreeList.ico"
 boolean center = true
+cbx_itembold cbx_itembold
+cb_itemcol cb_itemcol
+cb_itemback cb_itemback
 cbx_ex_headerownimglist cbx_ex_headerownimglist
 cb_choosefont cb_choosefont
 cbx_colvisible cbx_colvisible
@@ -227,7 +238,6 @@ st_cols st_cols
 st_rows st_rows
 cbx_colmarked cbx_colmarked
 cb_getwidth cb_getwidth
-st_width st_width
 cb_showcol cb_showcol
 cb_unmarkcol cb_unmarkcol
 cb_hidecol cb_hidecol
@@ -305,7 +315,6 @@ cb_1 cb_1
 uo_tree uo_tree
 gb_styles gb_styles
 gb_exstyles gb_exstyles
-gb_col gb_col
 r_back r_back
 r_odd r_odd
 r_even r_even
@@ -322,6 +331,9 @@ r_colmark r_colmark
 r_colmarkodd r_colmarkodd
 r_colmarkeven r_colmarkeven
 r_grayed r_grayed
+st_width st_width
+gb_col gb_col
+gb_item gb_item
 end type
 global w_test w_test
 
@@ -344,7 +356,7 @@ end variables
 
 forward prototypes
 public subroutine updatestyle ()
-public subroutine currentcolinfos ()
+public subroutine currentiteminfos ()
 end prototypes
 
 public subroutine updatestyle ();
@@ -387,22 +399,30 @@ uo_tree.updateexstyles()
 
 end subroutine
 
-public subroutine currentcolinfos ();
-dec ld_col
-em_col.getdata(ld_col)
+public subroutine currentiteminfos ();
+long r
+dec ldc_col
 
-if ld_col < 0 or ld_col > uo_tree.getcolumncount( ) then return
+r = uo_tree.finditem( currenttreeitem!, 0)
+em_col.getdata(ldc_col)
 
-cbx_colmarked.checked = uo_tree.iscolumnmarked(ld_col)
-cbx_colvisible.checked = not uo_tree.iscolumnhidden(ld_col)
+if ldc_col < 0 or ldc_col > uo_tree.getcolumncount( ) then return
+
+cbx_colmarked.checked = uo_tree.iscolumnmarked(ldc_col)
+cbx_colvisible.checked = not uo_tree.iscolumnhidden(ldc_col)
 
 long l_w
-l_w = uo_tree.getcolumnwidth(ld_col)
+l_w = uo_tree.getcolumnwidth(ldc_col)
 st_width.text = string(l_w) + " px"
+
+cbx_itembold.checked = uo_tree.isitembold(r, ldc_col)
 
 end subroutine
 
 on w_test.create
+this.cbx_itembold=create cbx_itembold
+this.cb_itemcol=create cb_itemcol
+this.cb_itemback=create cb_itemback
 this.cbx_ex_headerownimglist=create cbx_ex_headerownimglist
 this.cb_choosefont=create cb_choosefont
 this.cbx_colvisible=create cbx_colvisible
@@ -411,7 +431,6 @@ this.st_cols=create st_cols
 this.st_rows=create st_rows
 this.cbx_colmarked=create cbx_colmarked
 this.cb_getwidth=create cb_getwidth
-this.st_width=create st_width
 this.cb_showcol=create cb_showcol
 this.cb_unmarkcol=create cb_unmarkcol
 this.cb_hidecol=create cb_hidecol
@@ -489,7 +508,6 @@ this.cb_1=create cb_1
 this.uo_tree=create uo_tree
 this.gb_styles=create gb_styles
 this.gb_exstyles=create gb_exstyles
-this.gb_col=create gb_col
 this.r_back=create r_back
 this.r_odd=create r_odd
 this.r_even=create r_even
@@ -506,7 +524,13 @@ this.r_colmark=create r_colmark
 this.r_colmarkodd=create r_colmarkodd
 this.r_colmarkeven=create r_colmarkeven
 this.r_grayed=create r_grayed
-this.Control[]={this.cbx_ex_headerownimglist,&
+this.st_width=create st_width
+this.gb_col=create gb_col
+this.gb_item=create gb_item
+this.Control[]={this.cbx_itembold,&
+this.cb_itemcol,&
+this.cb_itemback,&
+this.cbx_ex_headerownimglist,&
 this.cb_choosefont,&
 this.cbx_colvisible,&
 this.cb_getcounts,&
@@ -514,7 +538,6 @@ this.st_cols,&
 this.st_rows,&
 this.cbx_colmarked,&
 this.cb_getwidth,&
-this.st_width,&
 this.cb_showcol,&
 this.cb_unmarkcol,&
 this.cb_hidecol,&
@@ -592,7 +615,6 @@ this.cb_1,&
 this.uo_tree,&
 this.gb_styles,&
 this.gb_exstyles,&
-this.gb_col,&
 this.r_back,&
 this.r_odd,&
 this.r_even,&
@@ -608,10 +630,16 @@ this.r_butbox,&
 this.r_colmark,&
 this.r_colmarkodd,&
 this.r_colmarkeven,&
-this.r_grayed}
+this.r_grayed,&
+this.st_width,&
+this.gb_col,&
+this.gb_item}
 end on
 
 on w_test.destroy
+destroy(this.cbx_itembold)
+destroy(this.cb_itemcol)
+destroy(this.cb_itemback)
 destroy(this.cbx_ex_headerownimglist)
 destroy(this.cb_choosefont)
 destroy(this.cbx_colvisible)
@@ -620,7 +648,6 @@ destroy(this.st_cols)
 destroy(this.st_rows)
 destroy(this.cbx_colmarked)
 destroy(this.cb_getwidth)
-destroy(this.st_width)
 destroy(this.cb_showcol)
 destroy(this.cb_unmarkcol)
 destroy(this.cb_hidecol)
@@ -698,7 +725,6 @@ destroy(this.cb_1)
 destroy(this.uo_tree)
 destroy(this.gb_styles)
 destroy(this.gb_exstyles)
-destroy(this.gb_col)
 destroy(this.r_back)
 destroy(this.r_odd)
 destroy(this.r_even)
@@ -715,6 +741,9 @@ destroy(this.r_colmark)
 destroy(this.r_colmarkodd)
 destroy(this.r_colmarkeven)
 destroy(this.r_grayed)
+destroy(this.st_width)
+destroy(this.gb_col)
+destroy(this.gb_item)
 end on
 
 event open;il_deltaheight = height - uo_tree.height //- uo_tree.y
@@ -764,7 +793,7 @@ next
 //uo_tree.expand( 0 )
 uo_tree.expandall(i1)
 
-uo_tree.setfont( "Times New Roman", 12, 400, false, false, false)
+uo_tree.setfont( "Times New Roman", 10, 400, false, false, false)
 
 //em_col.event itemchanged( )
 
@@ -774,6 +803,87 @@ event resize;
 //uo_tree.width = newwidth - uo_tree.x - pixelstounits(8, XPixelsToUnits!)
 uo_tree.width = max(newwidth - il_deltawidth, pixelstounits(50, XPixelsToUnits!))
 uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50, YPixelsToUnits!))
+
+end event
+
+type cbx_itembold from checkbox within w_test
+integer x = 2304
+integer y = 2280
+integer width = 224
+integer height = 64
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Bold"
+end type
+
+event clicked;
+long r
+dec ldc_col
+
+r = uo_tree.finditem( currenttreeitem!, 0)
+em_col.getdata(ldc_col)
+
+uo_tree.setitembold(r, ldc_col, checked)
+
+end event
+
+type cb_itemcol from commandbutton within w_test
+integer x = 2647
+integer y = 2280
+integer width = 302
+integer height = 72
+integer taborder = 100
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Text color"
+end type
+
+event clicked;
+long r, c
+dec ldc_col
+
+r = uo_tree.finditem( currenttreeitem!, 0)
+em_col.getdata(ldc_col)
+if choosecolor(c) < 1 then return
+
+uo_tree.setitemtextcolor(r, ldc_col, c)
+
+end event
+
+type cb_itemback from commandbutton within w_test
+integer x = 2647
+integer y = 2192
+integer width = 302
+integer height = 72
+integer taborder = 110
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+string text = "Background"
+end type
+
+event clicked;
+long r, c
+dec ldc_col
+
+r = uo_tree.finditem( currenttreeitem!, 0)
+em_col.getdata(ldc_col)
+if choosecolor(c) < 1 then return
+
+uo_tree.setitembackcolor(r, ldc_col, c)
 
 end event
 
@@ -831,7 +941,7 @@ end if
 end event
 
 type cbx_colvisible from checkbox within w_test
-integer x = 2075
+integer x = 1746
 integer y = 2196
 integer width = 238
 integer height = 64
@@ -854,14 +964,14 @@ if ld_col < 0 or ld_col > il_maxcol then return
 
 uo_tree.setcolumnvisible(ld_col, cbx_colvisible.checked)
 
-currentcolinfos( )
+currentiteminfos( )
 
 end event
 
 type cb_getcounts from commandbutton within w_test
 integer x = 878
 integer y = 2144
-integer width = 293
+integer width = 329
 integer height = 92
 integer taborder = 90
 integer textsize = -8
@@ -880,9 +990,9 @@ st_cols.text = "Cols: " + string(uo_tree.getcolumncount())
 end event
 
 type st_cols from statictext within w_test
-integer x = 1189
-integer y = 2184
-integer width = 361
+integer x = 878
+integer y = 2292
+integer width = 329
 integer height = 60
 integer textsize = -8
 integer weight = 400
@@ -897,9 +1007,9 @@ boolean focusrectangle = false
 end type
 
 type st_rows from statictext within w_test
-integer x = 1189
-integer y = 2132
-integer width = 361
+integer x = 878
+integer y = 2240
+integer width = 329
 integer height = 64
 integer textsize = -8
 integer weight = 400
@@ -914,7 +1024,7 @@ boolean focusrectangle = false
 end type
 
 type cbx_colmarked from checkbox within w_test
-integer x = 1810
+integer x = 1481
 integer y = 2196
 integer width = 256
 integer height = 64
@@ -937,12 +1047,12 @@ if ld_col < 0 or ld_col > il_maxcol then return
 
 uo_tree.setcolumnmark(ld_col, cbx_colmarked.checked)
 
-currentcolinfos( )
+currentiteminfos( )
 
 end event
 
 type cb_getwidth from commandbutton within w_test
-integer x = 2098
+integer x = 1769
 integer y = 2280
 integer width = 224
 integer height = 72
@@ -969,25 +1079,8 @@ st_width.text = string(l_width) + " px"
 
 end event
 
-type st_width from statictext within w_test
-integer x = 2331
-integer y = 2196
-integer width = 242
-integer height = 64
-integer textsize = -8
-integer weight = 400
-fontcharset fontcharset = ansi!
-fontpitch fontpitch = variable!
-fontfamily fontfamily = swiss!
-string facename = "Tahoma"
-long textcolor = 33554432
-long backcolor = 67108864
-string text = "??"
-boolean focusrectangle = false
-end type
-
 type cb_showcol from commandbutton within w_test
-integer x = 1851
+integer x = 1522
 integer y = 2280
 integer width = 224
 integer height = 72
@@ -1010,7 +1103,7 @@ uo_tree.showcolumn(ld_col)
 end event
 
 type cb_unmarkcol from commandbutton within w_test
-integer x = 1609
+integer x = 1280
 integer y = 2364
 integer width = 224
 integer height = 72
@@ -1034,7 +1127,7 @@ uo_tree.setcolumnmark(ld_col, false)
 end event
 
 type cb_hidecol from commandbutton within w_test
-integer x = 1851
+integer x = 1522
 integer y = 2364
 integer width = 224
 integer height = 72
@@ -1057,7 +1150,7 @@ uo_tree.hidecolumn(ld_col)
 end event
 
 type cb_markcol from commandbutton within w_test
-integer x = 1605
+integer x = 1275
 integer y = 2280
 integer width = 224
 integer height = 72
@@ -1081,7 +1174,7 @@ end event
 
 type em_col from editmask within w_test
 event itemchanged pbm_enchange
-integer x = 1605
+integer x = 1275
 integer y = 2192
 integer width = 192
 integer height = 76
@@ -1102,7 +1195,7 @@ string minmax = "0~~"
 end type
 
 event itemchanged;
-currentcolinfos( )
+currentiteminfos( )
 
 end event
 
@@ -2864,23 +2957,6 @@ long backcolor = 67108864
 string text = "Extended Styles"
 end type
 
-type gb_col from groupbox within w_test
-integer x = 1573
-integer y = 2124
-integer width = 1065
-integer height = 340
-integer taborder = 100
-integer textsize = -8
-integer weight = 400
-fontcharset fontcharset = ansi!
-fontpitch fontpitch = variable!
-fontfamily fontfamily = swiss!
-string facename = "Tahoma"
-long textcolor = 33554432
-long backcolor = 67108864
-string text = "Column"
-end type
-
 type r_back from rectangle within w_test
 long linecolor = 33554432
 integer linethickness = 4
@@ -3039,5 +3115,56 @@ integer x = 2917
 integer y = 1836
 integer width = 64
 integer height = 72
+end type
+
+type st_width from statictext within w_test
+integer x = 2002
+integer y = 2196
+integer width = 215
+integer height = 64
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "??"
+boolean focusrectangle = false
+end type
+
+type gb_col from groupbox within w_test
+integer x = 1243
+integer y = 2124
+integer width = 1001
+integer height = 340
+integer taborder = 100
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Column"
+end type
+
+type gb_item from groupbox within w_test
+integer x = 2267
+integer y = 2124
+integer width = 750
+integer height = 340
+integer taborder = 100
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Current line item"
 end type
 
