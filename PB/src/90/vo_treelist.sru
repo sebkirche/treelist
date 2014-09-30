@@ -112,6 +112,7 @@ long backcolor = 67108864
 string classname = "TreeList"
 string libraryname = "treelista.dll"
 string text = "PBTreeList"
+event type long wm_notify ( unsignedlong wparam,  long lparam )
 event type long oncbstatechanged ( unsignedlong action,  unsignedlong itemhandle,  unsignedlong olditemstate,  unsignedlong newitemstate,  long ptdrag_x,  long ptdrag_y )
 event post_constructor ( )
 event type long oncolumnclicked ( long item,  long button,  unsignedlong pitem )
@@ -232,6 +233,7 @@ ulong il_custom_font = 0
 
 constant long WM_SETFONT = 48
 constant long WM_GETFONT = 49
+constant long WM_NOTIFY = 78
 constant integer FW_NORMAL     = 400
 constant integer FW_BOLD       = 700
 constant long HWND_DESKTOP = 0	//to ask for desktop caps its the handle to give to GetDC
@@ -617,13 +619,78 @@ public function long addcolumn (string as_text)
 public function long addcolumn (string as_text, alignment a_align, long al_image)
 public function long setcolumn (long al_col, string as_text, alignment a_align, long al_image)
 public function long setcolumn (long al_col, string as_text)
-public function integer post ()
 public function long setitemtextcolor (long handle, long al_column_id, long al_color)
 public function long setitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_state, unsignedlong aul_statemask)
 public function long setitembold (unsignedlong aul_parent, long al_column, boolean ab_bold)
 public function long getitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_statemask)
 public function boolean isitembold (unsignedlong aul_parent, long al_column)
 end prototypes
+
+event type long wm_notify(unsignedlong wparam, long lparam);if lparam > 0 then
+	nmhdr header
+	nmtreeview msgdata
+	nmheader columndata
+	CopyMemoryNMHDR( ref header, lparam, SIZEOF_NMHDR )
+	choose case header.code 
+		case TVN_CBSTATECHANGED
+			
+			CopyMemorynmtreeview( ref msgdata, lparam, SIZEOF_NMTREEVIEW)
+			return event oncbstatechanged( &
+									msgdata.action, &
+									msgdata.itemnew.hitem, &
+									msgdata.itemold.state, &
+									msgdata.itemnew.state, &
+									msgdata.ptdrag.x, &
+									msgdata.ptdrag.y)
+		case TVN_COLUMNCLICK//, 4294967291
+			CopyMemorynmheader( ref columndata, lparam, SIZEOF_NMHEADER)
+			return event oncolumnclicked(        &
+									columndata.iitem,  &
+									columndata.ibutton,&
+									columndata.pitem   &
+									)
+
+/*
+		case TVN_COLUMNDBLCLICK
+		//TODO:
+		case TVN_DELETEITEM
+		case TVN_COLUMNCHANGED
+		case TVN_BEGINLABELEDIT
+		case TVN_ENDLABELEDIT
+		case TVN_SETDISPINFO
+		case TVN_KEYDOWN
+		case TVN_STARTEDIT
+		case TVN_STEPSTATECHANGED
+		case TVN_BEGINDRAG
+		case TVN_ITEMTOOLTIP
+		case TVN_GETINFOTIP
+		case TVN_ITEMEXPANDING
+		case TVN_ITEMEXPANDED
+		case TVN_SELCHANGED
+		case TVN_SELCHANGING
+		case TVN_SINGLEEXPAND
+		case TVN_LBUTTONUP
+		case TVN_RBUTTONUP
+//		case NM_RETURN
+//		case NM_SETFOCUS
+//		case NM_KILLFOCUS
+//		case NM_DBLCLK
+//		case NM_RCLICK
+//		case NM_RDBLCLK
+		case TVN_LAST
+		case TVN_FIRST
+		case TVN_BEGINRDRAG
+*/
+//		case else
+//			debug_message( classname(), "wm_notify hdr.code="+string(header.code ))
+
+
+	end choose	
+end if
+
+return 0
+
+end event
 
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text);
 tv_item itemdata
@@ -1481,11 +1548,6 @@ return l_ret
 
 end function
 
-public function integer post ();
-return 42
-
-end function
-
 public function long setitemtextcolor (long handle, long al_column_id, long al_color);
 return send(hwnd,TVM_SETITEMTEXTCOLOR, handle + al_column_id * 16777216,al_color)
 
@@ -1576,6 +1638,13 @@ end event
 event destructor;
 //clean the custom font if it was allocated
 if il_custom_font <> 0 then DeleteObject(il_custom_font)
+
+end event
+
+event other;
+if Message.Number = WM_NOTIFY THEN
+	event wm_notify(wparam, lparam)
+end if
 
 end event
 
