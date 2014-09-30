@@ -354,6 +354,8 @@ constant long TVI_LAST = -65534
 constant long TVI_ROOT = -65536
 constant long TVI_SORT = -65533
 constant ulong TVI_SORTEX = 4294901767
+constant ulong TVIS_UNDERLINE = 1
+constant ulong TVIS_BOLD = 16
 constant long TVM_COLUMNAUTOEDIT = 4454
 constant long TVM_COLUMNAUTOICON = 4453
 constant ulong TVM_CREATEDRAGIMAGE = 4370
@@ -540,6 +542,7 @@ constant long TV_NOIMAGE = -2
 constant ulong TV_NOCOLOR = -1
 
 end variables
+
 forward prototypes
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
@@ -616,6 +619,11 @@ public function long addcolumn (string as_text)
 public function long addcolumn (string as_text, alignment a_align, long al_image)
 public function long setcolumn (long al_col, string as_text, alignment a_align, long al_image)
 public function long setcolumn (long al_col, string as_text)
+public function long setitemtextcolor (long handle, long al_column_id, long al_color)
+public function long setitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_state, unsignedlong aul_statemask)
+public function long setitembold (unsignedlong aul_parent, long al_column, boolean ab_bold)
+public function long getitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_statemask)
+public function boolean isitembold (unsignedlong aul_parent, long al_column)
 end prototypes
 
 event wm_notify;if lparam > 0 then
@@ -1275,7 +1283,7 @@ long r
 col.fmt = 0
 col.mask = TVCF_WIDTH
 
-r = getcolumn(al_col, col)
+r = getcolumn(al_col, ref col)
 
 return col.cx
 
@@ -1531,6 +1539,67 @@ long l_ret
 l_ret = setcolumn(al_col, as_text, left!, TV_NOIMAGE)
 
 return l_ret
+
+end function
+
+public function long setitemtextcolor (long handle, long al_column_id, long al_color);
+return send(hwnd,TVM_SETITEMTEXTCOLOR, handle + al_column_id * 16777216,al_color)
+
+end function
+
+public function long setitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_state, unsignedlong aul_statemask);
+tv_item itemdata
+
+itemdata.mask = TVIF_STATE + TVIF_HANDLE
+if al_column > 0 then 
+	itemdata.mask += TVIF_SUBITEM 
+	itemdata.cChildren = al_column
+end if
+itemdata.hitem = aul_parent
+itemdata.stateMask = aul_statemask
+itemdata.state = aul_state
+
+return SendMessageItem( hwnd , TVM_SETITEM, 0, itemdata)
+
+end function
+
+public function long setitembold (unsignedlong aul_parent, long al_column, boolean ab_bold);
+ulong s
+
+if ab_bold then
+	s = TVIS_BOLD
+else
+	s = 0
+end if
+return setitemstate(aul_parent, al_column, s, TVIS_BOLD)
+
+end function
+
+public function long getitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_statemask);
+tv_item itemdata
+
+itemdata.mask = TVIF_STATE + TVIF_HANDLE
+if al_column > 0 then itemdata.mask += TVIF_SUBITEM 
+
+itemdata.hitem = aul_parent
+itemdata.cChildren = al_column
+itemdata.stateMask = aul_statemask
+itemdata.state = 0
+
+if SendMessageItem( hwnd , TVM_GETITEM, 0, itemdata) > 0 then
+	return itemdata.state
+else
+	return 0
+end if
+
+end function
+
+public function boolean isitembold (unsignedlong aul_parent, long al_column);
+ulong state
+
+state = getitemstate(aul_parent, al_column, TVIS_BOLD)
+
+return state > 0
 
 end function
 
