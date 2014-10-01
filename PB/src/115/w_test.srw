@@ -2,6 +2,8 @@ HA$PBExportHeader$w_test.srw
 forward
 global type w_test from window
 end type
+type cbx_itemunder from checkbox within w_test
+end type
 type cbx_itembold from checkbox within w_test
 end type
 type cb_itemcol from commandbutton within w_test
@@ -228,6 +230,7 @@ long backcolor = 67108864
 string icon = ".\res\TreeList.ico"
 boolean center = true
 event onnotify pbm_notify
+cbx_itemunder cbx_itemunder
 cbx_itembold cbx_itembold
 cb_itemcol cb_itemcol
 cb_itemback cb_itemback
@@ -426,6 +429,7 @@ cbx_itembold.checked = uo_tree.isitembold(r, ldc_col)
 end subroutine
 
 on w_test.create
+this.cbx_itemunder=create cbx_itemunder
 this.cbx_itembold=create cbx_itembold
 this.cb_itemcol=create cb_itemcol
 this.cb_itemback=create cb_itemback
@@ -533,7 +537,8 @@ this.r_grayed=create r_grayed
 this.st_width=create st_width
 this.gb_col=create gb_col
 this.gb_item=create gb_item
-this.Control[]={this.cbx_itembold,&
+this.Control[]={this.cbx_itemunder,&
+this.cbx_itembold,&
 this.cb_itemcol,&
 this.cb_itemback,&
 this.cbx_ex_headerownimglist,&
@@ -643,6 +648,7 @@ this.gb_item}
 end on
 
 on w_test.destroy
+destroy(this.cbx_itemunder)
 destroy(this.cbx_itembold)
 destroy(this.cb_itemcol)
 destroy(this.cb_itemback)
@@ -812,10 +818,37 @@ uo_tree.height = max(newheight - il_deltaheight, pixelstounits(50, YPixelsToUnit
 
 end event
 
+type cbx_itemunder from checkbox within w_test
+integer x = 2304
+integer y = 2360
+integer width = 329
+integer height = 64
+integer textsize = -8
+integer weight = 400
+fontcharset fontcharset = ansi!
+fontpitch fontpitch = variable!
+fontfamily fontfamily = swiss!
+string facename = "Tahoma"
+long textcolor = 33554432
+long backcolor = 67108864
+string text = "Underlined"
+end type
+
+event clicked;
+long r
+dec ldc_col
+
+r = uo_tree.finditem( currenttreeitem!, 0)
+em_col.getdata(ldc_col)
+
+uo_tree.setitemunderlined(r, ldc_col, checked)
+
+end event
+
 type cbx_itembold from checkbox within w_test
 integer x = 2304
 integer y = 2280
-integer width = 224
+integer width = 329
 integer height = 64
 integer textsize = -8
 integer weight = 400

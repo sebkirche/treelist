@@ -154,9 +154,9 @@ public:
 	CComboBox	*ListEditLabelCb	 	(int iRow,int nCol=0,int iFull=0,int iList=0,int iSel=0);
 	CImageList  *ListCreateDragImage 	(int iRow,int nCol=0); 	
 	BOOL		 ListDeleteItem		 	(int iRow);
-	INT 		 ListInsertItem		 	(int iRow,		   LPCTSTR pText,int nImage=-1,int nState=-1,int iMask=TVIS_BOLD|TVIS_UNTERLINE|TVIS_SELECTED|TVIS_OVERLAYMASK|TVIS_STATEIMAGEMASK);	
-	BOOL		 ListSetItem		 	(int iRow,		   LPCTSTR pText,int nImage=-1,int nState=-1,int iMask=TVIS_BOLD|TVIS_UNTERLINE|TVIS_SELECTED|TVIS_OVERLAYMASK|TVIS_STATEIMAGEMASK);	
-	BOOL		 ListSetItem		 	(int iRow,int iCol,LPCTSTR pText,int nImage=-1,int nState=-1,int iMask=TVIS_BOLD|TVIS_UNTERLINE|TVIS_SELECTED|TVIS_OVERLAYMASK|TVIS_STATEIMAGEMASK);	
+	INT 		 ListInsertItem		 	(int iRow,		   LPCTSTR pText,int nImage=-1,int nState=-1,int iMask=TVIS_BOLD|TVIS_UNDERLINE|TVIS_SELECTED|TVIS_OVERLAYMASK|TVIS_STATEIMAGEMASK);	
+	BOOL		 ListSetItem		 	(int iRow,		   LPCTSTR pText,int nImage=-1,int nState=-1,int iMask=TVIS_BOLD|TVIS_UNDERLINE|TVIS_SELECTED|TVIS_OVERLAYMASK|TVIS_STATEIMAGEMASK);	
+	BOOL		 ListSetItem		 	(int iRow,int iCol,LPCTSTR pText,int nImage=-1,int nState=-1,int iMask=TVIS_BOLD|TVIS_UNDERLINE|TVIS_SELECTED|TVIS_OVERLAYMASK|TVIS_STATEIMAGEMASK);	
 	BOOL		 ListSetColor		 	(int iRow,int iCol,COLORREF  uBkColor=TV_NOCOLOR,COLORREF  uTextColor=TV_NOCOLOR); 
 	BOOL		 ListGetColor		 	(int iRow,int iCol,COLORREF &uBkColor           ,COLORREF &uTextColor);
 	LRESULT		 ListGetItemData		(int iRow);		

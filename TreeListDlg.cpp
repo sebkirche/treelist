@@ -551,11 +551,11 @@ void CTreeListDlg::OnCheck19() {
 
 void CTreeListDlg::OnCheck20() {
 	if(((CButton *)GetDlgItem(IDC_CHECK20))->GetCheck())
-		m_uSelState |=  TVIS_UNTERLINE;
+		m_uSelState |=  TVIS_UNDERLINE;
 	else
-		m_uSelState &= ~TVIS_UNTERLINE;
+		m_uSelState &= ~TVIS_UNDERLINE;
 
-	m_cTreeList.SetItemState(m_hSelect, m_iSelCol, m_uSelState, TVIS_UNTERLINE);
+	m_cTreeList.SetItemState(m_hSelect, m_iSelCol, m_uSelState, TVIS_UNDERLINE);
 }
 
 void CTreeListDlg::OnCheck21() {
@@ -765,7 +765,7 @@ void CTreeListDlg::OnSelChanged(NMHDR *pNmHdr, LRESULT *pResult) {
 
 
 	((CButton *)GetDlgItem(IDC_CHECK19))->SetCheck((m_uSelState & TVIS_BOLD) ? 1 : 0);
-	((CButton *)GetDlgItem(IDC_CHECK20))->SetCheck((m_uSelState & TVIS_UNTERLINE) ? 1 : 0);
+	((CButton *)GetDlgItem(IDC_CHECK20))->SetCheck((m_uSelState & TVIS_UNDERLINE) ? 1 : 0);
 	((CButton *)GetDlgItem(IDC_CHECK21))->SetCheck((m_uSelState & TVIS_EXPANDED) ? 1 : 0);
 	((CButton *)GetDlgItem(IDC_CHECK30))->SetCheck((m_uSelState & TVIS_DISABLEBIT) ? 1 : 0);
 

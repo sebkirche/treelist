@@ -219,10 +219,10 @@ typedef struct {
 	HIMAGELIST	hChecks;									// Handle der Icon-Liste für die Checkboxen in den Spalten
 	HIMAGELIST	hSubImg;									// Handle der Icon-Liste für die Spalten
 	HIMAGELIST	hHeadImg;									// Handle for header images
-	HFONT		hFontN;										// Ist der normale Zeichensatz
-	HFONT		hFontB;										// Ist der fette Zeichensatz
-	HFONT		hFontL;										// Der letzte zugewiesene Font
-	HFONT		hFontT;										// Ist der Font für das Tooltip
+	HFONT		hFontN;										// Normal font
+	HFONT		hFontB;										// Bold fonts
+	HFONT		hFontL;										// Last used font
+	HFONT		hFontT;										// Tooltip font
 	HWND		hEdit;										// Handle des Edit-Fensters
 	HWND		hHeader;									// Handle des Header Fensters
 	HWND		hToolTip;									// Handle des Tooltip-Fensters
@@ -253,7 +253,7 @@ typedef struct {
 	unsigned	uItemPosCount;								// Anzahl der sichtbaren Einträge
 	unsigned   *pItemPos;									// Liste mit den Offsets der sichtbaren Einträge
 	BaseItem  **pTreeItems;									// Zeiger auf Item Zeiger
-	ExtraItem **pExtraItems[MAX_COLUMNS - 1];					// Zeiger auf die Spalteneinträge
+	ExtraItem **pExtraItems[MAX_COLUMNS - 1];				// Zeiger auf die Spalteneinträge
 	unsigned	uTreeItemsMax;								// Größe der Liste mit den vorhanden Einträge (alociert um 1 größer)
 	unsigned	uTreeItemsCount;							// Anzahl der vorhanden Einträge
 	unsigned	uNextSeachPos;								// Nächste Position zum suchen von freien Einträgen
@@ -2089,6 +2089,28 @@ UserTip:
 
 //*****************************************************************************
 //*
+//*		CreateFontset
+//*
+//*****************************************************************************
+//  Create the font set (normal, bold, etc...) from the given HFONT
+static int CreateFontset(TreeListData *pData, HFONT hFont){
+	LOGFONT sLog;
+	HFONT hBold;
+	int iRet = 0;
+	
+	if(GetObject(hFont, sizeof(sLog), &sLog)){
+		sLog.lfWeight = FW_BOLD;
+		if((hBold = CreateFontIndirect(&sLog))){
+			pData->hFontN = hFont;	//store the given font
+			pData->hFontB = hBold;
+			iRet = 1;
+		}
+	}
+	return iRet;
+}
+
+//*****************************************************************************
+//*
 //*		UpdateFont
 //*
 //*****************************************************************************
@@ -2114,19 +2136,23 @@ static int UpdateFont(TreeListData *pData) {
 		SystemParametersInfo(SPI_GETICONTITLELOGFONT, sizeof(sLog), &sLog, 0);
 		sLog.lfWeight = FW_NORMAL;
 		hDefaultFontN = CreateFontIndirect(&sLog);
-		sLog.lfWeight = FW_BOLD  ;
+		sLog.lfWeight = FW_BOLD;
 		hDefaultFontB = CreateFontIndirect(&sLog);
 	}
 
 
 	if(!pData->hFontN)
 		pData->hFontN = hDefaultFontN;
+	if(!pData->hFontB)
+		pData->hFontB = hDefaultFontB;
 
+/*
 	if(pData->hFontN == hDefaultFontN) {						// Ist der Standard-Font eingestellt
 		pData->hFontB = hDefaultFontB;
 	} else {
 		pData->hFontB = pData->hFontN;
 	}
+*/
 
 	if(pData->hFontN != pData->hFontL) {
 		pData->hFontL = pData->hFontN;
@@ -2169,7 +2195,8 @@ static int UpdateFont(TreeListData *pData) {
 		iRet = 0;
 	}
 
-	hDc = GetDC(NULL);										// Breite der "..." Texte
+	// compute Width of "..." text
+	hDc = GetDC(NULL);
 	SelectObject(hDc, pData->hFontN);
 	GetTextExtentExPoint(hDc, _T("..."), 3, 256, NULL, NULL, &sSize);
 	pData->uTrippleN =  sSize.cx;
@@ -3710,7 +3737,7 @@ static int TreeListSelectItem(TreeListData *pData, unsigned uItem, unsigned uSub
 				pExtra  = new ExtraItem;
 				memset(pExtra, 0, sizeof(ExtraItem));
 				pExtra->iImage = TV_NOIMAGE;
-				pExtra->uState = pEntry->uState & (TVIS_BOLD | TVIS_UNTERLINE);
+				pExtra->uState = pEntry->uState & (TVIS_BOLD | TVIS_UNDERLINE);
 				pData->pExtraItems[uSubItem - 1][uItem] = pExtra;
 			}
 
@@ -4606,7 +4633,7 @@ static int TreeListSetItem(TreeListData *pData, const TV_ITEM *pItem) {
 				pExtra  = new ExtraItem;
 				memset(pExtra, 0, sizeof(ExtraItem));
 				pExtra->iImage = TV_NOIMAGE;
-				pExtra->uState = pEntry->uState & (TVIS_BOLD | TVIS_UNTERLINE);
+				pExtra->uState = pEntry->uState & (TVIS_BOLD | TVIS_UNDERLINE);
 				pList[uItem]   = pExtra;
 			}
 
@@ -4936,7 +4963,7 @@ static unsigned TreeListGetItem(TreeListData *pData, TV_ITEM *pItem) {
 				pExtra  = new ExtraItem;
 				memset(pExtra, 0, sizeof(ExtraItem));
 				pExtra->iImage = TV_NOIMAGE;
-				pExtra->uState = pEntry->uState & (TVIS_BOLD | TVIS_UNTERLINE);
+				pExtra->uState = pEntry->uState & (TVIS_BOLD | TVIS_UNDERLINE);
 				pList[uItem]   = pExtra;
 			}
 
@@ -10131,6 +10158,11 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 				pData->pExtraItems[uVal - 1] = 0;
 			}
 
+			if(pData->hFontB){
+				DeleteObject(pData->hFontB);
+				pData->hFontB = 0;
+			}
+
 			pData->uColumnCount = 0;
 
 			UNLOCK(pData);
@@ -10732,9 +10764,10 @@ static LRESULT CALLBACK TreeListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 
 			LOCK(pData);
 
-			pData->hFontN = (HFONT)wParam;
-			if(UpdateFont(pData))
-				UpdateView(pData);
+			if(CreateFontset(pData, (HFONT)wParam)){
+				if(UpdateFont(pData))
+					UpdateView(pData);
+			}
 
 			UNLOCK(pData);
 
@@ -13072,7 +13105,7 @@ NoRootLines:
 		sArea.right = uFirstPos;								// Text ausgeben vom Haupteintrag
 		iYpos		= sArea.top + (iHeight - pData->iFontHeight) / 2;
 
-		if(uBits & (TVIS_SELECTED | TVIS_DROPHILITED | TVIS_UNTERLINE | TVIS_TRACKED | TVIS_TEXTCOLOR | TVIS_FOCUSED)) {
+		if(uBits & (TVIS_SELECTED | TVIS_DROPHILITED | TVIS_UNDERLINE | TVIS_TRACKED | TVIS_TEXTCOLOR | TVIS_FOCUSED)) {
 			// Das Feld speziel zeichnen
 			TCHAR	*pPtr = (TCHAR *)alloca((uTextSize + 4) * sizeof(TCHAR));
 			INT		*pPos = (INT *)alloca((uTextSize + 4) * sizeof(INT));
@@ -13173,7 +13206,7 @@ NoRootLines:
 			sButton.left += pData->iFontOff;
 			DrawText(hDc, pText, uTextSize, &sButton, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-			if(uBits & (TVIS_UNTERLINE | TVIS_TRACKED))				// Text unterstreichen
+			if(uBits & (TVIS_UNDERLINE | TVIS_TRACKED))				// Text unterstreichen
 				if(pText && *pText) {
 					sButton.left   -= pData->iFontOff;
 					sButton.right  -= pData->iFontOff + 1;
@@ -13399,7 +13432,7 @@ ExtraDraw:
 				iYpos = sArea.top + (iHeight - pData->iFontHeight) / 2;
 				SelectObject(hDc, (uBits & TVIS_BOLD) ? pData->hFontB : pData->hFontN);
 
-				if(uBits & (TVIS_SELECTED | TVIS_DROPHILITED | TVIS_UNTERLINE | TVIS_TRACKED | TVIS_TEXTCOLOR | TVIS_FOCUSED)) {
+				if(uBits & (TVIS_SELECTED | TVIS_DROPHILITED | TVIS_UNDERLINE | TVIS_TRACKED | TVIS_TEXTCOLOR | TVIS_FOCUSED)) {
 					// Text ausgeben in spezilem Format
 					TCHAR	*pPtr = (TCHAR *)alloca((uTextSize + 4) * sizeof(TCHAR));
 					INT		*pPos = (INT *)alloca((uTextSize + 4) * sizeof(INT));
@@ -13517,7 +13550,7 @@ ExtraDraw:
 
 					DrawText(hDc, pText, uTextSize, &sButton, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_NOPREFIX);
 
-					if(uBits & (TVIS_UNTERLINE | TVIS_TRACKED))		// Text unterstreichen
+					if(uBits & (TVIS_UNDERLINE | TVIS_TRACKED))		// Text unterstreichen
 						if(pText && *pText) {
 							sButton.left   -= pData->iFontOff;
 							sButton.right  -= pData->iFontOff + 1;

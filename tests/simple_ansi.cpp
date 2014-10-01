@@ -250,9 +250,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 			TVITEM itm;
 			char buffer[42];
-			itm.hItem = (HTREEITEM)2;
-			itm.cChildren = 1;
-			itm.mask = TVIF_STATE | TVIF_HANDLE | TVIF_SUBITEM | TVIF_TEXT;
+			itm.hItem = (HTREEITEM)3;
+			//itm.cChildren = 1;
+			itm.mask = TVIF_STATE | TVIF_HANDLE /*| TVIF_SUBITEM*/ | TVIF_TEXT;
 			itm.stateMask = TVIS_BOLD;
 			itm.state = 0;
 			itm.pszText = buffer;
@@ -385,7 +385,7 @@ void showConstants(void){
 	printf("TVIF_TEXTPTR  = %ld\n", TVIF_TEXTPTR );
 	printf("TVIF_TOOLTIPTIME  = %ld\n", TVIF_TOOLTIPTIME );
 	printf("TVIS_BOLD  = %ld\n", TVIS_BOLD );
-	printf("TVIS_UNDERLINE  = %ld\n", TVIS_UNTERLINE );
+	printf("TVIS_UNDERLINE  = %ld\n", TVIS_UNDERLINE );
 	printf("TVI_AFTER  = %ld\n", TVI_AFTER );
 	printf("TVI_BEFORE  = %ld\n", TVI_BEFORE );
 	printf("TVI_FIRST  = %ld\n", TVI_FIRST );

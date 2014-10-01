@@ -543,6 +543,7 @@ constant ulong TV_NOCOLOR = -1
 
 
 end variables
+
 forward prototypes
 public function long setitemtext (unsignedlong aul_parent, long al_column, string as_text)
 public function long expand (unsignedlong aul_parent)
@@ -624,6 +625,8 @@ public function long setitemstate (unsignedlong aul_parent, long al_column, unsi
 public function long setitembold (unsignedlong aul_parent, long al_column, boolean ab_bold)
 public function long getitemstate (unsignedlong aul_parent, long al_column, unsignedlong aul_statemask)
 public function boolean isitembold (unsignedlong aul_parent, long al_column)
+public function boolean isitemunderlined (unsignedlong aul_parent, long al_column)
+public function long setitemunderlined (unsignedlong aul_parent, long al_column, boolean ab_under)
 end prototypes
 
 event type long wm_notify(unsignedlong wparam, long lparam);if lparam > 0 then
@@ -1606,6 +1609,27 @@ ulong state
 state = getitemstate(aul_parent, al_column, TVIS_BOLD)
 
 return state > 0
+
+end function
+
+public function boolean isitemunderlined (unsignedlong aul_parent, long al_column);
+ulong state
+
+state = getitemstate(aul_parent, al_column, TVIS_UNDERLINE)
+
+return state > 0
+
+end function
+
+public function long setitemunderlined (unsignedlong aul_parent, long al_column, boolean ab_under);
+ulong s
+
+if ab_under then
+	s = TVIS_UNDERLINE
+else
+	s = 0
+end if
+return setitemstate(aul_parent, al_column, s, TVIS_UNDERLINE)
 
 end function
 

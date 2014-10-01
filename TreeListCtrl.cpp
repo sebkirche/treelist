@@ -358,7 +358,7 @@ int CTreeListCtrl::ListInsertItem(int iRow, LPCTSTR pText, int nImage, int nStat
 	if(nState >= 0) {
 		sData.item.mask	    |= TVIF_STATE;
 		sData.item.state	 = nState;
-		sData.item.stateMask = iMask & (TVIS_BOLD | TVIS_UNTERLINE | TVIS_SELECTED | TVIS_OVERLAYMASK | TVIS_STATEIMAGEMASK);
+		sData.item.stateMask = iMask & (TVIS_BOLD | TVIS_UNDERLINE | TVIS_SELECTED | TVIS_OVERLAYMASK | TVIS_STATEIMAGEMASK);
 	}
 
 
@@ -428,7 +428,7 @@ BOOL CTreeListCtrl::ListSetItem(int iRow, int nCol, LPCTSTR pText, int nImage, i
 	if(nState >= 0) {
 		sData.mask	    |= TVIF_STATE;
 		sData.state	     = nState;
-		sData.stateMask  = iMask & (TVIS_BOLD | TVIS_UNTERLINE | TVIS_SELECTED);
+		sData.stateMask  = iMask & (TVIS_BOLD | TVIS_UNDERLINE | TVIS_SELECTED);
 	}
 
 
