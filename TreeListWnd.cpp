@@ -2102,7 +2102,11 @@ static int CreateFontset(TreeListData *pData, HFONT hFont){
 		sLog.lfWeight = FW_BOLD;
 		if((hBold = CreateFontIndirect(&sLog))){
 			pData->hFontN = hFont;	//store the given font
-			pData->hFontB = hBold;
+			if(pData->hFontB != hDefaultFontB){
+				//if the current bold is not the default bold, free it
+				DeleteObject(pData->hFontB);
+			}
+			pData->hFontB = hBold;	//store the created bold 
 			iRet = 1;
 		}
 	}

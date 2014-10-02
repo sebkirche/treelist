@@ -45,12 +45,16 @@ BEGIN
         BLOCK "040704b0"
         BEGIN
             VALUE "CompanyName", "seki.fr"
-            VALUE "FileDescription", "TreeList control"
-#ifdef _DEBUG
-			" - Debug"
+            VALUE "FileDescription", "TreeList control - "
+#ifdef _UNICODE
+			"Unicode"
 #else
-			""
+			"Non-Unicode"
 #endif
+#ifdef _DEBUG
+			" / Debug"
+#endif
+			" version"
             VALUE "FileVersion", "2, 4, 1, 0"
             VALUE "InternalName", "TreeList"
             VALUE "LegalCopyright", "Copyright © 2007 Anton Zechner, 2014 Sébastien Kirche"
