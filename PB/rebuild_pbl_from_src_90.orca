@@ -8,19 +8,15 @@
 
 set targetFile = targetname
 set targetFile += ".pbt" 
-;set logfilename = "rebuild_"
-;set logfilename += targetname
-;set logfilename += ".log"
 
-
-echo target targetname
-echo local path lpath
-echo project ppath
+;echo target targetname
+;echo local path lpath
+;echo project ppath
 
 start session
 
 scc set connect property provider "PB Native"
-scc set connect property userid "seki"
+scc set connect property userid "johndoe"
 scc set connect property localprojpath lpath 
 scc set connect property project ppath
 scc set connect property logfile logfilename

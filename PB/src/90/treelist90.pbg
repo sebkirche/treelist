@@ -7,4 +7,5 @@ Save Format v3.0(19990112)
  "n_choosefont.sru" "treelist90.pbl";
  "treelist90.sra" "treelist90.pbl";
  "vo_treelist.sru" "treelist90.pbl";
+ "w_test.srw" "treelist90.pbl";
 @end;

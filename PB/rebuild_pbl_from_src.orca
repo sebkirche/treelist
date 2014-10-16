@@ -6,19 +6,20 @@
 ;                     otherwise you will have weird errors like "library list (or application) not defined"
 ;                     or "cannot find the application" :^S
 
-;set targetname = "TreeList105"  (this is passed by the calling batch)
 set targetFile = targetname
 set targetFile += ".pbt" 
-set logfilename = "rebuild_"
-set logfilename += targetname
-set logfilename += ".log"
+
+;echo target targetname
+;echo local path lpath
+;echo project ppath
 
 start session
 
+scc set connect property localprojpath lpath 
+scc set connect property project ppath
 scc set connect property logfile logfilename
-scc set connect property logappend false
-
-scc set connect property localprojpath ".\" 
+scc set connect property logappend true
+scc set connect property deletetempfiles true
 
 ;do not actually connect through source control
 ;just get the sources files from the current directory
